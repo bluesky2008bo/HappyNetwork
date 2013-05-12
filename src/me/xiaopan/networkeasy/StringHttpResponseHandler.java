@@ -11,25 +11,15 @@ import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.util.EntityUtils;
 
 import android.content.Context;
-import android.os.Handler;
 import android.os.Message;
 
-public class StringHttpResponseHandler extends Handler implements HttpResponseHandler {
-	protected static final int MESSAGE_START = 0;
-    protected static final int MESSAGE_SUCCESS = 1;
-    protected static final int MESSAGE_FAILURE = 2;
-    protected static final int MESSAGE_EXCEPTION = 3;
-    protected static final int MESSAGE_END = 4;
-	
+public class StringHttpResponseHandler extends HttpResponseHandler {
     private Context context;
-	private StringHttpResponseHandleListener stringHttpResponseHandleListener;
-	private Throwable throwable;
-	private String responseContent;
-	private HttpResponse httpResponse;
+	private StringHttpResponseHandleListener httpResponseHandleListener;
 	
 	public StringHttpResponseHandler(Context context, StringHttpResponseHandleListener stringHttpResponseHandleListener){
 		this.context = context;
-		this.stringHttpResponseHandleListener = stringHttpResponseHandleListener;
+		this.httpResponseHandleListener = stringHttpResponseHandleListener;
 	}
 	
 	@Override
@@ -49,21 +39,15 @@ public class StringHttpResponseHandler extends Handler implements HttpResponseHa
 			
 			/* 转换成字符串 */
 			HttpEntity httpEntity = httpResponse.getEntity();
-			if(httpEntity != null){
-				responseContent = EntityUtils.toString(new BufferedHttpEntity(httpEntity), charset);
-			}
-			
-			sendEmptyMessage(MESSAGE_SUCCESS);
+			sendMessage(obtainMessage(MESSAGE_SUCCESS, httpEntity != null?EntityUtils.toString(new BufferedHttpEntity(httpEntity), charset):null));
 		}else{
-			this.httpResponse = httpResponse;
-			sendEmptyMessage(MESSAGE_FAILURE);
+			sendMessage(obtainMessage(MESSAGE_FAILURE, httpResponse));
 		}
 	}
 
 	@Override
 	public void onException(Throwable e) {
-		throwable = e;
-		sendEmptyMessage(MESSAGE_EXCEPTION);
+		sendMessage(obtainMessage(MESSAGE_EXCEPTION, e));
 	}
 
 	@Override
@@ -73,13 +57,13 @@ public class StringHttpResponseHandler extends Handler implements HttpResponseHa
 	
 	@Override
 	public void handleMessage(Message msg) {
-		if(stringHttpResponseHandleListener != null){
+		if(httpResponseHandleListener != null){
 			switch(msg.what) {
-				case MESSAGE_START: stringHttpResponseHandleListener.onStart(); break;
-				case MESSAGE_SUCCESS: stringHttpResponseHandleListener.onSuccess(responseContent); break;
-				case MESSAGE_FAILURE: stringHttpResponseHandleListener.onFailure(httpResponse); break;
-				case MESSAGE_EXCEPTION: stringHttpResponseHandleListener.onException(context, throwable); break;
-				case MESSAGE_END: stringHttpResponseHandleListener.onEnd(); break;
+				case MESSAGE_START: httpResponseHandleListener.onStart(); break;
+				case MESSAGE_SUCCESS: httpResponseHandleListener.onSuccess((String) msg.obj); break;
+				case MESSAGE_FAILURE: httpResponseHandleListener.onFailure((HttpResponse) msg.obj); break;
+				case MESSAGE_EXCEPTION: httpResponseHandleListener.onException(context, (Throwable) msg.obj); break;
+				case MESSAGE_END: httpResponseHandleListener.onEnd(); break;
 			}
 		}
 	}

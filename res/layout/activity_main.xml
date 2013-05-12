@@ -34,5 +34,12 @@
             android:layout_height="wrap_content"
             android:text="正在加载，请稍后…" />
     </LinearLayout>
+    
+    <ImageView 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#FFFFFFFF"
+        android:id="@+id/image_main"
+        />
 
 </FrameLayout>
