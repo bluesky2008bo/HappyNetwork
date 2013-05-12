@@ -1,10 +1,7 @@
 package me.xiaopan.networkeasy;
 
-import java.io.IOException;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.util.EntityUtils;
 
@@ -26,7 +23,7 @@ public class BinaryHttpResponseHandler extends HttpResponseHandler {
 	}
 
 	@Override
-	public void onHandleResponse(HttpResponse httpResponse) throws ParseException, IOException {
+	public void onHandleResponse(HttpResponse httpResponse) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() < 300 ){
 			HttpEntity httpEntity = httpResponse.getEntity();
 			sendMessage(obtainMessage(MESSAGE_SUCCESS, httpEntity != null?EntityUtils.toByteArray(new BufferedHttpEntity(httpEntity)):null));

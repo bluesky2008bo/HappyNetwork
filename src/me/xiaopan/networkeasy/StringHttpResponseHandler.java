@@ -1,12 +1,9 @@
 package me.xiaopan.networkeasy;
 
-import java.io.IOException;
-
 import me.xiaopan.networkeasy.headers.ContentType;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.util.EntityUtils;
 
@@ -28,7 +25,7 @@ public class StringHttpResponseHandler extends HttpResponseHandler {
 	}
 
 	@Override
-	public void onHandleResponse(HttpResponse httpResponse) throws ParseException, IOException {
+	public void onHandleResponse(HttpResponse httpResponse) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() < 300 ){
 			/* 初始化编码方式 */
 			String charset = "UTF-8";

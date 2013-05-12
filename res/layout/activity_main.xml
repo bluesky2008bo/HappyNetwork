@@ -23,7 +23,9 @@
         android:layout_height="fill_parent"
         android:background="#FFFFFFFF"
         android:gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical" 
+        android:visibility="gone"
+        >
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -40,6 +42,7 @@
         android:layout_height="fill_parent"
         android:background="#FFFFFFFF"
         android:id="@+id/image_main"
+        android:visibility="gone"
         />
 
 </FrameLayout>
