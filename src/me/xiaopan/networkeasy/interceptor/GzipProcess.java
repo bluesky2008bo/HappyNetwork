@@ -1,4 +1,4 @@
-package me.xiaopan.networkeasy;
+package me.xiaopan.networkeasy.interceptor;
 
 public interface GzipProcess {
 	/**

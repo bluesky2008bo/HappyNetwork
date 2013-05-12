@@ -1,4 +1,6 @@
-package me.xiaopan.networkeasy;
+package me.xiaopan.networkeasy.interceptor;
+import me.xiaopan.networkeasy.InflatingEntity;
+
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
