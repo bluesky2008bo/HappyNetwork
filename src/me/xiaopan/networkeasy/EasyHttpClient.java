@@ -411,7 +411,7 @@ public class EasyHttpClient {
             uriRequest.addHeader("Content-Type", contentType);
         }
 
-        Future<?> request = threadPool.submit(new AsyncHttpRequest(httpClient, httpContext, uriRequest, responseHandler));
+        Future<?> request = threadPool.submit(new HttpRequestRunnable(httpClient, httpContext, uriRequest, responseHandler));
 
         if(context != null) {
             List<WeakReference<Future<?>>> requestList = requestMap.get(context);
