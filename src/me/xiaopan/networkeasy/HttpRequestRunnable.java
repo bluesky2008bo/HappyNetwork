@@ -1,7 +1,5 @@
 package me.xiaopan.networkeasy;
 
-import java.io.IOException;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.AbstractHttpClient;
@@ -22,30 +20,28 @@ public class HttpRequestRunnable implements Runnable {
 
     @Override
     public void run() {
-        try {
-            if(httpResponseHandler != null){
-                httpResponseHandler.onStart();
-            }
-
-            if(!Thread.currentThread().isInterrupted()) {
-            	try {
-            		HttpResponse httpResponse = httpClient.execute(httpUriRequest, httpContext);
-            		if(!Thread.currentThread().isInterrupted()) {
-            			if(httpResponseHandler != null) {
-            				httpResponseHandler.onHandleResponse(httpResponse);
-            			}
-            		}
-            	} catch (IOException e) {
-            		if(!Thread.currentThread().isInterrupted()) {
-            			throw e;
-            		}
-            	}
-            }
-        } catch (Throwable e) {
-            if(httpResponseHandler != null) {
-                httpResponseHandler.onException(e);
-            }
-        }
+    	if(!Thread.currentThread().isInterrupted()) {
+    		if(httpResponseHandler != null){
+    			httpResponseHandler.onStart();
+    		}
+    		
+    		try {
+    			if(!Thread.currentThread().isInterrupted()) {
+					HttpResponse httpResponse = httpClient.execute(httpUriRequest, httpContext);
+					if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null) {
+						httpResponseHandler.onHandleResponse(httpResponse);
+					}
+    			}
+    		} catch (Throwable e) {
+    			if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null) {
+    				httpResponseHandler.onException(e);
+    			}
+    		}
+    		
+    		if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null){
+    			httpResponseHandler.onEnd();
+    		}
+    	}
     }
 
 //    private void makeRequest() throws IOException {

@@ -24,4 +24,9 @@ public interface HttpResponseHandler {
      * @param e
      */
     public void onException(Throwable e);
+    
+    /**
+     * 当结束
+     */
+    public void onEnd();
 }
