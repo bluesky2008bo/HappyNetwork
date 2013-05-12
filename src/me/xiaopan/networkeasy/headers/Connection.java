@@ -23,6 +23,7 @@ public class Connection extends HttpHeader{
 	}
 	
 	public Connection() {
+		setValue(VALUE_KEEP_ALIVE);
 	}
 
 	@Override
@@ -32,9 +33,6 @@ public class Connection extends HttpHeader{
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = VALUE_KEEP_ALIVE;
-		}
 		return value;
 	}
 

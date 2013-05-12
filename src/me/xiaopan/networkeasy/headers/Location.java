@@ -15,6 +15,7 @@ public class Location extends HttpHeader{
 	}
 	
 	public Location() {
+		setValue("");
 	}
 
 	@Override
@@ -24,9 +25,6 @@ public class Location extends HttpHeader{
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "";
-		}
 		return value;
 	}
 

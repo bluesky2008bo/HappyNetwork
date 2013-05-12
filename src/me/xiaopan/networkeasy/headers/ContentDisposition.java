@@ -21,6 +21,7 @@ public class ContentDisposition extends HttpHeader{
 	}
 	
 	public ContentDisposition() {
+		setValue("");
 	}
 
 	@Override
@@ -30,9 +31,6 @@ public class ContentDisposition extends HttpHeader{
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "";
-		}
 		return value;
 	}
 

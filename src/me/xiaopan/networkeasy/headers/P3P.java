@@ -15,6 +15,7 @@ public class P3P extends HttpHeader{
 	}
 	
 	public P3P() {
+		setValue("CP=\" OTI DSP COR IVA OUR IND COM \"");
 	}
 
 	@Override
@@ -24,9 +25,6 @@ public class P3P extends HttpHeader{
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "CP=\" OTI DSP COR IVA OUR IND COM \"";
-		}
 		return value;
 	}
 

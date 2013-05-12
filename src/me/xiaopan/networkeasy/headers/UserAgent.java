@@ -15,7 +15,7 @@ public class UserAgent extends HttpHeader {
 	}
 	
 	public UserAgent() {
-		
+		setValue("Opera/9.80 (Windows NT 6.1; WOW64; U; Edition IBIS; zh-cn) Presto/2.10.289 Version/12.01");
 	}
 
 	@Override
@@ -25,9 +25,6 @@ public class UserAgent extends HttpHeader {
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "Opera/9.80 (Windows NT 6.1; WOW64; U; Edition IBIS; zh-cn) Presto/2.10.289 Version/12.01";
-		}
 		return value;
 	}
 

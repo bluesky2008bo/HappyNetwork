@@ -14,9 +14,6 @@ public class Host extends HttpHeader {
 		setValue(value);
 	}
 	
-	public Host() {
-	}
-
 	@Override
 	public String getName() {
 		return NAME;
@@ -24,9 +21,6 @@ public class Host extends HttpHeader {
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "www.baidu.com";
-		}
 		return value;
 	}
 

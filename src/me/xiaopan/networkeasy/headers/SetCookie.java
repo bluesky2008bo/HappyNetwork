@@ -15,6 +15,7 @@ public class SetCookie extends HttpHeader{
 	}
 	
 	public SetCookie() {
+		setValue("");
 	}
 
 	@Override
@@ -24,9 +25,6 @@ public class SetCookie extends HttpHeader{
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "";
-		}
 		return value;
 	}
 

@@ -15,6 +15,7 @@ public class Vary extends HttpHeader{
 	}
 	
 	public Vary() {
+		setValue("Accept-Encoding");
 	}
 
 	@Override
@@ -24,9 +25,6 @@ public class Vary extends HttpHeader{
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "Accept-Encoding";
-		}
 		return value;
 	}
 

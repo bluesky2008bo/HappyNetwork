@@ -49,12 +49,6 @@ public class StringHttpResponseHandler extends Handler implements HttpResponseHa
 			responseContent = EntityUtils.toString(new BufferedHttpEntity(httpEntity), charset);
 		}
 		
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
 		sendEmptyMessage(MESSAGE_SUCCESS);
 	}
 

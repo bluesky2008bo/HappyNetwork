@@ -15,7 +15,7 @@ public class AcceptRanges extends HttpHeader{
 	}
 	
 	public AcceptRanges() {
-		
+		setValue("bytes");
 	}
 
 	@Override
@@ -25,9 +25,6 @@ public class AcceptRanges extends HttpHeader{
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "bytes";
-		}
 		return value;
 	}
 

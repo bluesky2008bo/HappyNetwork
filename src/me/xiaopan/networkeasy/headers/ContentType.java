@@ -28,6 +28,8 @@ public class ContentType extends HttpHeader{
 	}
 	
 	public ContentType() {
+		setType("text/html");
+		setCharset("utf-8");
 	}
 
 	/**
@@ -79,7 +81,7 @@ public class ContentType extends HttpHeader{
 	@Override
 	public String getValue() {
 		if(value == null || "".equals(value.trim())){
-			value = "text/html;charset=utf-8";
+			value = getType()+";charset="+getCharset();
 		}
 		return value;
 	}

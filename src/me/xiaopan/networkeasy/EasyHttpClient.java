@@ -55,14 +55,12 @@ public class EasyHttpClient {
     private static final int DEFAULT_SOCKET_TIMEOUT = 10 * 1000;	//连接超时时间
     private static final int DEFAULT_MAX_RETRIES = 5;	//最大重试次数
     private static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;	//Socket缓存大小
-    
+    private static EasyHttpClient easyHttpClient = null;
 	private HttpContext httpContext;	//Http上下文
 	private DefaultHttpClient httpClient;	//Http客户端
 	private ThreadPoolExecutor threadPool;	//线程池
     private Map<Context, List<WeakReference<Future<?>>>> requestMap;
     private Map<String, String> clientHeaderMap;
-    
-    private static EasyHttpClient easyHttpClient = null;
 	
 	public EasyHttpClient(){
 		httpContext = new SyncBasicHttpContext(new BasicHttpContext());
@@ -478,7 +476,6 @@ public class EasyHttpClient {
                 url += "&" + paramString;
             }
         }
-
         return url;
     }
     

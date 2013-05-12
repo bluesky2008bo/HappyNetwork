@@ -18,7 +18,7 @@ public class TE extends HttpHeader {
 	}
 	
 	public TE() {
-		
+		setValue("text/html, application/xml;q=0.9, application/xhtml xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1");
 	}
 
 	@Override
@@ -28,9 +28,6 @@ public class TE extends HttpHeader {
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "text/html, application/xml;q=0.9, application/xhtml xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1";
-		}
 		return value;
 	}
 

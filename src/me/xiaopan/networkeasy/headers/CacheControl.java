@@ -23,6 +23,7 @@ public class CacheControl extends HttpHeader{
 	}
 	
 	public CacheControl() {
+		setValue(VALUE_PRIVATE);
 	}
 
 	@Override
@@ -32,9 +33,6 @@ public class CacheControl extends HttpHeader{
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = VALUE_PRIVATE;
-		}
 		return value;
 	}
 

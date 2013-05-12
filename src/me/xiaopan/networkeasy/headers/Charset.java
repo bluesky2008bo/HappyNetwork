@@ -27,7 +27,7 @@ public class Charset extends HttpHeader {
 	}
 	
 	public Charset() {
-		
+		setValue(VALUE_UTF8);
 	}
 
 	@Override
@@ -37,9 +37,6 @@ public class Charset extends HttpHeader {
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = VALUE_UTF8;
-		}
 		return value;
 	}
 

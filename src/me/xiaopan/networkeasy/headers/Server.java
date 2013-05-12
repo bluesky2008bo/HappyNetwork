@@ -27,6 +27,7 @@ public class Server extends HttpHeader{
 	}
 	
 	public Server() {
+		setValue(VALUE_BWS);
 	}
 
 	@Override
@@ -36,9 +37,6 @@ public class Server extends HttpHeader{
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = VALUE_APACHE;
-		}
 		return value;
 	}
 

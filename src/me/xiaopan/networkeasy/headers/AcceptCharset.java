@@ -15,7 +15,7 @@ public class AcceptCharset extends HttpHeader {
 	}
 	
 	public AcceptCharset() {
-		
+		setValue("iso-8859-1, utf-8, utf-16, *;q=0.1");
 	}
 
 	@Override
@@ -25,9 +25,6 @@ public class AcceptCharset extends HttpHeader {
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "iso-8859-1, utf-8, utf-16, *;q=0.1";
-		}
 		return value;
 	}
 

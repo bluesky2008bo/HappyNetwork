@@ -15,7 +15,7 @@ public class Referer extends HttpHeader {
 	}
 	
 	public Referer() {
-		
+		setValue("");
 	}
 
 	@Override
@@ -25,9 +25,6 @@ public class Referer extends HttpHeader {
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "";
-		}
 		return value;
 	}
 

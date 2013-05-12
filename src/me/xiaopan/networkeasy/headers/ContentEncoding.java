@@ -15,6 +15,7 @@ public class ContentEncoding extends HttpHeader{
 	}
 	
 	public ContentEncoding() {
+		setValue("gzip");
 	}
 
 	@Override
@@ -24,9 +25,6 @@ public class ContentEncoding extends HttpHeader{
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "gzip";
-		}
 		return value;
 	}
 

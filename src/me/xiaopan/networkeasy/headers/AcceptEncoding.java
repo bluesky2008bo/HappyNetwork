@@ -18,7 +18,7 @@ public class AcceptEncoding extends HttpHeader {
 	}
 	
 	public AcceptEncoding() {
-		
+		setValue("deflate, gzip, x-gzip, identity, *;q=0");
 	}
 
 	@Override
@@ -28,9 +28,6 @@ public class AcceptEncoding extends HttpHeader {
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "deflate, gzip, x-gzip, identity, *;q=0";
-		}
 		return value;
 	}
 

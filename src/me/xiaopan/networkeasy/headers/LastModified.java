@@ -15,6 +15,7 @@ public class LastModified extends HttpHeader{
 	}
 	
 	public LastModified() {
+		setValue("");
 	}
 
 	@Override
@@ -24,9 +25,6 @@ public class LastModified extends HttpHeader{
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "";
-		}
 		return value;
 	}
 

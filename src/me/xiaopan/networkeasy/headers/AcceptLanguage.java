@@ -18,7 +18,7 @@ public class AcceptLanguage extends HttpHeader {
 	}
 	
 	public AcceptLanguage() {
-		
+		setValue("en");
 	}
 
 	@Override
@@ -28,9 +28,6 @@ public class AcceptLanguage extends HttpHeader {
 
 	@Override
 	public String getValue() {
-		if(value == null || "".equals(value.trim())){
-			value = "en";
-		}
 		return value;
 	}
 
