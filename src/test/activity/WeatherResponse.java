@@ -1,10 +1,10 @@
 package test.activity;
 
-import me.xiaopan.networkeasy.ResponseKey;
+import me.xiaopan.networkeasy.ResponseBodyKey;
 
 import com.google.gson.annotations.Expose;
 
-@ResponseKey("weatherinfo")
+@ResponseBodyKey("weatherinfo")
 public class WeatherResponse{
 	@Expose
 	private String city;

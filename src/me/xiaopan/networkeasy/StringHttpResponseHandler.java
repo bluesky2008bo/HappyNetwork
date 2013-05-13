@@ -1,6 +1,6 @@
 package me.xiaopan.networkeasy;
 
-import me.xiaopan.networkeasy.headers.ContentType;
+import me.xiaopan.networkeasy.util.Utils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -27,16 +27,13 @@ public class StringHttpResponseHandler extends HttpResponseHandler {
 	@Override
 	public void onHandleResponse(HttpResponse httpResponse) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() < 300 ){
-			/* 初始化编码方式 */
-			String charset = "UTF-8";
-			ContentType contentType = HttpHeaderUtils.getContentType(httpResponse);
-			if(contentType != null){
-				charset = contentType.getCharset(charset);
-			}
-			
-			/* 转换成字符串 */
+			/* 读取内容并转换成字符串 */
 			HttpEntity httpEntity = httpResponse.getEntity();
-			sendMessage(obtainMessage(MESSAGE_SUCCESS, httpEntity != null?EntityUtils.toString(new BufferedHttpEntity(httpEntity), charset):null));
+			if(httpEntity != null){
+				sendMessage(obtainMessage(MESSAGE_SUCCESS, EntityUtils.toString(new BufferedHttpEntity(httpEntity), Utils.getResponseCharset(httpResponse))));
+			}else{
+				sendMessage(obtainMessage(MESSAGE_SUCCESS));
+			}
 		}else{
 			sendMessage(obtainMessage(MESSAGE_FAILURE, httpResponse));
 		}

@@ -50,7 +50,6 @@ import android.content.Context;
  * @author xiaopan
  */
 public class EasyHttpClient {
-    private static final String VERSION = "1.4.3";
 	private static final int DEFAULT_MAX_CONNECTIONS = 10;	//最大连接数
     private static final int DEFAULT_SOCKET_TIMEOUT = 10 * 1000;	//连接超时时间
     private static final int DEFAULT_MAX_RETRIES = 5;	//最大重试次数
@@ -462,7 +461,6 @@ public class EasyHttpClient {
         HttpConnectionParams.setSocketBufferSize(httpParams, DEFAULT_SOCKET_BUFFER_SIZE);
 
         HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);
-        HttpProtocolParams.setUserAgent(httpParams, String.format("android-async-http/%s (http://loopj.com/android-async-http)", VERSION));
         
         return httpParams;
 	}

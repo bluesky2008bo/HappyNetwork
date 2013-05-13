@@ -1,8 +1,8 @@
 package test.activity;
 
 import me.xiaopan.networkeasy.EasyHttpClient;
-import me.xiaopan.networkeasy.JsonHttpResponseHandler;
-import me.xiaopan.networkeasy.JsonHttpResponseHandler.JsonHttpResponseHandleListener;
+import me.xiaopan.networkeasy.DefaultJsonHttpResponseHandler;
+import me.xiaopan.networkeasy.DefaultJsonHttpResponseHandler.DefaultJsonHttpResponseHandleListener;
 import me.xiaopan.networkeasy.R;
 
 import org.apache.http.HttpResponse;
@@ -83,7 +83,7 @@ public class MainActivity extends Activity {
 //		}));
 		
 		EasyHttpClient.getInstance().get("http://www.weather.com.cn/data/cityinfo/101010100.html", 
-				new JsonHttpResponseHandler(getBaseContext(), WeatherResponse.class, new JsonHttpResponseHandleListener<WeatherResponse>() {
+				new DefaultJsonHttpResponseHandler(getBaseContext(), WeatherResponse.class, new DefaultJsonHttpResponseHandleListener<WeatherResponse>() {
 			@Override
 			public void onStart() {
 				findViewById(R.id.loading).setVisibility(View.VISIBLE);
