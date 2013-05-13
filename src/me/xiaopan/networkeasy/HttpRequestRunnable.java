@@ -22,24 +22,24 @@ public class HttpRequestRunnable implements Runnable {
     public void run() {
     	if(!Thread.currentThread().isInterrupted()) {
     		if(httpResponseHandler != null){
-    			httpResponseHandler.onStart();
+    			httpResponseHandler.sendStartMessage();
     		}
     		
     		try {
     			if(!Thread.currentThread().isInterrupted()) {
 					HttpResponse httpResponse = httpClient.execute(httpUriRequest, httpContext);
 					if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null) {
-						httpResponseHandler.onHandleResponse(httpResponse);
+						httpResponseHandler.sendHandleResponseMessage(httpResponse);
 					}
     			}
     		} catch (Throwable e) {
     			if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null) {
-    				httpResponseHandler.onException(e);
+    				httpResponseHandler.sendExceptionMessage(e);
     			}
     		}
     		
     		if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null){
-    			httpResponseHandler.onEnd();
+    			httpResponseHandler.sendEndMessage();
     		}
     	}
     }

@@ -199,7 +199,7 @@ public class EasyHttpClient {
 			sendRequest(context, Utils.setHeaders(new HttpGet(Utils.getUrlWithQueryString(Utils.getUrlFromRequestObject(url, requestObject), Utils.toRequestParams(requestObject))), headers), responseHandler);
 		} catch (Exception e) {
 			if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 		}
     }
@@ -216,7 +216,7 @@ public class EasyHttpClient {
 			sendRequest(context, new HttpGet(Utils.getUrlWithQueryString(Utils.getUrlFromRequestObject(url, requestObject), Utils.toRequestParams(requestObject))), responseHandler);
 		} catch (Exception e) {
 			if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 		}
     }
@@ -232,7 +232,7 @@ public class EasyHttpClient {
 			sendRequest(new HttpGet(Utils.getUrlWithQueryString(Utils.getUrlFromRequestObject(null, requestObject), Utils.toRequestParams(requestObject))), responseHandler);
 		} catch (Exception e) {
 			if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 		}
     }
@@ -281,7 +281,7 @@ public class EasyHttpClient {
 			sendRequest(Utils.setHeaders(new HttpGet(Utils.getUrlWithQueryString(Utils.getUrlFromRequestObject(url, requestObject), Utils.toRequestParams(requestObject))), headers), responseHandler);
 		} catch (Exception e) {
 			if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 		}
     }
@@ -297,7 +297,7 @@ public class EasyHttpClient {
 			sendRequest(new HttpGet(Utils.getUrlWithQueryString(Utils.getUrlFromRequestObject(url, requestObject), Utils.toRequestParams(requestObject))), responseHandler);
 		} catch (Exception e) {
 			if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 		}
     }
@@ -401,7 +401,7 @@ public class EasyHttpClient {
 	        sendRequest(context, Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(url, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject)), headers), contentType, responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 	    }
     }
@@ -419,7 +419,7 @@ public class EasyHttpClient {
 	        sendRequest(context, Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(url, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject))), contentType, responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 	    }
     }
@@ -436,7 +436,7 @@ public class EasyHttpClient {
 	        sendRequest(context, Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(url, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject))), responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 	    }
     }
@@ -452,7 +452,7 @@ public class EasyHttpClient {
 	        sendRequest(context, Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(null, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject))), responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 	    }
     }
@@ -546,7 +546,7 @@ public class EasyHttpClient {
 	        sendRequest(Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(url, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject)), headers), contentType, responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 	    }
     }
@@ -563,7 +563,7 @@ public class EasyHttpClient {
 	        sendRequest(Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(url, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject))), contentType, responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 	    }
     }
@@ -579,7 +579,7 @@ public class EasyHttpClient {
 	        sendRequest(Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(url, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject))), responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 	    }
     }
@@ -594,7 +594,7 @@ public class EasyHttpClient {
 	        sendRequest(Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(null, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject))), responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
-				responseHandler.onException(e);
+				responseHandler.sendExceptionMessage(e);
 			}
 	    }
     }
@@ -860,7 +860,7 @@ public class EasyHttpClient {
      * @param responseHandler 响应处理器
      */
     public void sendRequest(HttpUriRequest uriRequest, HttpResponseHandler responseHandler) {
-       sendRequest(uriRequest, responseHandler);
+       sendRequest(null, uriRequest, null, responseHandler);
     }
     
     /**
