@@ -295,7 +295,7 @@ public class RequestParams {
         return lparams;
     }
 
-    protected String getParamString() {
+    public String getParamString() {
         return URLEncodedUtils.format(getParamsList(), ENCODING);
     }
 

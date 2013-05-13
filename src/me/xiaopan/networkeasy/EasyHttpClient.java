@@ -13,6 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import me.xiaopan.networkeasy.interceptor.AddRequestHeaderRequestInterceptor;
 import me.xiaopan.networkeasy.interceptor.GzipProcessRequestInterceptor;
 import me.xiaopan.networkeasy.interceptor.GzipProcessResponseInterceptor;
+import me.xiaopan.networkeasy.util.Utils;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -21,7 +22,6 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -54,7 +54,7 @@ public class EasyHttpClient {
     private static final int DEFAULT_SOCKET_TIMEOUT = 10 * 1000;	//连接超时时间
     private static final int DEFAULT_MAX_RETRIES = 5;	//最大重试次数
     private static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;	//Socket缓存大小
-    private static EasyHttpClient easyHttpClient = null;
+    private static EasyHttpClient easyHttpClient;
 	private HttpContext httpContext;	//Http上下文
 	private DefaultHttpClient httpClient;	//Http客户端
 	private ThreadPoolExecutor threadPool;	//线程池
@@ -132,278 +132,691 @@ public class EasyHttpClient {
     }
 
     /**
-     * Sets basic authentication for the request. Uses AuthScope.ANY. This is the same as
-     * setBasicAuth('username','password',AuthScope.ANY) 
-     * @param username
-     * @param password
+     * 设置Http Auth认证
+     * @param username 用户名
+     * @param password 密码
      */
     public void setBasicAuth(String user, String pass){
         setBasicAuth(user, pass, AuthScope.ANY);
     }
     
    /**
-     * Sets basic authentication for the request. You should pass in your AuthScope for security. It should be like this
-     * setBasicAuth("username","password", new AuthScope("host",port,AuthScope.ANY_REALM))
-     * @param username
-     * @param password
-     * @param scope - an AuthScope object
-     *
+     * 设置Http Auth认证
+     * @param username 用户名
+     * @param password 密码
+     * @param scope 
      */
     public void setBasicAuth( String user, String pass, AuthScope scope){
         this.httpClient.getCredentialsProvider().setCredentials(scope, new UsernamePasswordCredentials(user,pass));
     }
+
     
-    /**
-     * Perform a HTTP GET request, without any parameters.
-     * @param url the URL to send the request to.
-     * @param responseHandler the response handler instance that should handle the response.
-     */
-    public void get(String url, HttpResponseHandler responseHandler) {
-        get(null, url, null, responseHandler);
-    }
-
-    /**
-     * Perform a HTTP GET request with parameters.
-     * @param url the URL to send the request to.
-     * @param params additional GET parameters to send with the request.
-     * @param responseHandler the response handler instance that should handle the response.
-     */
-    public void get(String url, RequestParams params, HttpResponseHandler responseHandler) {
-        get(null, url, params, responseHandler);
-    }
-
-    /**
-     * Perform a HTTP GET request without any parameters and track the Android Context which initiated the request.
-     * @param context the Android Context which initiated the request.
-     * @param url the URL to send the request to.
-     * @param responseHandler the response handler instance that should handle the response.
-     */
-    public void get(Context context, String url, HttpResponseHandler responseHandler) {
-        get(context, url, null, responseHandler);
-    }
-
-    /**
-     * Perform a HTTP GET request and track the Android Context which initiated the request.
-     * @param context the Android Context which initiated the request.
-     * @param url the URL to send the request to.
-     * @param params additional GET parameters to send with the request.
-     * @param responseHandler the response handler instance that should handle the response.
-     */
-    public void get(Context context, String url, RequestParams params, HttpResponseHandler responseHandler) {
-        sendRequest(new HttpGet(getUrlWithQueryString(url, params)), null, responseHandler, context);
-    }
     
+    /** **************************************************************************************** HTTP GET 请求 **************************************************************************************** */
     /**
-     * Perform a HTTP GET request and track the Android Context which initiated
-     * the request with customized headers
-     * 
-     * @param url the URL to send the request to.
-     * @param headers set headers only for this request
-     * @param params additional GET parameters to send with the request.
-     * @param responseHandler the response handler instance that should handle
-     *        the response.
+     * 执行一个HTTP GET请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param params 请求参数
+     * @param responseHandler 响应处理器
      */
     public void get(Context context, String url, Header[] headers, RequestParams params, HttpResponseHandler responseHandler) {
-        HttpUriRequest request = new HttpGet(getUrlWithQueryString(url, params));
-        if(headers != null){
-        	request.setHeaders(headers);
-        }
-        sendRequest(request, null, responseHandler, context);
+        sendRequest(context, Utils.setHeaders(new HttpGet(Utils.getUrlWithQueryString(url, params)), headers), responseHandler);
     }
-
-
     
     /**
-     * Perform a HTTP POST request, without any parameters.
-     * @param url the URL to send the request to.
-     * @param responseHandler the response handler instance that should handle the response.
+     * 执行一个HTTP GET请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param responseHandler 响应处理器
      */
-    public void post(String url, HttpResponseHandler responseHandler) {
-        post(null, url, null, responseHandler);
+    public void get(Context context, String url, RequestParams params, HttpResponseHandler responseHandler) {
+        sendRequest(context, new HttpGet(Utils.getUrlWithQueryString(url, params)), responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP GET请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param responseHandler 响应处理器
+     */
+    public void get(Context context, String url, HttpResponseHandler responseHandler) {
+        sendRequest(context, new HttpGet(url), responseHandler);
     }
 
     /**
-     * Perform a HTTP POST request with parameters.
-     * @param url the URL to send the request to.
-     * @param params additional POST parameters or files to send with the request.
-     * @param responseHandler the response handler instance that should handle the response.
+     * 执行一个HTTP GET请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param responseHandler 响应处理器
      */
-    public void post(String url, RequestParams params, HttpResponseHandler responseHandler) {
-        post(null, url, params, responseHandler);
+    public void get(Context context, String url, Header[] headers, Object requestObject, HttpResponseHandler responseHandler){
+		try {
+			sendRequest(context, Utils.setHeaders(new HttpGet(Utils.getUrlWithQueryString(Utils.getUrlFromRequestObject(url, requestObject), Utils.toRequestParams(requestObject))), headers), responseHandler);
+		} catch (Exception e) {
+			if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+		}
     }
 
     /**
-     * Perform a HTTP POST request and track the Android Context which initiated the request.
-     * @param context the Android Context which initiated the request.
-     * @param url the URL to send the request to.
-     * @param params additional POST parameters or files to send with the request.
-     * @param responseHandler the response handler instance that should handle the response.
+     * 执行一个HTTP GET请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param responseHandler 响应处理器
      */
-    public void post(Context context, String url, RequestParams params, HttpResponseHandler responseHandler) {
-        post(context, url, paramsToEntity(params), null, responseHandler);
+    public void get(Context context, String url, Object requestObject, HttpResponseHandler responseHandler){
+		try {
+			sendRequest(context, new HttpGet(Utils.getUrlWithQueryString(Utils.getUrlFromRequestObject(url, requestObject), Utils.toRequestParams(requestObject))), responseHandler);
+		} catch (Exception e) {
+			if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+		}
     }
 
     /**
-     * Perform a HTTP POST request and track the Android Context which initiated the request.
-     * @param context the Android Context which initiated the request.
-     * @param url the URL to send the request to.
-     * @param entity a raw {@link HttpEntity} to send with the request, for example, use this to send string/json/xml payloads to a server by passing a {@link org.apache.http.entity.StringEntity}.
-     * @param contentType the content type of the payload you are sending, for example application/json if sending a json payload.
-     * @param responseHandler the response handler instance that should handle the response.
+     * 执行一个HTTP GET请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param responseHandler 响应处理器
+     */
+    public void get(Object requestObject, HttpResponseHandler responseHandler){
+		try {
+			sendRequest(new HttpGet(Utils.getUrlWithQueryString(Utils.getUrlFromRequestObject(null, requestObject), Utils.toRequestParams(requestObject))), responseHandler);
+		} catch (Exception e) {
+			if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+		}
+    }
+    
+    /**
+     * 执行一个HTTP GET请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param params 请求参数
+     * @param responseHandler 响应处理器
+     */
+    public void get(String url, Header[] headers, RequestParams params, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setHeaders(new HttpGet(Utils.getUrlWithQueryString(url, params)), headers), responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP GET请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param responseHandler 响应处理器
+     */
+    public void get(String url, RequestParams params, HttpResponseHandler responseHandler) {
+        sendRequest(new HttpGet(Utils.getUrlWithQueryString(url, params)), responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP GET请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param responseHandler 响应处理器
+     */
+    public void get(String url, HttpResponseHandler responseHandler) {
+        sendRequest(new HttpGet(url), responseHandler);
+    }
+
+    /**
+     * 执行一个HTTP GET请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param responseHandler 响应处理器
+     */
+    public void get(String url, Header[] headers, Object requestObject, HttpResponseHandler responseHandler){
+		try {
+			sendRequest(Utils.setHeaders(new HttpGet(Utils.getUrlWithQueryString(Utils.getUrlFromRequestObject(url, requestObject), Utils.toRequestParams(requestObject))), headers), responseHandler);
+		} catch (Exception e) {
+			if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+		}
+    }
+
+    /**
+     * 执行一个HTTP GET请求
+     * @param url 请求地址
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param responseHandler 响应处理器
+     */
+    public void get(String url, Object requestObject, HttpResponseHandler responseHandler){
+		try {
+			sendRequest(new HttpGet(Utils.getUrlWithQueryString(Utils.getUrlFromRequestObject(url, requestObject), Utils.toRequestParams(requestObject))), responseHandler);
+		} catch (Exception e) {
+			if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+		}
+    }
+
+    
+    
+    /** **************************************************************************************** HTTP POST 请求 **************************************************************************************** */
+    /**
+     * 执行一个HTTP POST请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param entity 请求实体
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void post(Context context, String url, Header[] headers, HttpEntity entity, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(context, Utils.setEntity(new HttpPost(url), entity, headers), contentType, responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP POST请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param entity 请求实体
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
      */
     public void post(Context context, String url, HttpEntity entity, String contentType, HttpResponseHandler responseHandler) {
-        sendRequest(addEntityToRequestBase(new HttpPost(url), entity), contentType, responseHandler, context);
+        sendRequest(context, Utils.setEntity(new HttpPost(url), entity), contentType, responseHandler);
     }
-
+    
     /**
-     * Perform a HTTP POST request and track the Android Context which initiated
-     * the request. Set headers only for this request
-     * @param context the Android Context which initiated the request.
-     * @param url the URL to send the request to.
-     * @param headers set headers only for this request
-     * @param params additional POST parameters to send with the request.
-     * @param contentType the content type of the payload you are sending, for example application/json if sending a json payload.
-     * @param responseHandler the response handler instance that should handle the response.
+     * 执行一个HTTP POST请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param entity 请求实体
+     * @param responseHandler 响应处理器
+     */
+    public void post(Context context, String url, HttpEntity entity, HttpResponseHandler responseHandler) {
+        sendRequest(context, Utils.setEntity(new HttpPost(url), entity), responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP POST请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param responseHandler 响应处理器
+     */
+    public void post(Context context, String url, HttpResponseHandler responseHandler) {
+        sendRequest(context, new HttpPost(url), responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP POST请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param params 请求参数
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
      */
     public void post(Context context, String url, Header[] headers, RequestParams params, String contentType, HttpResponseHandler responseHandler) {
-        HttpEntityEnclosingRequestBase request = new HttpPost(url);
-        if(params != null) request.setEntity(paramsToEntity(params));
-        if(headers != null) request.setHeaders(headers);
-        sendRequest(request, contentType, responseHandler, context);
+        sendRequest(context, Utils.setEntity(new HttpPost(url), Utils.paramsToEntity(params), headers), contentType, responseHandler);
     }
-
+    
     /**
-     * Perform a HTTP POST request and track the Android Context which initiated
-     * the request. Set headers only for this request
-     *
-     * @param context the Android Context which initiated the request.
-     * @param url the URL to send the request to.
-     * @param headers set headers only for this request
-     * @param entity a raw {@link HttpEntity} to send with the request, for
-     *        example, use this to send string/json/xml payloads to a server by
-     *        passing a {@link org.apache.http.entity.StringEntity}.
-     * @param contentType the content type of the payload you are sending, for
-     *        example application/json if sending a json payload.
-     * @param responseHandler the response handler instance that should handle
-     *        the response.
+     * 执行一个HTTP POST请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
      */
-    public void post(Context context, String url, Header[] headers, HttpEntity entity, String contentType,
-            HttpResponseHandler responseHandler) {
-        HttpEntityEnclosingRequestBase request = addEntityToRequestBase(new HttpPost(url), entity);
-        if(headers != null) request.setHeaders(headers);
-        sendRequest(request, contentType, responseHandler, context);
+    public void post(Context context, String url, RequestParams params, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(context, Utils.setEntity(new HttpPost(url), Utils.paramsToEntity(params)), contentType, responseHandler);
     }
-
-    //
-    // HTTP PUT Requests
-    //
-
+    
     /**
-     * Perform a HTTP PUT request, without any parameters.
-     * @param url the URL to send the request to.
-     * @param responseHandler the response handler instance that should handle the response.
+     * 执行一个HTTP POST请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param responseHandler 响应处理器
      */
-    public void put(String url, HttpResponseHandler responseHandler) {
-        put(null, url, null, responseHandler);
+    public void post(Context context, String url, RequestParams params, HttpResponseHandler responseHandler) {
+        sendRequest(context, Utils.setEntity(new HttpPost(url), Utils.paramsToEntity(params)), responseHandler);
     }
 
     /**
-     * Perform a HTTP PUT request with parameters.
-     * @param url the URL to send the request to.
-     * @param params additional PUT parameters or files to send with the request.
-     * @param responseHandler the response handler instance that should handle the response.
+     * 执行一个HTTP POST请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
      */
-    public void put(String url, RequestParams params, HttpResponseHandler responseHandler) {
-        put(null, url, params, responseHandler);
+    public void post(Context context, String url, Header[] headers, Object requestObject, String contentType, HttpResponseHandler responseHandler){
+	    try {
+	        sendRequest(context, Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(url, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject)), headers), contentType, responseHandler);
+	    } catch (Exception e) {
+	    	if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+	    }
     }
 
     /**
-     * Perform a HTTP PUT request and track the Android Context which initiated the request.
-     * @param context the Android Context which initiated the request.
-     * @param url the URL to send the request to.
-     * @param params additional PUT parameters or files to send with the request.
-     * @param responseHandler the response handler instance that should handle the response.
+     * 执行一个HTTP POST请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
      */
-    public void put(Context context, String url, RequestParams params, HttpResponseHandler responseHandler) {
-        put(context, url, paramsToEntity(params), null, responseHandler);
+    public void post(Context context, String url, Object requestObject, String contentType, HttpResponseHandler responseHandler){
+	    try {
+	        sendRequest(context, Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(url, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject))), contentType, responseHandler);
+	    } catch (Exception e) {
+	    	if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+	    }
     }
 
     /**
-     * Perform a HTTP PUT request and track the Android Context which initiated the request.
-     * And set one-time headers for the request
-     * @param context the Android Context which initiated the request.
-     * @param url the URL to send the request to.
-     * @param entity a raw {@link HttpEntity} to send with the request, for example, use this to send string/json/xml payloads to a server by passing a {@link org.apache.http.entity.StringEntity}.
-     * @param contentType the content type of the payload you are sending, for example application/json if sending a json payload.
-     * @param responseHandler the response handler instance that should handle the response.
+     * 执行一个HTTP POST请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param responseHandler 响应处理器
+     */
+    public void post(Context context, String url, Object requestObject, HttpResponseHandler responseHandler){
+	    try {
+	        sendRequest(context, Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(url, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject))), responseHandler);
+	    } catch (Exception e) {
+	    	if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+	    }
+    }
+
+    /**
+     * 执行一个HTTP POST请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param responseHandler 响应处理器
+     */
+    public void post(Context context, Object requestObject, HttpResponseHandler responseHandler){
+	    try {
+	        sendRequest(context, Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(null, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject))), responseHandler);
+	    } catch (Exception e) {
+	    	if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+	    }
+    }
+    
+    /**
+     * 执行一个HTTP POST请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param entity 请求实体
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void post(String url, Header[] headers, HttpEntity entity, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setEntity(new HttpPost(url), entity, headers), contentType, responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP POST请求
+     * @param url 请求地址
+     * @param entity 请求实体
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void post(String url, HttpEntity entity, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setEntity(new HttpPost(url), entity), contentType, responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP POST请求
+     * @param url 请求地址
+     * @param entity 请求实体
+     * @param responseHandler 响应处理器
+     */
+    public void post(String url, HttpEntity entity, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setEntity(new HttpPost(url), entity), responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP POST请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param responseHandler 响应处理器
+     */
+    public void post(String url, HttpResponseHandler responseHandler) {
+        sendRequest(new HttpPost(url), responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP POST请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param params 请求参数
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void post(String url, Header[] headers, RequestParams params, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setEntity(new HttpPost(url), Utils.paramsToEntity(params), headers), contentType, responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP POST请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void post(String url, RequestParams params, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setEntity(new HttpPost(url), Utils.paramsToEntity(params)), contentType, responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP POST请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param responseHandler 响应处理器
+     */
+    public void post(String url, RequestParams params, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setEntity(new HttpPost(url), Utils.paramsToEntity(params)), responseHandler);
+    }
+
+    /**
+     * 执行一个HTTP POST请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void post(String url, Header[] headers, Object requestObject, String contentType, HttpResponseHandler responseHandler){
+	    try {
+	        sendRequest(Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(url, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject)), headers), contentType, responseHandler);
+	    } catch (Exception e) {
+	    	if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+	    }
+    }
+
+    /**
+     * 执行一个HTTP POST请求
+     * @param url 请求地址
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void post(String url, Object requestObject, String contentType, HttpResponseHandler responseHandler){
+	    try {
+	        sendRequest(Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(url, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject))), contentType, responseHandler);
+	    } catch (Exception e) {
+	    	if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+	    }
+    }
+
+    /**
+     * 执行一个HTTP POST请求
+     * @param url 请求地址
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param responseHandler 响应处理器
+     */
+    public void post(String url, Object requestObject, HttpResponseHandler responseHandler){
+	    try {
+	        sendRequest(Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(url, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject))), responseHandler);
+	    } catch (Exception e) {
+	    	if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+	    }
+    }
+
+    /**
+     * 执行一个HTTP POST请求
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param responseHandler 响应处理器
+     */
+    public void post(Object requestObject, HttpResponseHandler responseHandler){
+	    try {
+	        sendRequest(Utils.setEntity(new HttpPost(Utils.getUrlFromRequestObject(null, requestObject)), Utils.paramsToEntity(Utils.toRequestParams(requestObject))), responseHandler);
+	    } catch (Exception e) {
+	    	if(responseHandler != null){
+				responseHandler.onException(e);
+			}
+	    }
+    }
+
+    
+    
+    /** **************************************************************************************** HTTP PUT 请求 **************************************************************************************** */
+    /**
+     * 执行一个HTTP PUT请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url the 请求地址
+     * @param headers 请求头信息
+     * @param entity 请求实体
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void put(Context context, String url, Header[] headers, HttpEntity entity, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(context, Utils.setEntity(new HttpPut(url), entity, headers), contentType, responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP PUT请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url the 请求地址
+     * @param entity 请求实体
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
      */
     public void put(Context context, String url, HttpEntity entity, String contentType, HttpResponseHandler responseHandler) {
-        sendRequest(addEntityToRequestBase(new HttpPut(url), entity), contentType, responseHandler, context);
+        sendRequest(context, Utils.setEntity(new HttpPut(url), entity), contentType, responseHandler);
     }
     
     /**
-     * Perform a HTTP PUT request and track the Android Context which initiated the request.
-     * And set one-time headers for the request
-     * @param context the Android Context which initiated the request.
-     * @param url the URL to send the request to.
-     * @param headers set one-time headers for this request
-     * @param entity a raw {@link HttpEntity} to send with the request, for example, use this to send string/json/xml payloads to a server by passing a {@link org.apache.http.entity.StringEntity}.
-     * @param contentType the content type of the payload you are sending, for example application/json if sending a json payload.
-     * @param responseHandler the response handler instance that should handle the response.
+     * 执行一个HTTP PUT请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url the 请求地址
+     * @param entity 请求实体
+     * @param responseHandler 响应处理器
      */
-    public void put(Context context, String url,Header[] headers, HttpEntity entity, String contentType, HttpResponseHandler responseHandler) {
-        HttpEntityEnclosingRequestBase request = addEntityToRequestBase(new HttpPut(url), entity);
-        if(headers != null) request.setHeaders(headers);
-        sendRequest(request, contentType, responseHandler, context);
-    }
-
-    //
-    // HTTP DELETE Requests
-    //
-
-    /**
-     * Perform a HTTP DELETE request.
-     * @param url the URL to send the request to.
-     * @param responseHandler the response handler instance that should handle the response.
-     */
-    public void delete(String url, HttpResponseHandler responseHandler) {
-        delete(null, url, responseHandler);
-    }
-
-    /**
-     * Perform a HTTP DELETE request.
-     * @param context the Android Context which initiated the request.
-     * @param url the URL to send the request to.
-     * @param responseHandler the response handler instance that should handle the response.
-     */
-    public void delete(Context context, String url, HttpResponseHandler responseHandler) {
-        final HttpDelete delete = new HttpDelete(url);
-        sendRequest(delete, null, responseHandler, context);
+    public void put(Context context, String url, HttpEntity entity, HttpResponseHandler responseHandler) {
+        sendRequest(context, Utils.setEntity(new HttpPut(url), entity), responseHandler);
     }
     
     /**
-     * Perform a HTTP DELETE request.
-     * @param context the Android Context which initiated the request.
-     * @param url the URL to send the request to.
-     * @param headers set one-time headers for this request
-     * @param responseHandler the response handler instance that should handle the response.
+     * 执行一个HTTP PUT请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url the 请求地址
+     * @param entity 请求实体
+     * @param responseHandler 响应处理器
+     */
+    public void put(Context context, String url, HttpResponseHandler responseHandler) {
+        sendRequest(context, new HttpPut(url), responseHandler);
+    }
+
+    /**
+     * 执行一个HTTP PUT请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param params 请求参数
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void put(Context context, String url, Header[] headers, RequestParams params, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(context, Utils.setEntity(new HttpPut(url), Utils.paramsToEntity(params), headers), contentType, responseHandler);
+    }
+
+    /**
+     * 执行一个HTTP PUT请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void put(Context context, String url, RequestParams params, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(context, Utils.setEntity(new HttpPut(url), Utils.paramsToEntity(params)), contentType, responseHandler);
+    }
+
+    /**
+     * 执行一个HTTP PUT请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param responseHandler 响应处理器
+     */
+    public void put(Context context, String url, RequestParams params, HttpResponseHandler responseHandler) {
+        sendRequest(context, Utils.setEntity(new HttpPut(url), Utils.paramsToEntity(params)), responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP PUT请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url the 请求地址
+     * @param headers 请求头信息
+     * @param entity 请求实体
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void put(String url, Header[] headers, HttpEntity entity, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setEntity(new HttpPut(url), entity, headers), contentType, responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP PUT请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url the 请求地址
+     * @param entity 请求实体
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void put(String url, HttpEntity entity, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setEntity(new HttpPut(url), entity), contentType, responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP PUT请求
+     * @param url the 请求地址
+     * @param entity 请求实体
+     * @param responseHandler 响应处理器
+     */
+    public void put(String url, HttpEntity entity, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setEntity(new HttpPut(url), entity), responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP PUT请求
+     * @param url the 请求地址
+     * @param entity 请求实体
+     * @param responseHandler 响应处理器
+     */
+    public void put(String url, HttpResponseHandler responseHandler) {
+        sendRequest(new HttpPut(url), responseHandler);
+    }
+
+    /**
+     * 执行一个HTTP PUT请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param params 请求参数
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void put(String url, Header[] headers, RequestParams params, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setEntity(new HttpPut(url), Utils.paramsToEntity(params), headers), contentType, responseHandler);
+    }
+
+    /**
+     * 执行一个HTTP PUT请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void put(String url, RequestParams params, String contentType, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setEntity(new HttpPut(url), Utils.paramsToEntity(params)), contentType, responseHandler);
+    }
+
+    /**
+     * 执行一个HTTP PUT请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param responseHandler 响应处理器
+     */
+    public void put(String url, RequestParams params, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setEntity(new HttpPut(url), Utils.paramsToEntity(params)), responseHandler);
+    }
+
+    
+    
+    /** **************************************************************************************** HTTP DELETE 请求 **************************************************************************************** */   
+    /**
+     * 执行一个HTTP DELETE请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param responseHandler 响应处理器
      */
     public void delete(Context context, String url, Header[] headers, HttpResponseHandler responseHandler) {
-        final HttpDelete delete = new HttpDelete(url);
-        if(headers != null) delete.setHeaders(headers);
-        sendRequest(delete, null, responseHandler, context);
+        sendRequest(context, Utils.setHeaders(new HttpDelete(url), headers), null, responseHandler);
     }
     
     /**
-     * 发送请求
-     * @param client
-     * @param httpContext
-     * @param uriRequest
-     * @param contentType
-     * @param responseHandler
-     * @param context
+     * 执行一个HTTP DELETE请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param responseHandler 响应处理器
      */
-    public void sendRequest(HttpUriRequest uriRequest, String contentType, HttpResponseHandler responseHandler, Context context) {
+    public void delete(Context context, String url, HttpResponseHandler responseHandler) {
+        sendRequest(context, new HttpDelete(url), null, responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP DELETE请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param responseHandler 响应处理器
+     */
+    public void delete(String url, Header[] headers, HttpResponseHandler responseHandler) {
+        sendRequest(Utils.setHeaders(new HttpDelete(url), headers), null, responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP DELETE请求
+     * @param url 请求地址
+     * @param responseHandler 响应处理器
+     */
+    public void delete(String url, HttpResponseHandler responseHandler) {
+        sendRequest(new HttpDelete(url), null, responseHandler);
+    }
+
+    
+    
+    /** **************************************************************************************** 发送 请求 **************************************************************************************** */   
+    /**
+     * 发送请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param uriRequest http请求对象
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void sendRequest(Context context, HttpUriRequest uriRequest, String contentType, HttpResponseHandler responseHandler) {
         if(contentType != null) {
             uriRequest.addHeader("Content-Type", contentType);
         }
@@ -419,17 +832,90 @@ public class EasyHttpClient {
             requestList.add(new WeakReference<Future<?>>(request));
         }
     }
+    
+    /**
+     * 发送请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param uriRequest http请求对象
+     * @param responseHandler 响应处理器
+     */
+    public void sendRequest(Context context, HttpUriRequest uriRequest, HttpResponseHandler responseHandler) {
+       sendRequest(context, uriRequest, null, responseHandler);
+    }
+    
+    /**
+     * 发送请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param uriRequest http请求对象
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void sendRequest(HttpUriRequest uriRequest, String contentType, HttpResponseHandler responseHandler) {
+       sendRequest(null, uriRequest, contentType, responseHandler);
+    }
+    
+    /**
+     * 发送请求
+     * @param uriRequest http请求对象
+     * @param responseHandler 响应处理器
+     */
+    public void sendRequest(HttpUriRequest uriRequest, HttpResponseHandler responseHandler) {
+       sendRequest(uriRequest, responseHandler);
+    }
+    
+    /**
+     * 执行一个HTTP 请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void sendRequest(Context context, String url, Header[] headers, Object requestObject, String contentType, HttpResponseHandler responseHandler){
+    	if(requestObject.getClass().getAnnotation(Post.class) != null){
+    		post(context, url, headers, requestObject, contentType, responseHandler);
+    	}else{
+    		get(context, url, headers, requestObject, responseHandler);
+    	}
+    }
+    
+    /**
+     * 执行一个HTTP 请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void sendRequest(Context context, String url, Object requestObject, String contentType, HttpResponseHandler responseHandler){
+    	if(requestObject.getClass().getAnnotation(Post.class) != null){
+    		post(context, url, requestObject, contentType, responseHandler);
+    	}else{
+    		get(context, url, requestObject, responseHandler);
+    	}
+    }
+    
+    /**
+     * 执行一个HTTP 请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * @param responseHandler 响应处理器
+     */
+    public void sendRequest(Context context, String url, Object requestObject, HttpResponseHandler responseHandler){
+    	if(requestObject.getClass().getAnnotation(Post.class) != null){
+    		post(context, url, requestObject, responseHandler);
+    	}else{
+    		get(context, url, requestObject, responseHandler);
+    	}
+    }
 
     /**
      * 取消所有的请求，请求如果尚未开始就不再执行，如果已经开始就尝试中断
-     * <p>
-     * <b>Note:</b> This will only affect requests which were created with a non-null
-     * android Context. This method is intended to be used in the onDestroy
-     * method of your android activities to destroy all requests which are no
-     * longer required.
-     *
-     * @param context the android Context instance associated to the request.
-     * @param mayInterruptIfRunning specifies if active requests should be cancelled along with pending requests.
+     * <br>你可以在Activity Destory的时候调用此方法来抛弃跟当前Activity相关的所有请求
+     * @param context 上下文
+     * @param mayInterruptIfRunning 如果有请求正在运行中的话是否尝试中断
      */
     public void cancelRequests(Context context, boolean mayInterruptIfRunning) {
         List<WeakReference<Future<?>>> requestList = requestMap.get(context);
@@ -445,7 +931,7 @@ public class EasyHttpClient {
     }
 	
 	/**
-	 * 获取默认的Http参数集
+	 * 获取默认的Http参数
 	 * @return
 	 */
 	private HttpParams getDefaultHttpParams(){
@@ -464,27 +950,4 @@ public class EasyHttpClient {
         
         return httpParams;
 	}
-
-	private String getUrlWithQueryString(String url, RequestParams params) {
-        if(params != null) {
-            String paramString = params.getParamString();
-            if (url.indexOf("?") == -1) {
-                url += "?" + paramString;
-            } else {
-                url += "&" + paramString;
-            }
-        }
-        return url;
-    }
-    
-    private HttpEntity paramsToEntity(RequestParams params) {
-        return params != null?params.getEntity():null;
-    }
-
-    private HttpEntityEnclosingRequestBase addEntityToRequestBase(HttpEntityEnclosingRequestBase requestBase, HttpEntity entity) {
-        if(entity != null){
-            requestBase.setEntity(entity);
-        }
-        return requestBase;
-    }
 }
