@@ -14,6 +14,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -145,22 +147,22 @@ public class EasyNetworkUtils {
 	
 	/**
 	 * 将一个请求对象转换为RequestParams对象
-	 * @param requestObject 请求对象
+	 * @param request 请求对象
 	 * @return 
 	 */
 	@SuppressWarnings("unchecked")
-	public static RequestParams toRequestParams(Object requestObject){
-		if(requestObject != null){
+	public static RequestParams requestToRequestParams(Request request){
+		if(request != null){
 			RequestParams requestParams = new RequestParams();
 			
 			//循环处理所有字段
 			String paramValue;
 			Object paramValueObject;
-			for(Field field : getFileds(requestObject.getClass(), true, true, true)){
+			for(Field field : getFileds(request.getClass(), true, true, true)){
 				if(field.getAnnotation(Expose.class) != null){	//如果当前字段被标记为需要序列化
 					try {
 						field.setAccessible(true);
-						paramValueObject = field.get(requestObject);
+						paramValueObject = field.get(request);
 						
 						if(paramValueObject instanceof Map){	//如果当前字段是一个MAP，就取出其中的每一项添加到请求参数集中
 							Map<Object, Object> map = (Map<Object, Object>)paramValueObject;
@@ -261,7 +263,10 @@ public class EasyNetworkUtils {
     }
     
 	public static final HttpEntity paramsToEntity(RequestParams params) {
-        return params != null?params.getEntity():null;
+		if(EasyHttpClient.LOG_ENABLE){
+			Log.i("请求参数", params.getParamString());
+		}
+		return params != null?params.getEntity():null;
     }
 
 	public static final HttpEntityEnclosingRequestBase setEntity(HttpEntityEnclosingRequestBase requestBase, HttpEntity entity, Header[] headers) {

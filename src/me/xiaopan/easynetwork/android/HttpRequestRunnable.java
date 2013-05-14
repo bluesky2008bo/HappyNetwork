@@ -5,6 +5,8 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.protocol.HttpContext;
 
+import android.util.Log;
+
 public class HttpRequestRunnable implements Runnable {
     private final AbstractHttpClient httpClient;
     private final HttpContext httpContext;
@@ -27,6 +29,9 @@ public class HttpRequestRunnable implements Runnable {
     		
     		try {
     			if(!Thread.currentThread().isInterrupted()) {
+    				if(EasyHttpClient.LOG_ENABLE){
+    					Log.i("请求地址", httpUriRequest.getURI().toString());
+    				}
 					HttpResponse httpResponse = httpClient.execute(httpUriRequest, httpContext);
 					if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null) {
 						httpResponseHandler.sendHandleResponseMessage(httpResponse);

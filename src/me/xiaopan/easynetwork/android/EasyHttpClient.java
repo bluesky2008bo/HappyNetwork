@@ -53,6 +53,7 @@ public class EasyHttpClient {
     private static final int DEFAULT_SOCKET_TIMEOUT = 10 * 1000;	//连接超时时间
     private static final int DEFAULT_MAX_RETRIES = 5;	//最大重试次数
     private static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;	//Socket缓存大小
+    public static boolean LOG_ENABLE = false;
     private static EasyHttpClient easyHttpClient;
 	private HttpContext httpContext;	//Http上下文
 	private DefaultHttpClient httpClient;	//Http客户端
@@ -190,12 +191,12 @@ public class EasyHttpClient {
      * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param url 请求地址
      * @param headers 请求头信息
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param responseHandler 响应处理器
      */
-    public void get(Context context, String url, Header[] headers, Object requestObject, HttpResponseHandler responseHandler){
+    public void get(Context context, String url, Header[] headers, Request request, HttpResponseHandler responseHandler){
 		try {
-			sendRequest(context, EasyNetworkUtils.setHeaders(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(url, requestObject), EasyNetworkUtils.toRequestParams(requestObject))), headers), responseHandler);
+			sendRequest(context, EasyNetworkUtils.setHeaders(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(url, request), EasyNetworkUtils.requestToRequestParams(request))), headers), responseHandler);
 		} catch (Exception e) {
 			if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -207,12 +208,12 @@ public class EasyHttpClient {
      * 执行一个HTTP GET请求
      * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param url 请求地址
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param responseHandler 响应处理器
      */
-    public void get(Context context, String url, Object requestObject, HttpResponseHandler responseHandler){
+    public void get(Context context, String url, Request request, HttpResponseHandler responseHandler){
 		try {
-			sendRequest(context, new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(url, requestObject), EasyNetworkUtils.toRequestParams(requestObject))), responseHandler);
+			sendRequest(context, new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(url, request), EasyNetworkUtils.requestToRequestParams(request))), responseHandler);
 		} catch (Exception e) {
 			if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -223,12 +224,12 @@ public class EasyHttpClient {
     /**
      * 执行一个HTTP GET请求
      * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param responseHandler 响应处理器
      */
-    public void get(Object requestObject, HttpResponseHandler responseHandler){
+    public void get(Request request, HttpResponseHandler responseHandler){
 		try {
-			sendRequest(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(null, requestObject), EasyNetworkUtils.toRequestParams(requestObject))), responseHandler);
+			sendRequest(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(null, request), EasyNetworkUtils.requestToRequestParams(request))), responseHandler);
 		} catch (Exception e) {
 			if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -272,12 +273,12 @@ public class EasyHttpClient {
      * 执行一个HTTP GET请求
      * @param url 请求地址
      * @param headers 请求头信息
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param responseHandler 响应处理器
      */
-    public void get(String url, Header[] headers, Object requestObject, HttpResponseHandler responseHandler){
+    public void get(String url, Header[] headers, Request request, HttpResponseHandler responseHandler){
 		try {
-			sendRequest(EasyNetworkUtils.setHeaders(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(url, requestObject), EasyNetworkUtils.toRequestParams(requestObject))), headers), responseHandler);
+			sendRequest(EasyNetworkUtils.setHeaders(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(url, request), EasyNetworkUtils.requestToRequestParams(request))), headers), responseHandler);
 		} catch (Exception e) {
 			if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -288,12 +289,12 @@ public class EasyHttpClient {
     /**
      * 执行一个HTTP GET请求
      * @param url 请求地址
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param responseHandler 响应处理器
      */
-    public void get(String url, Object requestObject, HttpResponseHandler responseHandler){
+    public void get(String url, Request request, HttpResponseHandler responseHandler){
 		try {
-			sendRequest(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(url, requestObject), EasyNetworkUtils.toRequestParams(requestObject))), responseHandler);
+			sendRequest(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(url, request), EasyNetworkUtils.requestToRequestParams(request))), responseHandler);
 		} catch (Exception e) {
 			if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -391,13 +392,13 @@ public class EasyHttpClient {
      * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param url 请求地址
      * @param headers 请求头信息
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param contentType 内容类型
      * @param responseHandler 响应处理器
      */
-    public void post(Context context, String url, Header[] headers, Object requestObject, String contentType, HttpResponseHandler responseHandler){
+    public void post(Context context, String url, Header[] headers, Request request, String contentType, HttpResponseHandler responseHandler){
 	    try {
-	        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, requestObject)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.toRequestParams(requestObject)), headers), contentType, responseHandler);
+	        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request)), headers), contentType, responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -409,13 +410,13 @@ public class EasyHttpClient {
      * 执行一个HTTP POST请求
      * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param url 请求地址
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param contentType 内容类型
      * @param responseHandler 响应处理器
      */
-    public void post(Context context, String url, Object requestObject, String contentType, HttpResponseHandler responseHandler){
+    public void post(Context context, String url, Request request, String contentType, HttpResponseHandler responseHandler){
 	    try {
-	        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, requestObject)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.toRequestParams(requestObject))), contentType, responseHandler);
+	        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), contentType, responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -427,12 +428,12 @@ public class EasyHttpClient {
      * 执行一个HTTP POST请求
      * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param url 请求地址
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param responseHandler 响应处理器
      */
-    public void post(Context context, String url, Object requestObject, HttpResponseHandler responseHandler){
+    public void post(Context context, String url, Request request, HttpResponseHandler responseHandler){
 	    try {
-	        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, requestObject)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.toRequestParams(requestObject))), responseHandler);
+	        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -443,12 +444,12 @@ public class EasyHttpClient {
     /**
      * 执行一个HTTP POST请求
      * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param responseHandler 响应处理器
      */
-    public void post(Context context, Object requestObject, HttpResponseHandler responseHandler){
+    public void post(Context context, Request request, HttpResponseHandler responseHandler){
 	    try {
-	        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(null, requestObject)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.toRequestParams(requestObject))), responseHandler);
+	        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(null, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -536,13 +537,13 @@ public class EasyHttpClient {
      * 执行一个HTTP POST请求
      * @param url 请求地址
      * @param headers 请求头信息
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param contentType 内容类型
      * @param responseHandler 响应处理器
      */
-    public void post(String url, Header[] headers, Object requestObject, String contentType, HttpResponseHandler responseHandler){
+    public void post(String url, Header[] headers, Request request, String contentType, HttpResponseHandler responseHandler){
 	    try {
-	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, requestObject)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.toRequestParams(requestObject)), headers), contentType, responseHandler);
+	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request)), headers), contentType, responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -553,13 +554,13 @@ public class EasyHttpClient {
     /**
      * 执行一个HTTP POST请求
      * @param url 请求地址
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param contentType 内容类型
      * @param responseHandler 响应处理器
      */
-    public void post(String url, Object requestObject, String contentType, HttpResponseHandler responseHandler){
+    public void post(String url, Request request, String contentType, HttpResponseHandler responseHandler){
 	    try {
-	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, requestObject)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.toRequestParams(requestObject))), contentType, responseHandler);
+	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), contentType, responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -570,12 +571,12 @@ public class EasyHttpClient {
     /**
      * 执行一个HTTP POST请求
      * @param url 请求地址
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param responseHandler 响应处理器
      */
-    public void post(String url, Object requestObject, HttpResponseHandler responseHandler){
+    public void post(String url, Request request, HttpResponseHandler responseHandler){
 	    try {
-	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, requestObject)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.toRequestParams(requestObject))), responseHandler);
+	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -585,13 +586,13 @@ public class EasyHttpClient {
 
     /**
      * 执行一个HTTP POST请求
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param contentType 内容类型
      * @param responseHandler 响应处理器
      */
-    public void post(Object requestObject, String contentType, HttpResponseHandler responseHandler){
+    public void post(Request request, String contentType, HttpResponseHandler responseHandler){
 	    try {
-	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(null, requestObject)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.toRequestParams(requestObject))), contentType, responseHandler);
+	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(null, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), contentType, responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -601,12 +602,12 @@ public class EasyHttpClient {
 
     /**
      * 执行一个HTTP POST请求
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams
      * @param responseHandler 响应处理器
      */
-    public void post(Object requestObject, HttpResponseHandler responseHandler){
+    public void post(Request request, HttpResponseHandler responseHandler){
 	    try {
-	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(null, requestObject)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.toRequestParams(requestObject))), responseHandler);
+	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(null, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), responseHandler);
 	    } catch (Exception e) {
 	    	if(responseHandler != null){
 				responseHandler.sendExceptionMessage(e);
@@ -859,95 +860,69 @@ public class EasyHttpClient {
     }
     
     /**
-     * 执行一个HTTP 请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
-     * @param url 请求地址
-     * @param headers 请求头信息
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * 发送请求
+     * @param uriRequest http请求对象
      * @param contentType 内容类型
      * @param responseHandler 响应处理器
      */
-    public void sendRequest(Context context, String url, Header[] headers, Object requestObject, String contentType, HttpResponseHandler responseHandler){
-    	if(requestObject.getClass().getAnnotation(Post.class) != null){
-    		post(context, url, headers, requestObject, contentType, responseHandler);
-    	}else{
-    		get(context, url, headers, requestObject, responseHandler);
-    	}
+    public void sendRequest(HttpUriRequest uriRequest, String contentType, HttpResponseHandler responseHandler) {
+       sendRequest(null, uriRequest, contentType, responseHandler);
     }
     
     /**
-     * 执行一个HTTP 请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
-     * @param url 请求地址
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
-     * @param contentType 内容类型
+     * 发送请求
+     * @param uriRequest http请求对象
      * @param responseHandler 响应处理器
      */
-    public void sendRequest(Context context, String url, Object requestObject, String contentType, HttpResponseHandler responseHandler){
-    	if(requestObject.getClass().getAnnotation(Post.class) != null){
-    		post(context, url, requestObject, contentType, responseHandler);
-    	}else{
-    		get(context, url, requestObject, responseHandler);
-    	}
+    public void sendRequest(HttpUriRequest uriRequest, HttpResponseHandler responseHandler) {
+       sendRequest(null, uriRequest, null, responseHandler);
     }
     
     /**
      * 执行一个HTTP 请求
      * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param url 请求地址
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
-     * @param responseHandler 响应处理器
-     */
-    public void sendRequest(Context context, String url, Object requestObject, HttpResponseHandler responseHandler){
-    	if(requestObject.getClass().getAnnotation(Post.class) != null){
-    		post(context, url, requestObject, responseHandler);
-    	}else{
-    		get(context, url, requestObject, responseHandler);
-    	}
-    }
-    
-    /**
-     * 执行一个HTTP 请求
-     * @param url 请求地址
      * @param headers 请求头信息
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
      * @param contentType 内容类型
      * @param responseHandler 响应处理器
      */
-    public void sendRequest(String url, Header[] headers, Object requestObject, String contentType, HttpResponseHandler responseHandler){
-    	if(requestObject.getClass().getAnnotation(Post.class) != null){
-    		post(url, headers, requestObject, contentType, responseHandler);
+    public void sendRequest(Context context, String url, Header[] headers, Request request, String contentType, HttpResponseHandler responseHandler){
+    	if(request.getClass().getAnnotation(Post.class) != null){
+    		post(context, url, headers, request, contentType, responseHandler);
     	}else{
-    		get(url, headers, requestObject, responseHandler);
+    		get(context, url, headers, request, responseHandler);
     	}
     }
     
     /**
      * 执行一个HTTP 请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param url 请求地址
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
      * @param contentType 内容类型
      * @param responseHandler 响应处理器
      */
-    public void sendRequest(String url, Object requestObject, String contentType, HttpResponseHandler responseHandler){
-    	if(requestObject.getClass().getAnnotation(Post.class) != null){
-    		post(url, requestObject, contentType, responseHandler);
+    public void sendRequest(Context context, String url, Request request, String contentType, HttpResponseHandler responseHandler){
+    	if(request.getClass().getAnnotation(Post.class) != null){
+    		post(context, url, request, contentType, responseHandler);
     	}else{
-    		get(url, requestObject, responseHandler);
+    		get(context, url, request, responseHandler);
     	}
     }
     
     /**
      * 执行一个HTTP 请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param url 请求地址
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
      * @param responseHandler 响应处理器
      */
-    public void sendRequest(String url, Object requestObject, HttpResponseHandler responseHandler){
-    	if(requestObject.getClass().getAnnotation(Post.class) != null){
-    		post(url, requestObject, responseHandler);
+    public void sendRequest(Context context, String url, Request request, HttpResponseHandler responseHandler){
+    	if(request.getClass().getAnnotation(Post.class) != null){
+    		post(context, url, request, responseHandler);
     	}else{
-    		get(url, requestObject, responseHandler);
+    		get(context, url, request, responseHandler);
     	}
     }
     
@@ -955,28 +930,73 @@ public class EasyHttpClient {
      * 执行一个HTTP 请求
      * @param url 请求地址
      * @param headers 请求头信息
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
      * @param contentType 内容类型
      * @param responseHandler 响应处理器
      */
-    public void sendRequest(Object requestObject, String contentType, HttpResponseHandler responseHandler){
-    	if(requestObject.getClass().getAnnotation(Post.class) != null){
-    		post(requestObject, contentType, responseHandler);
+    public void sendRequest(String url, Header[] headers, Request request, String contentType, HttpResponseHandler responseHandler){
+    	if(request.getClass().getAnnotation(Post.class) != null){
+    		post(url, headers, request, contentType, responseHandler);
     	}else{
-    		get(requestObject, responseHandler);
+    		get(url, headers, request, responseHandler);
     	}
     }
     
     /**
      * 执行一个HTTP 请求
-     * @param requestObject 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * @param url 请求地址
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * @param contentType 内容类型
      * @param responseHandler 响应处理器
      */
-    public void sendRequest(Object requestObject, HttpResponseHandler responseHandler){
-    	if(requestObject.getClass().getAnnotation(Post.class) != null){
-    		post(requestObject, responseHandler);
+    public void sendRequest(String url, Request request, String contentType, HttpResponseHandler responseHandler){
+    	if(request.getClass().getAnnotation(Post.class) != null){
+    		post(url, request, contentType, responseHandler);
     	}else{
-    		get(requestObject, responseHandler);
+    		get(url, request, responseHandler);
+    	}
+    }
+    
+    /**
+     * 执行一个HTTP 请求
+     * @param url 请求地址
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * @param responseHandler 响应处理器
+     */
+    public void sendRequest(String url, Request request, HttpResponseHandler responseHandler){
+    	if(request.getClass().getAnnotation(Post.class) != null){
+    		post(url, request, responseHandler);
+    	}else{
+    		get(url, request, responseHandler);
+    	}
+    }
+    
+    /**
+     * 执行一个HTTP 请求
+     * @param url 请求地址
+     * @param headers 请求头信息
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * @param contentType 内容类型
+     * @param responseHandler 响应处理器
+     */
+    public void sendRequest(Request request, String contentType, HttpResponseHandler responseHandler){
+    	if(request.getClass().getAnnotation(Post.class) != null){
+    		post(request, contentType, responseHandler);
+    	}else{
+    		get(request, responseHandler);
+    	}
+    }
+    
+    /**
+     * 执行一个HTTP 请求
+     * @param request 请求对象，EasyHttpClient会采用反射的方式将请求对象里所有加了Expose注解的字段封装成一个RequestParams，如果请求对象有Post注解就会以Post的方式来发送请求，否则一律采用Get的方式来发送请求
+     * @param responseHandler 响应处理器
+     */
+    public void sendRequest(Request request, HttpResponseHandler responseHandler){
+    	if(request.getClass().getAnnotation(Post.class) != null){
+    		post(request, responseHandler);
+    	}else{
+    		get(request, responseHandler);
     	}
     }
 
