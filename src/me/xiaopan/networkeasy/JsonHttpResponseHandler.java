@@ -44,7 +44,6 @@ public abstract class JsonHttpResponseHandler<T> extends Handler implements Http
 	@Override
 	public void sendHandleResponseMessage(HttpResponse httpResponse) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() < 300 ){
-			Object result = null;
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
 				/* 读取返回的JSON字符串并转换成对象 */
@@ -53,16 +52,21 @@ public abstract class JsonHttpResponseHandler<T> extends Handler implements Http
 					if(responseClass != null){	//如果是要转换成一个对象
 						ResponseBodyKey responseBodyKey = responseClass.getAnnotation(ResponseBodyKey.class);
 						if(responseBodyKey != null && responseBodyKey.value() != null && !"".equals(responseBodyKey.value())){
-							result = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey.value()), responseClass);
+							sendMessage(obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey.value()), responseClass)));
 						}else{
-							result = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseClass);
+							sendMessage(obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseClass)));
 						}
 					}else if(responseType != null){	//如果是要转换成一个集合
-						result = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseType);
+						sendMessage(obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseType)));
+					}else{
+						sendMessage(obtainMessage(MESSAGE_EXCEPTION, new Exception("responseClass和responseType至少有一个不能为null")));
 					}
+				}else{
+					sendMessage(obtainMessage(MESSAGE_EXCEPTION, new Exception("响应内容为空")));
 				}
+			}else{
+				sendMessage(obtainMessage(MESSAGE_EXCEPTION, new Exception("没有响应实体")));
 			}
-			sendMessage(obtainMessage(MESSAGE_SUCCESS, result));
 		}else{
 			sendMessage(obtainMessage(MESSAGE_FAILURE, httpResponse));
 		}
