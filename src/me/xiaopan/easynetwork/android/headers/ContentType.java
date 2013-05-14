@@ -3,7 +3,7 @@ package me.xiaopan.easynetwork.android.headers;
 import java.util.HashMap;
 import java.util.Map;
 
-import me.xiaopan.easynetwork.android.util.Utils;
+import me.xiaopan.easynetwork.android.EasyNetworkUtils;
 
 public class ContentType extends HttpHeader{
 	/**
@@ -90,12 +90,12 @@ public class ContentType extends HttpHeader{
 	public void setValue(String value) {
 		this.value = value;
 		if(value != null){
-			String[] strs = Utils.partition(value, ';');
+			String[] strs = EasyNetworkUtils.partition(value, ';');
 			if(strs.length > 0){
 				setType(strs[0]);
 			}
 			if(strs.length > 1){
-				strs = Utils.partition(strs[1], '=');
+				strs = EasyNetworkUtils.partition(strs[1], '=');
 				if(strs.length > 1){
 					setCharset(strs[1]);
 				}

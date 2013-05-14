@@ -1,6 +1,5 @@
 package me.xiaopan.easynetwork.android;
 
-import me.xiaopan.easynetwork.android.util.Utils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,7 +27,7 @@ public abstract class StringHttpResponseHandler extends Handler implements HttpR
 			/* 读取内容并转换成字符串 */
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
-				sendMessage(obtainMessage(MESSAGE_SUCCESS, EntityUtils.toString(new BufferedHttpEntity(httpEntity), Utils.getResponseCharset(httpResponse))));
+				sendMessage(obtainMessage(MESSAGE_SUCCESS, EntityUtils.toString(new BufferedHttpEntity(httpEntity), EasyNetworkUtils.getResponseCharset(httpResponse))));
 			}else{
 				sendMessage(obtainMessage(MESSAGE_SUCCESS));
 			}

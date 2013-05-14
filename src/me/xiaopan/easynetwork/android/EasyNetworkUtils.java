@@ -1,4 +1,4 @@
-package me.xiaopan.easynetwork.android.util;
+package me.xiaopan.easynetwork.android;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -6,10 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import me.xiaopan.easynetwork.android.Host;
-import me.xiaopan.easynetwork.android.HttpHeaderUtils;
-import me.xiaopan.easynetwork.android.Path;
-import me.xiaopan.easynetwork.android.RequestParams;
 import me.xiaopan.easynetwork.android.headers.ContentType;
 
 import org.apache.http.Header;
@@ -21,7 +17,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Utils {
+public class EasyNetworkUtils {
 	public static final String DEFAULT_CHARSET = "UTF-8";
 	
 	/**

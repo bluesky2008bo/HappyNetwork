@@ -1,6 +1,6 @@
 package me.xiaopan.easynetwork.android.headers;
 
-import me.xiaopan.easynetwork.android.util.Utils;
+import me.xiaopan.easynetwork.android.EasyNetworkUtils;
 
 
 
@@ -38,12 +38,12 @@ public class ContentDisposition extends HttpHeader{
 	public void setValue(String value) {
 		this.value = value;
 		if(value != null){
-			String[] strs = Utils.partition(value, ';');
+			String[] strs = EasyNetworkUtils.partition(value, ';');
 			if(strs.length > 0){
 				setDisposition(strs[0]);
 			}
 			if(strs.length > 1){
-				strs = Utils.partition(strs[1], '=');
+				strs = EasyNetworkUtils.partition(strs[1], '=');
 				if(strs.length > 1){
 					setFileName(strs[1]);
 				}
