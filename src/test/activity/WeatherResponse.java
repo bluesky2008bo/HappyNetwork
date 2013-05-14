@@ -1,6 +1,6 @@
 package test.activity;
 
-import me.xiaopan.networkeasy.ResponseBodyKey;
+import me.xiaopan.easynetwork.android.ResponseBodyKey;
 
 import com.google.gson.annotations.Expose;
 

@@ -1,8 +1,8 @@
 package test.activity;
 
-import me.xiaopan.networkeasy.EasyHttpClient;
-import me.xiaopan.networkeasy.R;
-import me.xiaopan.networkeasy.StringHttpResponseHandler;
+import me.xiaopan.easynetwork.android.EasyHttpClient;
+import me.xiaopan.easynetwork.android.R;
+import me.xiaopan.easynetwork.android.StringHttpResponseHandler;
 
 import org.apache.http.HttpResponse;
 
