@@ -1,5 +1,6 @@
 package me.xiaopan.networkeasy.util;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -151,55 +152,64 @@ public class Utils {
 	 * @param requestObject 请求对象
 	 * @return 
 	 */
+	@SuppressWarnings("unchecked")
 	public static RequestParams toRequestParams(Object requestObject){
 		if(requestObject != null){
 			RequestParams requestParams = new RequestParams();
 			
 			//循环处理所有字段
 			String paramValue;
-			String paramName;
-			Object valueObject;
-			Class<?> requestClass = requestObject.getClass();
-			for(Field field : getFileds(requestClass, true, true, true)){
-				try {
-					/* 如果当前字段被标记为需要序列化 */
-					if(field.getAnnotation(Expose.class) != null){
-						//初始化参数值
+			Object paramValueObject;
+			for(Field field : getFileds(requestObject.getClass(), true, true, true)){
+				if(field.getAnnotation(Expose.class) != null){	//如果当前字段被标记为需要序列化
+					try {
 						field.setAccessible(true);
-						valueObject = field.get(requestObject);
-						if(valueObject instanceof Map){
-							@SuppressWarnings("unchecked")
-							Map<Object, Object> map = (Map<Object, Object>)valueObject;
+						paramValueObject = field.get(requestObject);
+						
+						if(paramValueObject instanceof Map){	//如果当前字段是一个MAP，就取出其中的每一项添加到请求参数集中
+							Map<Object, Object> map = (Map<Object, Object>)paramValueObject;
 							for(java.util.Map.Entry<Object, Object> entry : map.entrySet()){
 								if(entry.getKey() != null && entry.getValue() != null && isNotNullAndEmpty(entry.getKey().toString(), entry.getValue().toString())){
-									//添加请求参数
-									requestParams.put(entry.getKey().toString(), entry.getValue().toString());
+									requestParams.put(entry.getKey().toString(), entry.getValue().toString());	
 								}
 							}
-						}else{
-							paramValue = valueObject != null?valueObject.toString():null;
+						}else if(paramValueObject instanceof File){	//如果当前字段是一个文件，就将其作为一个文件添加到请求参水集中
+							if(paramValueObject != null){
+								requestParams.put(getParamKey(field), (File) paramValueObject);
+							}
+						}else if(paramValueObject instanceof ArrayList){	//如果当前字段是ArrayList，就将其作为一个ArrayList添加到请求参水集中
+							if(paramValueObject != null){
+								requestParams.put(getParamKey(field), (ArrayList<String>) paramValueObject);
+							}
+						}else{	//如果以上几种情况都不是就直接转为字符串添加到请求参数集中
+							paramValue = paramValueObject != null?paramValueObject.toString():null;
 							if(isNotNullAndEmpty(paramValue)){
-								//初始化参数名
-								SerializedName serializedName = field.getAnnotation(SerializedName.class);
-								if(serializedName != null && isNotNullAndEmpty(serializedName.value())){
-									paramName = serializedName.value();
-								}else{
-									paramName = field.getName();
-								}
-								
-								//添加请求参数
-								requestParams.put(paramName, paramValue);
+								requestParams.put(getParamKey(field), paramValue);
 							}
 						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
 			
 			return requestParams;
 		}else{
 			return null;
+		}
+	}
+	
+	/**
+	 * 获取参数名
+	 * @param field
+	 * @return
+	 */
+	public static final String getParamKey(Field field){
+		SerializedName serializedName = field.getAnnotation(SerializedName.class);
+		if(serializedName != null && isNotNullAndEmpty(serializedName.value())){
+			return serializedName.value();
+		}else{
+			return field.getName();
 		}
 	}
 	

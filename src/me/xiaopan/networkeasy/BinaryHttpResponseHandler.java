@@ -5,9 +5,20 @@ import org.apache.http.HttpResponse;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.util.EntityUtils;
 
+import android.os.Handler;
 import android.os.Message;
 
-public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
+/**
+ * 将Http响应转换为二进制数组的处理器
+ * @author xiaopan
+ */
+public abstract class BinaryHttpResponseHandler extends Handler implements HttpResponseHandler {
+	private static final int MESSAGE_START = 0;
+	private static final int MESSAGE_SUCCESS = 1;
+	private static final int MESSAGE_FAILURE = 2;
+	private static final int MESSAGE_EXCEPTION = 3;
+	private static final int MESSAGE_END = 4;
+	
 	@Override
 	public void sendStartMessage() {
 		sendEmptyMessage(MESSAGE_START);
