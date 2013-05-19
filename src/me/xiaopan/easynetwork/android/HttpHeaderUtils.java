@@ -1,5 +1,6 @@
 package me.xiaopan.easynetwork.android;
 
+import me.xiaopan.easynetwork.android.headers.ContentLength;
 import me.xiaopan.easynetwork.android.headers.ContentType;
 
 import org.apache.http.Header;
@@ -10,6 +11,15 @@ public class HttpHeaderUtils {
 		Header[] contentTypeString = httpResponse.getHeaders(ContentType.NAME);
 		if(contentTypeString.length > 0){
 			return new ContentType(contentTypeString[0].getValue());
+		}else{
+			return null;
+		}
+	}
+	
+	public static ContentLength getContentLength(HttpResponse httpResponse){
+		Header[] contentTypeString = httpResponse.getHeaders(ContentLength.NAME);
+		if(contentTypeString.length > 0){
+			return new ContentLength(contentTypeString[0].getValue());
 		}else{
 			return null;
 		}
