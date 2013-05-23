@@ -162,27 +162,39 @@ public class EasyNetworkUtils {
 				if(field.getAnnotation(Expose.class) != null){	//如果当前字段被标记为需要序列化
 					try {
 						field.setAccessible(true);
-						paramValueObject = field.get(request);
-						
-						if(paramValueObject instanceof Map){	//如果当前字段是一个MAP，就取出其中的每一项添加到请求参数集中
-							Map<Object, Object> map = (Map<Object, Object>)paramValueObject;
-							for(java.util.Map.Entry<Object, Object> entry : map.entrySet()){
-								if(entry.getKey() != null && entry.getValue() != null && isNotNullAndEmpty(entry.getKey().toString(), entry.getValue().toString())){
-									requestParams.put(entry.getKey().toString(), entry.getValue().toString());	
+						if((paramValueObject = field.get(request)) != null){
+							if(paramValueObject instanceof Map){	//如果当前字段是一个MAP，就取出其中的每一项添加到请求参数集中
+								Map<Object, Object> map = (Map<Object, Object>)paramValueObject;
+								for(java.util.Map.Entry<Object, Object> entry : map.entrySet()){
+									if(entry.getKey() != null && entry.getValue() != null && isNotNullAndEmpty(entry.getKey().toString(), entry.getValue().toString())){
+										requestParams.put(entry.getKey().toString(), entry.getValue().toString());	
+									}
 								}
-							}
-						}else if(paramValueObject instanceof File){	//如果当前字段是一个文件，就将其作为一个文件添加到请求参水集中
-							if(paramValueObject != null){
+							}else if(paramValueObject instanceof File){	//如果当前字段是一个文件，就将其作为一个文件添加到请求参水集中
 								requestParams.put(getParamKey(field), (File) paramValueObject);
-							}
-						}else if(paramValueObject instanceof ArrayList){	//如果当前字段是ArrayList，就将其作为一个ArrayList添加到请求参水集中
-							if(paramValueObject != null){
+							}else if(paramValueObject instanceof ArrayList){	//如果当前字段是ArrayList，就将其作为一个ArrayList添加到请求参水集中
 								requestParams.put(getParamKey(field), (ArrayList<String>) paramValueObject);
-							}
-						}else{	//如果以上几种情况都不是就直接转为字符串添加到请求参数集中
-							paramValue = paramValueObject != null?paramValueObject.toString():null;
-							if(isNotNullAndEmpty(paramValue)){
-								requestParams.put(getParamKey(field), paramValue);
+							}else if(paramValueObject instanceof Boolean){	//如果当前字段是boolean
+								if((Boolean) paramValueObject){
+									True true1 = field.getAnnotation(True.class);
+									if(true1 != null && isNotNullAndEmpty(true1.value())){
+										requestParams.put(getParamKey(field), true1.value());
+									}else{
+										requestParams.put(getParamKey(field), paramValueObject.toString());
+									}
+								}else{
+									False false1 = field.getAnnotation(False.class);
+									if(false1 != null && isNotNullAndEmpty(false1.value())){
+										requestParams.put(getParamKey(field), false1.value());
+									}else{
+										requestParams.put(getParamKey(field), paramValueObject.toString());
+									}
+								}
+							}else{	//如果以上几种情况都不是就直接转为字符串添加到请求参数集中
+								paramValue = paramValueObject.toString();
+								if(isNotNullAndEmpty(paramValue)){
+									requestParams.put(getParamKey(field), paramValue);
+								}
 							}
 						}
 					} catch (Exception e) {
