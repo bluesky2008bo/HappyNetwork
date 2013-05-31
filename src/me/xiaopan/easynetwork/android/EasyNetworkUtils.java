@@ -275,7 +275,7 @@ public class EasyNetworkUtils {
     }
     
 	public static final HttpEntity paramsToEntity(RequestParams params) {
-		if(EasyHttpClient.OUTPUT_LOG){
+		if(EasyHttpClient.outputLogToConsole){
 			Log.i("请求参数", params.getParamString());
 		}
 		return params != null?params.getEntity():null;

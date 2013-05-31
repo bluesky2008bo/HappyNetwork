@@ -29,7 +29,7 @@ public class HttpRequestRunnable implements Runnable {
     		
     		try {
     			if(!Thread.currentThread().isInterrupted()) {
-    				if(EasyHttpClient.OUTPUT_LOG){
+    				if(EasyHttpClient.outputLogToConsole){
     					Log.i("请求地址", httpUriRequest.getURI().toString());
     				}
 					HttpResponse httpResponse = httpClient.execute(httpUriRequest, httpContext);
