@@ -53,18 +53,21 @@ public class EasyHttpClient {
     private static final int DEFAULT_MAX_RETRIES = 5;	//最大重试次数
     private static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;	//Socket缓存大小
     private static boolean enableOutputLogToConsole = true;
-    private static EasyHttpClient easyHttpClient;
+    private static EasyHttpClient easyHttpClient;	//实例
+    private static ThreadPoolExecutor threadPool;	//线程池
+    private DefaultHttpClient httpClient;	//Http客户端
 	private HttpContext httpContext;	//Http上下文
-	private DefaultHttpClient httpClient;	//Http客户端
-	private ThreadPoolExecutor threadPool;	//线程池
-    private Map<Context, List<WeakReference<Future<?>>>> requestMap;
-    private Map<String, String> clientHeaderMap;
+    private Map<Context, List<WeakReference<Future<?>>>> requestMap;	//请求Map
+    private Map<String, String> clientHeaderMap;	//请求头Map
 	
 	public EasyHttpClient(){
+		if(threadPool == null){
+			threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+		}
+		
 		httpContext = new SyncBasicHttpContext(new BasicHttpContext());
 		requestMap = new WeakHashMap<Context, List<WeakReference<Future<?>>>>();
         clientHeaderMap = new HashMap<String, String>();
-		threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 		
 		/* 初始化HttpClient */
         SchemeRegistry schemeRegistry = new SchemeRegistry();
@@ -78,6 +81,10 @@ public class EasyHttpClient {
         httpClient.setHttpRequestRetryHandler(new RetryHandler(DEFAULT_MAX_RETRIES));
 	}
 	
+	/**
+	 * 获取实例
+	 * @return 实例
+	 */
 	public static final EasyHttpClient getInstance(){
 		if(easyHttpClient == null){
 			easyHttpClient = new EasyHttpClient();
@@ -836,7 +843,7 @@ public class EasyHttpClient {
             uriRequest.addHeader("Content-Type", contentType);
         }
 
-        Future<?> request = threadPool.submit(new HttpRequestRunnable(httpClient, httpContext, uriRequest, responseHandler));
+        Future<?> request = getThreadPool().submit(new HttpRequestRunnable(httpClient, httpContext, uriRequest, responseHandler));
 
         if(context != null) {
             List<WeakReference<Future<?>>> requestList = requestMap.get(context);
@@ -1039,11 +1046,35 @@ public class EasyHttpClient {
         return httpParams;
 	}
 
+	/**
+	 * 判断是否输出Log到控制台
+	 * @return 是否输出Log到控制台
+	 */
 	public static boolean isEnableOutputLogToConsole() {
 		return enableOutputLogToConsole;
 	}
 
+	/**
+	 * 设置是否输出Log到控制台
+	 * @param enableOutputLogToConsole 是否输出Log到控制台
+	 */
 	public static void setEnableOutputLogToConsole(boolean enableOutputLogToConsole) {
 		EasyHttpClient.enableOutputLogToConsole = enableOutputLogToConsole;
+	}
+
+	/**
+	 * 获取线程池
+	 * @return 线程池
+	 */
+	public static ThreadPoolExecutor getThreadPool() {
+		return threadPool;
+	}
+
+	/**
+	 * 设置线程池
+	 * @param threadPool 线程池
+	 */
+	public static void setThreadPool(ThreadPoolExecutor threadPool) {
+		EasyHttpClient.threadPool = threadPool;
 	}
 }
