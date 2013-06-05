@@ -14,10 +14,9 @@ import android.os.Message;
 import com.google.gson.GsonBuilder;
 
 /**
- * 默认的JSON响应处理器
- * @author xiaopan
+ * 默认的JSON访问监听器
  */
-public abstract class JsonHttpResponseHandler<T> extends Handler implements HttpResponseHandler {
+public abstract class JsonHttpListener<T> extends Handler implements HttpListener {
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;
@@ -26,21 +25,21 @@ public abstract class JsonHttpResponseHandler<T> extends Handler implements Http
 	private Class<?> responseClass;
 	private Type responseType;
 	
-	public JsonHttpResponseHandler(Class<?> responseClass){
+	public JsonHttpListener(Class<?> responseClass){
 		this.responseClass = responseClass;
 	}
 	
-	public JsonHttpResponseHandler(Type responseType){
+	public JsonHttpListener(Type responseType){
 		this.responseType = responseType;
 	}
 	
 	@Override
-	public void sendStartMessage() {
+	public void start() {
 		sendEmptyMessage(MESSAGE_START);
 	}
 
 	@Override
-	public void sendHandleResponseMessage(HttpResponse httpResponse) throws Throwable {
+	public void handleResponse(HttpResponse httpResponse) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() < 300 ){
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
@@ -71,12 +70,12 @@ public abstract class JsonHttpResponseHandler<T> extends Handler implements Http
 	}
 	
 	@Override
-	public void sendExceptionMessage(Throwable e) {
+	public void exception(Throwable e) {
 		sendMessage(obtainMessage(MESSAGE_EXCEPTION, e));
 	}
 
 	@Override
-	public void sendEndMessage() {
+	public void end() {
 		sendEmptyMessage(MESSAGE_END);
 	}
 	
@@ -84,7 +83,7 @@ public abstract class JsonHttpResponseHandler<T> extends Handler implements Http
 	@Override
 	public void handleMessage(Message msg) {
 		switch(msg.what) {
-			case MESSAGE_START: onStart(); break;
+			case MESSAGE_START: start(); break;
 			case MESSAGE_SUCCESS: onSuccess((T) msg.obj); break;
 			case MESSAGE_FAILURE: onFailure((HttpResponse) msg.obj); break;
 			case MESSAGE_EXCEPTION: onException((Throwable) msg.obj); break;

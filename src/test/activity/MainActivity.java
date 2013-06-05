@@ -2,7 +2,7 @@ package test.activity;
 
 import me.xiaopan.easynetwork.android.EasyHttpClient;
 import me.xiaopan.easynetwork.android.R;
-import me.xiaopan.easynetwork.android.StringHttpResponseHandler;
+import me.xiaopan.easynetwork.android.StringHttpListener;
 
 import org.apache.http.HttpResponse;
 
@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		EasyHttpClient.getInstance().get("http://www.miui.com/forum.php", new StringHttpResponseHandler(){
+		EasyHttpClient.getInstance().get("http://www.miui.com/forum.php", new StringHttpListener(){
 			@Override
 			public void onStart() {
 				findViewById(R.id.loading).setVisibility(View.VISIBLE);

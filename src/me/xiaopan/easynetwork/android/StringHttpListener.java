@@ -9,7 +9,7 @@ import org.apache.http.util.EntityUtils;
 import android.os.Handler;
 import android.os.Message;
 
-public abstract class StringHttpResponseHandler extends Handler implements HttpResponseHandler {
+public abstract class StringHttpListener extends Handler implements HttpListener {
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;
@@ -17,12 +17,12 @@ public abstract class StringHttpResponseHandler extends Handler implements HttpR
 	private static final int MESSAGE_END = 4;
 	
 	@Override
-	public void sendStartMessage() {
+	public void start() {
 		sendEmptyMessage(MESSAGE_START);
 	}
 
 	@Override
-	public void sendHandleResponseMessage(HttpResponse httpResponse) throws Throwable {
+	public void handleResponse(HttpResponse httpResponse) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() < 300 ){
 			/* 读取内容并转换成字符串 */
 			HttpEntity httpEntity = httpResponse.getEntity();
@@ -37,19 +37,19 @@ public abstract class StringHttpResponseHandler extends Handler implements HttpR
 	}
 
 	@Override
-	public void sendExceptionMessage(Throwable e) {
+	public void exception(Throwable e) {
 		sendMessage(obtainMessage(MESSAGE_EXCEPTION, e));
 	}
 
 	@Override
-	public void sendEndMessage() {
+	public void end() {
 		sendEmptyMessage(MESSAGE_END);
 	}
 	
 	@Override
 	public void handleMessage(Message msg) {
 		switch(msg.what) {
-			case MESSAGE_START: onStart(); break;
+			case MESSAGE_START: start(); break;
 			case MESSAGE_SUCCESS: onSuccess((String) msg.obj); break;
 			case MESSAGE_FAILURE: onFailure((HttpResponse) msg.obj); break;
 			case MESSAGE_EXCEPTION: onException((Throwable) msg.obj); break;

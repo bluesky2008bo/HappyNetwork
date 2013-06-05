@@ -11,20 +11,20 @@ public class HttpRequestRunnable implements Runnable {
     private final AbstractHttpClient httpClient;
     private final HttpContext httpContext;
     private final HttpUriRequest httpUriRequest;
-    private final HttpResponseHandler httpResponseHandler;
+    private final HttpListener httpListener;
 
-    public HttpRequestRunnable(AbstractHttpClient client, HttpContext context, HttpUriRequest request, HttpResponseHandler responseHandler) {
+    public HttpRequestRunnable(AbstractHttpClient client, HttpContext context, HttpUriRequest request, HttpListener httpListener) {
         this.httpClient = client;
         this.httpContext = context;
         this.httpUriRequest = request;
-        this.httpResponseHandler = responseHandler;
+        this.httpListener = httpListener;
     }
 
     @Override
     public void run() {
     	if(!Thread.currentThread().isInterrupted()) {
-    		if(httpResponseHandler != null){
-    			httpResponseHandler.sendStartMessage();
+    		if(httpListener != null){
+    			httpListener.start();
     		}
     		
     		try {
@@ -33,18 +33,18 @@ public class HttpRequestRunnable implements Runnable {
     					Log.i("请求地址", httpUriRequest.getURI().toString());
     				}
 					HttpResponse httpResponse = httpClient.execute(httpUriRequest, httpContext);
-					if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null) {
-						httpResponseHandler.sendHandleResponseMessage(httpResponse);
+					if(!Thread.currentThread().isInterrupted() && httpListener != null) {
+						httpListener.handleResponse(httpResponse);
 					}
     			}
     		} catch (Throwable e) {
-    			if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null) {
-    				httpResponseHandler.sendExceptionMessage(e);
+    			if(!Thread.currentThread().isInterrupted() && httpListener != null) {
+    				httpListener.exception(e);
     			}
     		}
     		
-    		if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null){
-    			httpResponseHandler.sendEndMessage();
+    		if(!Thread.currentThread().isInterrupted() && httpListener != null){
+    			httpListener.end();
     		}
     	}
     }
