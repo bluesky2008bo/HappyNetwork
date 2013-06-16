@@ -36,6 +36,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 public class ImageLoadTask implements Runnable {
+	private ImageLoader imageLoader;	//图片加载器
 	private LoadRequest loadRequest;	//加载请求
 	private int numberOfLoaded;	//已加载次数
 	
@@ -43,7 +44,8 @@ public class ImageLoadTask implements Runnable {
 	 * 创建一个加载图片任务
 	 * @param loadRequest 加载请求
 	 */
-	public ImageLoadTask(LoadRequest loadRequest){
+	public ImageLoadTask(ImageLoader imageLoader, LoadRequest loadRequest){
+		this.imageLoader = imageLoader;
 		this.loadRequest = loadRequest;
 	}
 	
@@ -56,7 +58,7 @@ public class ImageLoadTask implements Runnable {
 		}else{
 			loadRequest.setResultBitmap(null);
 		}
-		ImageLoader.getLoadMessageHandler().obtainMessage(LoadMessageHandler.WHAT_LOAD_FINISH, loadRequest).sendToTarget();
+		imageLoader.getLoadHandler().obtainMessage(LoadHandler.WHAT_LOAD_FINISH, loadRequest).sendToTarget();
 	}
 	
 	/**

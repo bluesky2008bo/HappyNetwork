@@ -19,7 +19,9 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -54,30 +56,28 @@ public class ImageLoader{
     private static Options defaultOptions;	//默认加载选项
     private static ImageLoader imageLoader; //图片加载器的实例，用来实现单例模式
 	private static DefaultHttpClient httpClient;	//Http客户端
-	private static LoadMessageHandler loadMessageHandler;	//加载消息处理器
 	private static ConcurrentHashMap<String, SoftReference<Bitmap>> bitmapCacheMap;//软引用图片Map
 	
 	private int maxThreadNumber = 50;	//最大线程数
 	private int maxWaitingNumber = 30;	//最大等待数
-	private Set<ImageView> loadingImageViewSet;	//图片视图集合，这个集合里的每个尚未加载完成的视图身上都会携带有他要显示的图片的地址，当每一个图片加载完成之后都会在这个列表中遍历找到所有携带有这个这个图片的地址的视图，并把图片显示到这个视图上
-	private Set<String> loadingRequestSet;	//正在加载的Url列表，用来防止同一个URL被重复加载
+	private Map<String, Set<ImageView>> loadingMap;	//加载中ID和要显示的图片集合
 	private Circle<LoadRequest> waitingRequestCircle;	//等待处理的加载请求
+	private LoadHandler loadHandler;	//加载处理器
+	
+	private Bitmap cacheBitmap;
 	
 	/**
 	 * 创建图片加载器
 	 * @param defaultDrawableResId 默认显示的图片
 	 */
 	public ImageLoader(){
-		if(loadMessageHandler == null){
-			loadMessageHandler = new LoadMessageHandler(this);
-		}
 		if(bitmapCacheMap == null){
 			bitmapCacheMap = new ConcurrentHashMap<String, SoftReference<Bitmap>>();//软引用图片Map
 		}
 		
-		this.loadingImageViewSet = new HashSet<ImageView>();//初始化图片视图集合
-		this.loadingRequestSet = new HashSet<String>();//初始化加载中URL集合
-		this.waitingRequestCircle = new Circle<LoadRequest>(maxWaitingNumber);//初始化等待处理的加载请求集合
+		loadHandler = new LoadHandler(this);
+		loadingMap = new HashMap<String, Set<ImageView>>();
+		waitingRequestCircle = new Circle<LoadRequest>(maxWaitingNumber);//初始化等待处理的加载请求集合
 	}
 	
 	/**
@@ -203,15 +203,11 @@ public class ImageLoader{
 	 * @return true：图片缓存中有图片并且已经显示了；false：缓存中没有对应的图片，需要开启新线程从网络或本地加载
 	 */
 	private final boolean tryShowImage(String id, ImageView showImageView, int defaultDrawableResId){
-		showImageView.setTag(id);//绑定
-		
-		//根据地址从缓存中获取图片，如果缓存中存在相对的图片就显示，否则显示默认图片或者显示空
-		Bitmap bitmap = getBitmapFromCache(id);
-		if(bitmap != null){
-			loadingImageViewSet.remove(showImageView);
-			
+		/* 根据地址从缓存中获取图片，如果缓存中存在相对的图片就显示，否则显示默认图片或者显示空 */
+		cacheBitmap = getBitmapFromCache(id);
+		if(cacheBitmap != null){
 			showImageView.clearAnimation();
-			showImageView.setImageBitmap(bitmap);
+			showImageView.setImageBitmap(cacheBitmap);
 			return true;
 		}else{
 			if(defaultDrawableResId > 0){
@@ -232,15 +228,17 @@ public class ImageLoader{
 	 * @param options
 	 */
 	final void tryLoad(String id, String url, File localCacheFile, ImageView showImageView, Options options, LoadRequest loadRequest){
-		loadingImageViewSet.add(showImageView);//将当前视图存起来
-		
-		if(!loadingRequestSet.contains(id)){		//如果没有加载
+		if(loadingMap.containsKey(id)){		//如果正在加载
+			loadingMap.get(id).add(showImageView);
+		}else{
 			if(loadRequest == null){
 				loadRequest = new LoadRequest(id, url, localCacheFile, showImageView, options);
 			}
-			if(loadingRequestSet.size() < maxThreadNumber){	//如果尚未达到最大负荷，就开启线程加载
-				loadingRequestSet.add(id);
-				EasyNetwork.getThreadPool().submit(new ImageLoadTask(loadRequest));
+			if(loadingMap.size() < maxThreadNumber){	//如果尚未达到最大负荷，就开启线程加载
+				HashSet<ImageView> imageViews = new HashSet<ImageView>(1);
+				imageViews.add(showImageView);
+				loadingMap.put(id, imageViews);
+				EasyNetwork.getThreadPool().submit(new ImageLoadTask(this, loadRequest));
 			}else{
 				//否则，加到等待队列中
 				synchronized (waitingRequestCircle) {
@@ -254,8 +252,9 @@ public class ImageLoader{
 	 * 清除历史
 	 */
 	public final void clearHistory(){
-		loadingImageViewSet.clear();
-		loadingRequestSet.clear();
+		synchronized (loadingMap){
+			loadingMap.clear();
+		}
 		synchronized (waitingRequestCircle) {
 			waitingRequestCircle.clear();
 		}
@@ -293,28 +292,36 @@ public class ImageLoader{
 		this.maxWaitingNumber = maxWaitingNumber;
 	}
 
-	public final Set<ImageView> getLoadingImageViewSet() {
-		return loadingImageViewSet;
+	/**
+	 * 获取加载中集合
+	 * @return 加载中集合
+	 */
+	public final Map<String, Set<ImageView>> getLoadingMap() {
+		return loadingMap;
 	}
 
-	public final Set<String> getLoadingRequestSet() {
-		return loadingRequestSet;
-	}
-
+	/**
+	 * 获取等待请求集合
+	 * @return 等待请求集合
+	 */
 	public final Circle<LoadRequest> getWaitingRequestCircle() {
 		return waitingRequestCircle;
 	}
 
-	public final void setLoadingImageViewSet(Set<ImageView> loadingImageViewSet) {
-		this.loadingImageViewSet = loadingImageViewSet;
+	/**
+	 * 获取加载处理器
+	 * @return 加载处理器
+	 */
+	public final LoadHandler getLoadHandler() {
+		return loadHandler;
 	}
 
-	public final void setLoadingRequestSet(Set<String> loadingRequestSet) {
-		this.loadingRequestSet = loadingRequestSet;
-	}
-
-	public final void setWaitingRequestCircle(Circle<LoadRequest> waitingRequestCircle) {
-		this.waitingRequestCircle = waitingRequestCircle;
+	/**
+	 * 设置加载处理器
+	 * @param loadHandler 加载处理器
+	 */
+	public final void setLoadHandler(LoadHandler loadHandler) {
+		this.loadHandler = loadHandler;
 	}
 	
 	/**
@@ -479,21 +486,5 @@ public class ImageLoader{
 	 */
 	public static final void setDefaultOptions(Options defaultOptions) {
 		ImageLoader.defaultOptions = defaultOptions;
-	}
-
-	/**
-	 * 获取加载消息处理器
-	 * @return 加载消息处理器
-	 */
-	public static final LoadMessageHandler getLoadMessageHandler() {
-		return loadMessageHandler;
-	}
-
-	/**
-	 * 设置加载消息处理器
-	 * @param loadMessageHandler 加载消息处理器
-	 */
-	public static final void setLoadMessageHandler(LoadMessageHandler loadMessageHandler) {
-		ImageLoader.loadMessageHandler = loadMessageHandler;
 	}
 } 
