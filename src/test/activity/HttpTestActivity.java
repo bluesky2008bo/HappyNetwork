@@ -30,7 +30,7 @@ public class HttpTestActivity extends Activity {
 
 			@Override
 			public void onSuccess(String responseContent) {
-				((TextView) findViewById(R.id.text_main_content)).setText(Html.fromHtml("成功了："+responseContent));
+				((TextView) findViewById(R.id.text_main_content)).setText(Html.fromHtml(responseContent));
 			}
 
 			@Override

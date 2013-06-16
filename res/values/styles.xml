@@ -1,7 +1,7 @@
 <resources>
     <!-- ******************************************************************************** 布局 ************************************************************************************ -->
     <!-- 布局 - 正文 -->
-    <style name="layout_body" parent="@style/base_match_match_vertical">
+    <style name="layout_body" parent="@style/base_match_match">
         <item name="android:id">@id/layout_body</item>
         <item name="android:background">@color/body_backg</item>
     </style>

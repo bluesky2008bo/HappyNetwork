@@ -58,24 +58,26 @@ public class LoadMessageHandler extends Handler {
 		Object tagObject;
 		while(iterator.hasNext()){
 			imageView = iterator.next();
-			tagObject = imageView.getTag();
-			if(tagObject != null && loadRequest.getId().equals(tagObject.toString())){
-				imageView.clearAnimation();//先清除之前所有的动画
-				if(loadRequest.getResultBitmap() != null){
-					Animation animation = ImageLoaderUtils.getShowAnimationListener(loadRequest.getOptions());
-					if(animation != null){
-						imageView.setAnimation(animation);
-					}
-					imageView.setImageBitmap(loadRequest.getResultBitmap());
-				}else{
-					int loadFailedDrawableResId = ImageLoaderUtils.getLoadFailedDrawableResId(loadRequest.getOptions());
-					if(loadFailedDrawableResId > 0){
-						imageView.setImageResource(loadFailedDrawableResId);
+			if(imageView != null){
+				tagObject = imageView.getTag();
+				if(tagObject != null && loadRequest.getId().equals(tagObject.toString())){
+					imageView.clearAnimation();//先清除之前所有的动画
+					if(loadRequest.getResultBitmap() != null){
+						Animation animation = ImageLoaderUtils.getShowAnimationListener(loadRequest.getOptions());
+						if(animation != null){
+							imageView.setAnimation(animation);
+						}
+						imageView.setImageBitmap(loadRequest.getResultBitmap());
 					}else{
-						imageView.setImageBitmap(null);
+						int loadFailedDrawableResId = ImageLoaderUtils.getLoadFailedDrawableResId(loadRequest.getOptions());
+						if(loadFailedDrawableResId > 0){
+							imageView.setImageResource(loadFailedDrawableResId);
+						}else{
+							imageView.setImageBitmap(null);
+						}
 					}
+					iterator.remove();
 				}
-				iterator.remove();
 			}
 		}
 		

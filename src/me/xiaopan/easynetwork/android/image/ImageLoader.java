@@ -19,12 +19,11 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
 import java.net.URLEncoder;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+
+import me.xiaopan.easynetwork.android.EasyNetwork;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.conn.params.ConnManagerParams;
@@ -55,7 +54,6 @@ public class ImageLoader{
     private static Options defaultOptions;	//默认加载选项
     private static ImageLoader imageLoader; //图片加载器的实例，用来实现单例模式
 	private static DefaultHttpClient httpClient;	//Http客户端
-	private static ThreadPoolExecutor threadPool;	//线程池
 	private static LoadMessageHandler loadMessageHandler;	//加载消息处理器
 	private static ConcurrentHashMap<String, SoftReference<Bitmap>> bitmapCacheMap;//软引用图片Map
 	
@@ -70,9 +68,6 @@ public class ImageLoader{
 	 * @param defaultDrawableResId 默认显示的图片
 	 */
 	public ImageLoader(){
-		if(threadPool == null){
-			threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-		}
 		if(loadMessageHandler == null){
 			loadMessageHandler = new LoadMessageHandler(this);
 		}
@@ -80,8 +75,8 @@ public class ImageLoader{
 			bitmapCacheMap = new ConcurrentHashMap<String, SoftReference<Bitmap>>();//软引用图片Map
 		}
 		
-		this.loadingImageViewSet = Collections.synchronizedSet(new HashSet<ImageView>());//初始化图片视图集合
-		this.loadingRequestSet = Collections.synchronizedSet(new HashSet<String>());//初始化加载中URL集合
+		this.loadingImageViewSet = new HashSet<ImageView>();//初始化图片视图集合
+		this.loadingRequestSet = new HashSet<String>();//初始化加载中URL集合
 		this.waitingRequestCircle = new Circle<LoadRequest>(maxWaitingNumber);//初始化等待处理的加载请求集合
 	}
 	
@@ -245,7 +240,7 @@ public class ImageLoader{
 			}
 			if(loadingRequestSet.size() < maxThreadNumber){	//如果尚未达到最大负荷，就开启线程加载
 				loadingRequestSet.add(id);
-				threadPool.submit(new ImageLoadTask(loadRequest));
+				EasyNetwork.getThreadPool().submit(new ImageLoadTask(loadRequest));
 			}else{
 				//否则，加到等待队列中
 				synchronized (waitingRequestCircle) {
@@ -484,22 +479,6 @@ public class ImageLoader{
 	 */
 	public static final void setDefaultOptions(Options defaultOptions) {
 		ImageLoader.defaultOptions = defaultOptions;
-	}
-
-	/**
-	 * 获取线程池
-	 * @return 线程池
-	 */
-	public static final ThreadPoolExecutor getThreadPool() {
-		return threadPool;
-	}
-
-	/**
-	 * 设置线程池
-	 * @param threadPool 线程池
-	 */
-	public static final void setThreadPool(ThreadPoolExecutor threadPool) {
-		ImageLoader.threadPool = threadPool;
 	}
 
 	/**

@@ -6,10 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
 
+import me.xiaopan.easynetwork.android.EasyNetwork;
 import me.xiaopan.easynetwork.android.http.interceptor.AddRequestHeaderRequestInterceptor;
 import me.xiaopan.easynetwork.android.http.interceptor.GzipProcessRequestInterceptor;
 import me.xiaopan.easynetwork.android.http.interceptor.GzipProcessResponseInterceptor;
@@ -54,17 +53,12 @@ public class EasyHttpClient {
     private static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;	//Socket缓存大小
     private static boolean enableOutputLogToConsole = true;
     private static EasyHttpClient easyHttpClient;	//实例
-    private static ThreadPoolExecutor threadPool;	//线程池
     private DefaultHttpClient httpClient;	//Http客户端
 	private HttpContext httpContext;	//Http上下文
     private Map<Context, List<WeakReference<Future<?>>>> requestMap;	//请求Map
     private Map<String, String> clientHeaderMap;	//请求头Map
 	
 	public EasyHttpClient(){
-		if(threadPool == null){
-			threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-		}
-		
 		httpContext = new SyncBasicHttpContext(new BasicHttpContext());
 		requestMap = new WeakHashMap<Context, List<WeakReference<Future<?>>>>();
         clientHeaderMap = new HashMap<String, String>();
@@ -843,7 +837,7 @@ public class EasyHttpClient {
             uriRequest.addHeader("Content-Type", contentType);
         }
 
-        Future<?> request = getThreadPool().submit(new HttpRequestRunnable(httpClient, httpContext, uriRequest, responseHandler));
+        Future<?> request = EasyNetwork.getThreadPool().submit(new HttpRequestRunnable(httpClient, httpContext, uriRequest, responseHandler));
 
         if(context != null) {
             List<WeakReference<Future<?>>> requestList = requestMap.get(context);
@@ -1060,21 +1054,5 @@ public class EasyHttpClient {
 	 */
 	public static void setEnableOutputLogToConsole(boolean enableOutputLogToConsole) {
 		EasyHttpClient.enableOutputLogToConsole = enableOutputLogToConsole;
-	}
-
-	/**
-	 * 获取线程池
-	 * @return 线程池
-	 */
-	public static ThreadPoolExecutor getThreadPool() {
-		return threadPool;
-	}
-
-	/**
-	 * 设置线程池
-	 * @param threadPool 线程池
-	 */
-	public static void setThreadPool(ThreadPoolExecutor threadPool) {
-		EasyHttpClient.threadPool = threadPool;
 	}
 }
