@@ -3,9 +3,9 @@ package me.xiaopan.easynetwork.android.http;
 import org.apache.http.HttpResponse;
 
 /**
- * Http访问监听器
+ * 响应处理器
  */
-public interface HttpListener{
+public interface ResponseHandler{
 	/**
      * 开始
      */

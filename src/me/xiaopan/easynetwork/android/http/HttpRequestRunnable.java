@@ -11,20 +11,20 @@ public class HttpRequestRunnable implements Runnable {
     private final AbstractHttpClient httpClient;
     private final HttpContext httpContext;
     private final HttpUriRequest httpUriRequest;
-    private final HttpListener httpListener;
+    private final ResponseHandler responseHandler;
 
-    public HttpRequestRunnable(AbstractHttpClient client, HttpContext context, HttpUriRequest request, HttpListener httpListener) {
+    public HttpRequestRunnable(AbstractHttpClient client, HttpContext context, HttpUriRequest request, ResponseHandler responseHandler) {
         this.httpClient = client;
         this.httpContext = context;
         this.httpUriRequest = request;
-        this.httpListener = httpListener;
+        this.responseHandler = responseHandler;
     }
 
     @Override
     public void run() {
     	if(!Thread.currentThread().isInterrupted()) {
-    		if(httpListener != null){
-    			httpListener.start();
+    		if(responseHandler != null){
+    			responseHandler.start();
     		}
     		
     		try {
@@ -33,18 +33,18 @@ public class HttpRequestRunnable implements Runnable {
     					Log.i("请求地址", httpUriRequest.getURI().toString());
     				}
 					HttpResponse httpResponse = httpClient.execute(httpUriRequest, httpContext);
-					if(!Thread.currentThread().isInterrupted() && httpListener != null) {
-						httpListener.handleResponse(httpResponse);
+					if(!Thread.currentThread().isInterrupted() && responseHandler != null) {
+						responseHandler.handleResponse(httpResponse);
 					}
     			}
     		} catch (Throwable e) {
-    			if(!Thread.currentThread().isInterrupted() && httpListener != null) {
-    				httpListener.exception(e);
+    			if(!Thread.currentThread().isInterrupted() && responseHandler != null) {
+    				responseHandler.exception(e);
     			}
     		}
     		
-    		if(!Thread.currentThread().isInterrupted() && httpListener != null){
-    			httpListener.end();
+    		if(!Thread.currentThread().isInterrupted() && responseHandler != null){
+    			responseHandler.end();
     		}
     	}
     }

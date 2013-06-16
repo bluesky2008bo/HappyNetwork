@@ -16,7 +16,7 @@ import com.google.gson.GsonBuilder;
 /**
  * 默认的JSON访问监听器
  */
-public abstract class JsonHttpListener<T> extends Handler implements HttpListener {
+public abstract class JsonResponseHandler<T> extends Handler implements ResponseHandler {
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;
@@ -25,11 +25,11 @@ public abstract class JsonHttpListener<T> extends Handler implements HttpListene
 	private Class<?> responseClass;
 	private Type responseType;
 	
-	public JsonHttpListener(Class<?> responseClass){
+	public JsonResponseHandler(Class<?> responseClass){
 		this.responseClass = responseClass;
 	}
 	
-	public JsonHttpListener(Type responseType){
+	public JsonResponseHandler(Type responseType){
 		this.responseType = responseType;
 	}
 	
