@@ -1,20 +1,189 @@
 <resources>
-
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
+    <!-- ******************************************************************************** 布局 ************************************************************************************ -->
+    <!-- 布局 - 正文 -->
+    <style name="layout_body" parent="@style/base_match_match_vertical">
+        <item name="android:id">@id/layout_body</item>
+        <item name="android:background">@color/body_backg</item>
     </style>
-
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    
+    <!-- 布局 - 正文 - 内容 -->
+    <style name="layout_body_content" parent="@style/base_match_match_vertical">
+        <item name="android:id">@id/layout_bodyContent</item>
     </style>
-
+    
+    <!-- 布局 - 正文  - 内容 - 四边有内边距-->
+    <style name="layout_body_content_padding" parent="@style/layout_body_content">
+        <item name="android:padding">@dimen/base_padding_specialLarge</item>
+    </style>
+    
+    <!-- 布局 - 正文  - 内容 - 左右有内边距-->
+    <style name="layout_body_content_leftPadding" parent="@style/layout_body_content">
+        <item name="android:paddingLeft">@dimen/base_padding_specialLarge</item>
+        <item name="android:paddingRight">@dimen/base_padding_specialLarge</item>
+    </style>
+    
+    <!-- 布局 - 正文  - 内容 - 上下有内边距-->
+    <style name="layout_body_content_topPadding" parent="@style/layout_body_content">
+        <item name="android:paddingTop">@dimen/base_padding_specialLarge</item>
+        <item name="android:paddingBottom">@dimen/base_padding_specialLarge</item>
+    </style>
+    
+	<!-- 布局 - 列表项 -->
+	<style name="layout_listItem" parent="@style/base_match_wrap">
+	    <item name="android:minHeight">@dimen/layout_listItem_minHeight</item>
+	    <item name="android:paddingLeft">@dimen/base_padding_veryLarge</item>
+	    <item name="android:paddingTop">@dimen/base_padding_littleSmall</item>
+	    <item name="android:paddingRight">@dimen/base_padding_veryLarge</item>
+	    <item name="android:paddingBottom">@dimen/base_padding_littleSmall</item>
+	    <item name="android:gravity">center_vertical</item>
+	</style>
+	
+	<!-- 布局 - 列表头和尾 -->
+	<style name="layout_listHeaderAndFooter" parent="@style/layout_listItem">
+	    <item name="android:clickable">true</item>
+	</style>
+    
+    <!-- 布局 - 列表为空时的提示视图 -->
+    <style name="layout_listEmptyHint" parent="@style/base_wrap_wrap">
+        <item name="android:id">@id/layout_listEmptyHint</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:visibility">gone</item>
+	    <item name="android:gravity">center</item>  
+	    <item name="android:clickable">true</item>
+    </style>
+    
+    <!-- 布局 - 加载中提示 -->
+    <style name="layout_loadingHint" parent="@style/base_match_match">
+        <item name="android:id">@id/layout_loadingHint</item>
+        <item name="android:layout_gravity">center</item>
+	    <item name="android:gravity">center</item> 
+	    <item name="android:clickable">true</item>
+         <item name="android:background">@color/body_backg</item>
+         <item name="android:visibility">gone</item>
+    </style>
+    
+    
+    
+    
+    
+    <!-- ******************************************************************************** 列表 ************************************************************************************ -->
+	<!-- 列表 -->
+	<style name="list" parent="@style/base_match_wrap">
+	    <item name="android:id">@android:id/list</item>
+	    <item name="android:divider">@drawable/list_divider</item>
+	    <item name="android:cacheColorHint">@color/base_transparent</item>
+	    <item name="android:fastScrollEnabled">true</item>
+	</style>
+    
+	<!-- 列表 - 充满的 -->
+	<style name="list_match" parent="@style/list">
+	    <item name="android:layout_height">match_parent</item>
+	</style>
+    
+	<!-- 列表 - 高度权重1 -->
+	<style name="list_weight" parent="@style/list">
+	    <item name="android:layout_height">0dp</item>
+	    <item name="android:layout_weight">1</item>
+	</style>
+   
+	<!-- 列表 - 有左右内边距 -->
+	<style name="list_padding" parent="@style/list">
+	    <item name="android:paddingLeft">@dimen/base_padding_specialLarge</item>
+	    <item name="android:paddingRight">@dimen/base_padding_specialLarge</item>
+	</style>
+    
+	<!-- 列表 - 充满的 - 有左右内边距 -->
+	<style name="list_match_padding" parent="@style/list_match">
+	    <item name="android:paddingLeft">@dimen/base_padding_specialLarge</item>
+	    <item name="android:paddingRight">@dimen/base_padding_specialLarge</item>
+	</style>
+    
+	<!-- 列表 - 高度权重1 - 有左右内边距 -->
+	<style name="list_weight_padding" parent="@style/list_weight">
+	    <item name="android:paddingLeft">@dimen/base_padding_specialLarge</item>
+	    <item name="android:paddingRight">@dimen/base_padding_specialLarge</item>
+	</style>
+	
+	
+	
+	
+	
+	<!-- ******************************************************************************** 文本 ************************************************************************************ -->	
+	<!-- 文本 -->
+	<style name="text" parent="@style/base_wrap_wrap">
+		<item name="android:textColor">@color/base_black</item>
+		<item name="android:textSize">@dimen/base_textSize_default</item>
+	    <item name="android:layout_margin">@dimen/base_margin_littleSmall</item>
+	</style>
+	
+	<!-- 文本 - 宽度充满 -->
+	<style name="text_match" parent="@style/text">
+	    <item name="android:layout_width">match_parent</item>
+	</style>
+	
+	<!-- 文本 - 宽度权重 -->
+	<style name="text_weight" parent="@style/text">
+	    <item name="android:layout_width">0dp</item>
+	    <item name="android:layout_weight">1</item>
+	</style>
+	
+	
+	
+	
+	
+	<!-- ******************************************************************************** 按钮 ************************************************************************************ -->
+	<!-- 按钮 - 正文 -->
+	<style name="button" parent="@style/base_wrap_wrap">
+	    <item name="android:gravity">center</item>
+	    <item name="android:textColor">@color/base_gray</item>
+	    <item name="android:minWidth">@dimen/button_minWidth</item>
+	    <item name="android:minHeight">@dimen/button_minHeight</item>
+	    <item name="android:layout_margin">@dimen/base_margin_littleSmall</item>
+        <item name="android:padding">@dimen/base_padding_large</item>
+	</style>
+	
+	<!-- 按钮 - 正文 - 宽度充满 -->
+	<style name="button_match" parent="@style/button">
+	    <item name="android:layout_width">match_parent</item>
+	</style>
+	
+	<!-- 按钮 - 正文 - 宽度权重 -->
+	<style name="button_weight" parent="@style/button">
+	    <item name="android:layout_width">0dp</item>
+	    <item name="android:layout_weight">1</item>
+	</style>
+	
+    <!-- 按钮 - 列表项 -->
+    <style name="button_listItem" parent="@style/base_wrap_wrap">
+	    <item name="android:gravity">center</item>
+	    <item name="android:textColor">@color/base_gray</item>
+		<item name="android:minWidth">@dimen/button_listItem_minHeight</item>
+		<item name="android:minHeight">@dimen/button_listItem_minHeight</item>
+	    <item name="android:layout_margin">@dimen/base_margin_littleSmall</item>
+	    <item name="android:padding">@dimen/base_padding_default</item>
+		<item name="android:focusable">false</item>
+		<item name="android:focusableInTouchMode">false</item>
+    </style>
+    
+    <!-- 按钮 - 列表项中的选择按钮 -->
+    <style name="button_listItem_choice" parent="@style/button_listItem">
+		<item name="android:clickable">false</item>
+        <item name="android:id">@id/button_listItemChoice</item>
+    </style>
+    
+    
+    
+    
+    
+    <!-- ******************************************************************************** 编辑器 ************************************************************************************ -->
+   <!-- 编辑器 -->
+    <style name="edit" parent="@style/base_match_wrap">
+        <item name="android:textSize">@dimen/base_textSize_default</item>
+        <item name="android:textColor">@color/base_black</item>
+        <item name="android:minHeight">@dimen/edit_minHeight</item>
+        <item name="android:minWidth">@dimen/edit_minWidth</item>
+        <item name="android:padding">@dimen/base_padding_large</item>
+	    <item name="android:layout_margin">@dimen/base_margin_littleSmall</item>
+        <item name="android:singleLine">true</item>
+    </style>
 </resources>

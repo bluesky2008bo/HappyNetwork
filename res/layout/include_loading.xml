@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/base_match_match_vertical"
+    android:id="@+id/loading"
+    android:gravity="center"
+    android:visibility="gone">
+    
+	<ProgressBar style="@style/base_wrap_wrap"/>
+	<include layout="@layout/include_spacing_vertical_large"/>
+	<TextView style="@style/base_wrap_wrap" android:text="@string/base_loadingLater" />
+</LinearLayout>

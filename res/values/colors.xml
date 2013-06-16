@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 公共的颜色 -->
+<resources>
+    <!-- 正文区背景 -->
+    <color name="body_backg">#f0f4f6</color>
+</resources>
