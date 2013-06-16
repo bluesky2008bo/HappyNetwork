@@ -1,3 +1,4 @@
+<!-- Http访问网络页面 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" style="@style/layout_body">
     <ScrollView style="@style/base_match_match">
         <LinearLayout style="@style/layout_body_content_padding">
@@ -6,4 +7,5 @@
     </ScrollView>
 
     <include layout="@layout/include_loading"/>
+    <include layout="@layout/include_shadow_down"/>
 </FrameLayout>

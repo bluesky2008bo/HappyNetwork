@@ -27,7 +27,7 @@ public class ImageGridFragment extends TitleFragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		GridView gridView = (GridView) inflater.inflate(R.layout.grid_simple, null);
+		GridView gridView = (GridView) inflater.inflate(R.layout.grid, null);
 		gridView.setAdapter(new ImageAdapter(getActivity(), IMAGES));
 		return gridView;
 	}

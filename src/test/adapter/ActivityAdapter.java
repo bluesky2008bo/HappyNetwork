@@ -66,7 +66,7 @@ public class ActivityAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		TextView text = null;
 		if(convertView == null){
-			convertView = LayoutInflater.from(context).inflate(R.layout.text, null);
+			convertView = LayoutInflater.from(context).inflate(R.layout.list_item_text, null);
 		}
 		
 		text = (TextView) convertView;

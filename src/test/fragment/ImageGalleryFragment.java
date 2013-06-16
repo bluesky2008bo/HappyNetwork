@@ -27,10 +27,9 @@ public class ImageGalleryFragment extends TitleFragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.gallery_simple, null);
-		Gallery gallery = (Gallery) view.findViewById(R.id.gallery);
+		Gallery gallery = (Gallery) inflater.inflate(R.layout.gallery, null);
 		gallery.setAdapter(new ImageAdapter(getActivity(), getResources().getStringArray(R.array.imageurls)));
-		return view;
+		return gallery;
 	}
 
 	@Override

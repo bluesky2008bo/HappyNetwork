@@ -22,7 +22,7 @@
     <dimen name="pull_height">90dp</dimen>
     
     <!-- 阴影 - 高度 -->
-    <dimen name="shadow_height">6dp</dimen>
+    <dimen name="shadow_height">4dp</dimen>
     
     <!-- 间隔 - 高度 -->
     <dimen name="spacing_height">10dp</dimen>

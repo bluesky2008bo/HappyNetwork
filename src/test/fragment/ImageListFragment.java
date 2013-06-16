@@ -27,7 +27,7 @@ public class ImageListFragment extends TitleFragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		ListView listView = (ListView) inflater.inflate(R.layout.activity_list, null);
+		ListView listView = (ListView) inflater.inflate(R.layout.list, null);
 		listView.setAdapter(new ImageAdapter(getActivity(), getResources().getStringArray(R.array.imageurls)));
 		return listView;
 	}
