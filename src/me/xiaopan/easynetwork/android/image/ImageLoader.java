@@ -19,9 +19,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -60,7 +58,8 @@ public class ImageLoader{
 	
 	private int maxThreadNumber = 50;	//最大线程数
 	private int maxWaitingNumber = 30;	//最大等待数
-	private Map<String, Set<ImageView>> loadingMap;	//加载中ID和要显示的图片集合
+	private Set<ImageView> loadingImageViewSet;	//图片视图集合，这个集合里的每个尚未加载完成的视图身上都会携带有他要显示的图片的地址，当每一个图片加载完成之后都会在这个列表中遍历找到所有携带有这个这个图片的地址的视图，并把图片显示到这个视图上
+	private Set<String> loadingRequestSet;	//正在加载的Url列表，用来防止同一个URL被重复加载
 	private Circle<LoadRequest> waitingRequestCircle;	//等待处理的加载请求
 	private LoadHandler loadHandler;	//加载处理器
 	
@@ -76,7 +75,8 @@ public class ImageLoader{
 		}
 		
 		loadHandler = new LoadHandler(this);
-		loadingMap = new HashMap<String, Set<ImageView>>();
+		loadingImageViewSet = new HashSet<ImageView>();//初始化图片视图集合
+		loadingRequestSet = new HashSet<String>();//初始化加载中URL集合
 		waitingRequestCircle = new Circle<LoadRequest>(maxWaitingNumber);//初始化等待处理的加载请求集合
 	}
 	
@@ -203,9 +203,12 @@ public class ImageLoader{
 	 * @return true：图片缓存中有图片并且已经显示了；false：缓存中没有对应的图片，需要开启新线程从网络或本地加载
 	 */
 	private final boolean tryShowImage(String id, ImageView showImageView, int defaultDrawableResId){
+		showImageView.setTag(id);//绑定
+		
 		/* 根据地址从缓存中获取图片，如果缓存中存在相对的图片就显示，否则显示默认图片或者显示空 */
 		cacheBitmap = getBitmapFromCache(id);
 		if(cacheBitmap != null){
+			loadingImageViewSet.remove(showImageView);
 			showImageView.clearAnimation();
 			showImageView.setImageBitmap(cacheBitmap);
 			return true;
@@ -228,16 +231,13 @@ public class ImageLoader{
 	 * @param options
 	 */
 	final void tryLoad(String id, String url, File localCacheFile, ImageView showImageView, Options options, LoadRequest loadRequest){
-		if(loadingMap.containsKey(id)){		//如果正在加载
-			loadingMap.get(id).add(showImageView);
-		}else{
+		loadingImageViewSet.add(showImageView);	//将当前视图存起来
+		if(!loadingRequestSet.contains(id)){		//如果没有加载
 			if(loadRequest == null){
 				loadRequest = new LoadRequest(id, url, localCacheFile, showImageView, options);
 			}
-			if(loadingMap.size() < maxThreadNumber){	//如果尚未达到最大负荷，就开启线程加载
-				HashSet<ImageView> imageViews = new HashSet<ImageView>(1);
-				imageViews.add(showImageView);
-				loadingMap.put(id, imageViews);
+			if(loadingRequestSet.size() < maxThreadNumber){	//如果尚未达到最大负荷，就开启线程加载
+				loadingRequestSet.add(id);
 				EasyNetwork.getThreadPool().submit(new ImageLoadTask(this, loadRequest));
 			}else{
 				//否则，加到等待队列中
@@ -252,8 +252,11 @@ public class ImageLoader{
 	 * 清除历史
 	 */
 	public final void clearHistory(){
-		synchronized (loadingMap){
-			loadingMap.clear();
+		synchronized (loadingImageViewSet) {
+			loadingImageViewSet.clear();
+		}
+		synchronized (loadingRequestSet) {
+			loadingRequestSet.clear();
 		}
 		synchronized (waitingRequestCircle) {
 			waitingRequestCircle.clear();
@@ -293,11 +296,19 @@ public class ImageLoader{
 	}
 
 	/**
-	 * 获取加载中集合
-	 * @return 加载中集合
+	 * 获取加载中显示视图集合
+	 * @return
 	 */
-	public final Map<String, Set<ImageView>> getLoadingMap() {
-		return loadingMap;
+	public final Set<ImageView> getLoadingImageViewSet() {
+		return loadingImageViewSet;
+	}
+
+	/**
+	 * 获取加载中请求ID集合
+	 * @return
+	 */
+	public final Set<String> getLoadingRequestSet() {
+		return loadingRequestSet;
 	}
 
 	/**

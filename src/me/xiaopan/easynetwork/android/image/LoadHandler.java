@@ -15,7 +15,7 @@
  */
 package me.xiaopan.easynetwork.android.image;
 
-import java.util.Set;
+import java.util.Iterator;
 
 import android.os.Handler;
 import android.os.Message;
@@ -55,28 +55,37 @@ public class LoadHandler extends Handler {
 			}
 		}
 			
-		/* 根据当前加载ID从加载中集合中取出其显示视图集合，并遍历其显示视图集合，一一显示 */
-		Set<ImageView> imageViews =  imageLoader.getLoadingMap().remove(loadRequest.getId());
-		if(imageViews != null &&imageViews.size() > 0){
-			for(ImageView imageView : imageViews){
-				imageView.clearAnimation();//先清除之前所有的动画
-				if(loadRequest.getResultBitmap() != null){
-					Animation animation = ImageLoaderUtils.getShowAnimationListener(loadRequest.getOptions());
-					if(animation != null){
-						imageView.setAnimation(animation);
-					}
-					imageView.setImageBitmap(loadRequest.getResultBitmap());
-				}else{
-					int loadFailedDrawableResId = ImageLoaderUtils.getLoadFailedDrawableResId(loadRequest.getOptions());
-					if(loadFailedDrawableResId > 0){
-						imageView.setImageResource(loadFailedDrawableResId);
+		/* 遍历显示视图集合，找到其绑定的地址同当前下载的地址一样的图片视图，并将结果显示到图片视图上 */
+		Iterator<ImageView> iterator = imageLoader.getLoadingImageViewSet().iterator();
+		ImageView imageView;
+		Object tagObject;
+		while(iterator.hasNext()){
+			imageView = iterator.next();
+			if(imageView != null){
+				tagObject = imageView.getTag();
+				if(tagObject != null && loadRequest.getId().equals(tagObject.toString())){
+					imageView.clearAnimation();//先清除之前所有的动画
+					if(loadRequest.getResultBitmap() != null){
+						Animation animation = ImageLoaderUtils.getShowAnimationListener(loadRequest.getOptions());
+						if(animation != null){
+							imageView.setAnimation(animation);
+						}
+						imageView.setImageBitmap(loadRequest.getResultBitmap());
 					}else{
-						imageView.setImageBitmap(null);
+						int loadFailedDrawableResId = ImageLoaderUtils.getLoadFailedDrawableResId(loadRequest.getOptions());
+						if(loadFailedDrawableResId > 0){
+							imageView.setImageResource(loadFailedDrawableResId);
+						}else{
+							imageView.setImageBitmap(null);
+						}
 					}
+					iterator.remove();
 				}
 			}
-			imageViews.clear();
 		}
+		
+		/* 将当前下载对象从正在下载集合中删除 */
+		imageLoader.getLoadingRequestSet().remove(loadRequest.getId());
 		
 		/* 从等待队列中取出等待加载的请求并尝试加载 */
 		LoadRequest waitImageLoadRequest;
