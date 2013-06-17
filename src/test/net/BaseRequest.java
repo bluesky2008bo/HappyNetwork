@@ -13,38 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package me.xiaopan.easynetwork.android.http.headers;
 
-public class ContentEncoding extends HttpHeader{
-	/**
-	 * 名字
-	 */
-	public static final String NAME = "Content-Encoding";
-	/**
-	 * 值
-	 */
-	private String value;
-	
-	public ContentEncoding(String value) {
-		setValue(value);
-	}
-	
-	public ContentEncoding() {
-		setValue("gzip");
-	}
+package test.net;
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+import me.xiaopan.easynetwork.android.http.Request;
 
-	@Override
-	public String getValue() {
-		return value;
-	}
+/**
+ * 基本请求
+ */
+public class BaseRequest implements Request {
 
-	@Override
-	public void setValue(String value) {
-		this.value = value;
-	}
 }

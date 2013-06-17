@@ -13,38 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package me.xiaopan.easynetwork.android.http.headers;
 
-public class ContentEncoding extends HttpHeader{
-	/**
-	 * 名字
-	 */
-	public static final String NAME = "Content-Encoding";
-	/**
-	 * 值
-	 */
-	private String value;
-	
-	public ContentEncoding(String value) {
-		setValue(value);
-	}
-	
-	public ContentEncoding() {
-		setValue("gzip");
-	}
+package test.net.request;
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+import me.xiaopan.easynetwork.android.http.Path;
 
-	@Override
-	public String getValue() {
-		return value;
-	}
+/**
+ * 北京天气请求
+ */
+@Path("data/101010100.html")
+public class BeijingWeatherRequest extends WeatherRequest {
 
-	@Override
-	public void setValue(String value) {
-		this.value = value;
-	}
 }

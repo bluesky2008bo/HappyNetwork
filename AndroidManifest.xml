@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.xiaopan.easynetwork.android"
-    android:versionCode="104"
-    android:versionName="1.0.4" >
+    android:versionCode="105"
+    android:versionName="1.0.5" >
 
     <!-- 声明兼容的系统版本 -->
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17" />
@@ -20,6 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name="test.activity.ImageLoaderTestActivity" android:label="@string/activityTitle_imageLoader"/>
-        <activity android:name="test.activity.HttpTestActivity" android:label="@string/activityTitle_http"/>
+        <activity android:name="test.activity.StringActivity" android:label="@string/activityTitle_string"/>
+        <activity android:name="test.activity.WeatherActivity" android:label="@string/activityTitle_weather"/>
     </application>
 </manifest>

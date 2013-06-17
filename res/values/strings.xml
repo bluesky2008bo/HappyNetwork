@@ -2,7 +2,8 @@
 <resources>
     <string name="app_name">EasyNetwork</string>
     
-    <string name="activityTitle_http">Http访问网络</string>
+    <string name="activityTitle_string">MIUI首页源码（字符串响应处理器）</string>
+    <string name="activityTitle_weather">天气预报（请求对象+Json响应处理器）</string>
     <string name="activityTitle_imageLoader">图片加载器</string>
     
     <string-array name="imageurls">

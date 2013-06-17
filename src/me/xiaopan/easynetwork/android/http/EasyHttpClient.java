@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 Peng fei Pan
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package me.xiaopan.easynetwork.android.http;
 
 import java.lang.ref.WeakReference;
@@ -9,6 +24,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.Future;
 
 import me.xiaopan.easynetwork.android.EasyNetwork;
+import me.xiaopan.easynetwork.android.EasyNetworkUtils;
 import me.xiaopan.easynetwork.android.http.interceptor.AddRequestHeaderRequestInterceptor;
 import me.xiaopan.easynetwork.android.http.interceptor.GzipProcessRequestInterceptor;
 import me.xiaopan.easynetwork.android.http.interceptor.GzipProcessResponseInterceptor;
@@ -48,7 +64,7 @@ import android.content.Context;
  */
 public class EasyHttpClient {
 	private static final int DEFAULT_MAX_CONNECTIONS = 10;	//最大连接数
-    private static final int DEFAULT_SOCKET_TIMEOUT = 10 * 1000;	//连接超时时间
+    private static final int DEFAULT_SOCKET_TIMEOUT = 15 * 1000;	//连接超时时间
     private static final int DEFAULT_MAX_RETRIES = 5;	//最大重试次数
     private static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;	//Socket缓存大小
     private static boolean enableOutputLogToConsole = true;
@@ -103,7 +119,7 @@ public class EasyHttpClient {
     }
     
     /**
-     * 设置请求超时时间，默认是10秒
+     * 设置请求超时时间，默认是15秒
      * @param timeout 请求超时时间，单位毫秒
      */
     public void setTimeout(int timeout){
