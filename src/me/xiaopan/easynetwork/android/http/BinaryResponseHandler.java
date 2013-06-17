@@ -11,7 +11,7 @@ import android.os.Message;
 /**
  * 将Http响应转换为二进制数组的处理器
  */
-public abstract class BinaryResponseHandler extends Handler implements ResponseHandler {
+public abstract class BinaryResponseHandler extends Handler implements HttpResponseHandler {
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;

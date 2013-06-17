@@ -8,7 +8,7 @@ import org.apache.http.util.EntityUtils;
 import android.os.Handler;
 import android.os.Message;
 
-public abstract class StringResponseHandler extends Handler implements ResponseHandler {
+public abstract class StringResponseHandler extends Handler implements HttpResponseHandler {
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;

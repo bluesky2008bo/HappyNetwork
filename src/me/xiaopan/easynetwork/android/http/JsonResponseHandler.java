@@ -16,7 +16,7 @@ import com.google.gson.GsonBuilder;
 /**
  * 默认的JSON访问监听器
  */
-public abstract class JsonResponseHandler<T> extends Handler implements ResponseHandler {
+public abstract class JsonResponseHandler<T> extends Handler implements HttpResponseHandler {
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;

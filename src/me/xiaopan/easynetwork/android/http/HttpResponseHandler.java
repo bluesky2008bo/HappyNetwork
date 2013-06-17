@@ -5,7 +5,7 @@ import org.apache.http.HttpResponse;
 /**
  * 响应处理器
  */
-public interface ResponseHandler{
+public interface HttpResponseHandler{
 	/**
      * 开始
      */
