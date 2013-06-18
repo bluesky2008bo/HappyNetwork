@@ -16,67 +16,83 @@
 package test.activity;
 
 import me.xiaopan.easynetwork.android.R;
+import me.xiaopan.easynetwork.android.http.BinaryHttpResponseHandler;
 import me.xiaopan.easynetwork.android.http.EasyHttpClient;
-import me.xiaopan.easynetwork.android.http.StringHttpResponseHandler;
 
 import org.apache.http.HttpResponse;
 
-import test.util.WebViewManager;
 import android.app.Activity;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
- * 字符串
+ * 使用BinaryResponseHandler下载图片
  */
-public class StringActivity extends Activity {
-	private WebViewManager webViewManager;
+public class BinaryActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_web);
-		webViewManager = new WebViewManager((WebView) findViewById(R.id.web1));
-		
-		EasyHttpClient.getInstance().get("http://www.miui.com/forum.php", new StringHttpResponseHandler(){
+		setContentView(R.layout.activity_image);
+		EasyHttpClient.getInstance().get("http://e.hiphotos.baidu.com/album/w%3D2048/sign=4a605579d1160924dc25a51be03f34fa/1f178a82b9014a900a9e7492a8773912b31bee79.jpg", new BinaryHttpResponseHandler() {
 			@Override
 			public void onStart() {
 				findViewById(R.id.loading).setVisibility(View.VISIBLE);
 			}
-
+			
 			@Override
-			public void onSuccess(String responseContent) {
-				webViewManager.getWebView().loadData(responseContent, "text/html;charset=utf-8", null);
+			public void onSuccess(byte[] binaryData) {
+				((ImageView) findViewById(R.id.image1)).setImageBitmap(BitmapFactory.decodeByteArray(binaryData, 0, binaryData.length));
 			}
-
+			
 			@Override
 			public void onFailure(HttpResponse httpResponse) {
 				Toast.makeText(getBaseContext(), "失败了，状态码："+httpResponse.getStatusLine().getStatusCode(), Toast.LENGTH_LONG).show();
 				finish();
 			}
-
+			
 			@Override
 			public void onException(Throwable e) {
 				e.printStackTrace();
 				Toast.makeText(getBaseContext(), "异常了："+e.getMessage(), Toast.LENGTH_LONG).show();
 				finish();
 			}
-
+			
 			@Override
 			public void onEnd() {
 				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 		});
-	}
-
-	@Override
-	public void onBackPressed() {
-		if(webViewManager.getWebView().canGoBack()){
-			webViewManager.getWebView().goBack();
-		}else{
-			super.onBackPressed();
-		}
+		
+//		EasyHttpClient.getInstance().get("http://www.weather.com.cn/data/cityinfo/101010100.html", new JsonHttpResponseHandler<WeatherResponse>(WeatherResponse.class){
+//			@Override
+//			public void onStart() {
+//				findViewById(R.id.loading).setVisibility(View.VISIBLE);
+//			}
+//
+//			@Override
+//			public void onSuccess(WeatherResponse t) {
+//				((TextView) findViewById(R.id.text_main_content)).setText(t.toString());
+//			}
+//
+//			@Override
+//			public void onFailure(HttpResponse httpResponse) {
+//				((TextView) findViewById(R.id.text_main_content)).setText("失败了："+httpResponse.getStatusLine().getStatusCode());
+//			}
+//
+//			@Override
+//			public void onException(Throwable e) {
+//				e.printStackTrace();
+//				((TextView) findViewById(R.id.text_main_content)).setText("异常了："+e.getMessage());
+//			}
+//
+//			@Override
+//			public void onEnd() {
+//				findViewById(R.id.loading).setVisibility(View.GONE);
+//			}
+//		});
 	}
 }

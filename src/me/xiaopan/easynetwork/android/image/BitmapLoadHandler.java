@@ -21,9 +21,9 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 /**
- * 位图加载监听器
+ * 位图加载处理器
  */
-public interface BitmapLoadListener{
+public interface BitmapLoadHandler{
 	/**
 	 * 从本地文件加载
 	 * @param localFile 本地文件

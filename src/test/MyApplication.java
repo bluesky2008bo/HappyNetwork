@@ -18,7 +18,7 @@ package test;
 import me.xiaopan.easynetwork.android.R;
 import me.xiaopan.easynetwork.android.image.ImageLoader;
 import me.xiaopan.easynetwork.android.image.Options;
-import me.xiaopan.easynetwork.android.image.RoundedBitmapLoadListener;
+import me.xiaopan.easynetwork.android.image.RoundedBitmapLoadHandler;
 import me.xiaopan.easynetwork.android.image.ShowAnimationListener;
 import android.app.Application;
 import android.view.animation.Animation;
@@ -42,7 +42,7 @@ public class MyApplication extends Application {
 				return scaleAnimation;
 			}
 		});
-		options.setBitmapLoadListener(new RoundedBitmapLoadListener());	//设置图片加载监听器，这里传入的是一个可以将图片都处理为圆角的图片加载监听器
+		options.setBitmapLoadHandler(new RoundedBitmapLoadHandler());	//设置图片加载监听器，这里传入的是一个可以将图片都处理为圆角的图片加载监听器
 		ImageLoader.init(getBaseContext(), options);
 	}
 }

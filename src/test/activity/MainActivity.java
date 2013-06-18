@@ -29,9 +29,11 @@ public class MainActivity extends ListActivity {
 		setContentView(R.layout.activity_list);
 		
 		getListView().setAdapter(new ActivityAdapter(getBaseContext(), getListView()
-			, new ActivityItem(getString(R.string.activityTitle_weather), WeatherActivity.class)
+			, new ActivityItem(getString(R.string.activityTitle_binary), BinaryActivity.class)
 			, new ActivityItem(getString(R.string.activityTitle_string), StringActivity.class)
-			, new ActivityItem(getString(R.string.activityTitle_imageLoader), ImageLoaderTestActivity.class)
+			, new ActivityItem(getString(R.string.activityTitle_json), JsonActivity.class)
+			, new ActivityItem(getString(R.string.activityTitle_requestObject), RequestObjectActivity.class)
+			, new ActivityItem(getString(R.string.activityTitle_imageLoader), ImageLoaderActivity.class)
 		));
 	}
 }

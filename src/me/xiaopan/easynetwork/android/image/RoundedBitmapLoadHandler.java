@@ -31,14 +31,14 @@ import android.widget.ImageView;
 /**
  * 圆角位图加载监听器，此监听器会把原始位图处理成宽高同其ImageView的宽高一样，并且还是圆角的
  */
-public class RoundedBitmapLoadListener implements BitmapLoadListener {
+public class RoundedBitmapLoadHandler implements BitmapLoadHandler {
 	private int roundPixels;
 	
-	public RoundedBitmapLoadListener(){
+	public RoundedBitmapLoadHandler(){
 		this.roundPixels = 18;
 	}
 	
-	public RoundedBitmapLoadListener(int roundPixels){
+	public RoundedBitmapLoadHandler(int roundPixels){
 		this.roundPixels = roundPixels;
 	}
 	

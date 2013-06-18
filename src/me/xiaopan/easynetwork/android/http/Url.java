@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package test.net;
+package me.xiaopan.easynetwork.android.http;
 
-import me.xiaopan.easynetwork.android.http.Request;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * 基本请求，可以将一些每个请求都必须有的参数定义在此
+ * Url地址
  */
-public class BaseRequest implements Request {
-
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+public @interface Url {
+	public String value();
 }

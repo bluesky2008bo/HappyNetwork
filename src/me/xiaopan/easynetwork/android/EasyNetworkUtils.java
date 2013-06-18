@@ -29,6 +29,7 @@ import me.xiaopan.easynetwork.android.http.Path;
 import me.xiaopan.easynetwork.android.http.Request;
 import me.xiaopan.easynetwork.android.http.RequestParams;
 import me.xiaopan.easynetwork.android.http.True;
+import me.xiaopan.easynetwork.android.http.Url;
 import me.xiaopan.easynetwork.android.http.headers.ContentType;
 
 import org.apache.http.Header;
@@ -266,22 +267,61 @@ public class EasyNetworkUtils {
 		}
 	}
 	
-	public static final String getUrlFromRequestObject(String defaultUrl, Object requestObject) throws Exception{
-		if(isNotNullAndEmpty(defaultUrl)){
-			return defaultUrl;
+	/**
+	 * 判断给定的字符串是否以一个特定的字符串结尾，忽略大小写
+	 * @param sourceString 给定的字符串
+	 * @param newString 一个特定的字符串
+	 * @return 
+	 */
+	public static boolean endsWithIgnoreCase(String sourceString, String newString){
+		int newLength = newString.length();
+		int sourceLength = sourceString.length();
+		if(newLength == sourceLength){
+			return newString.equalsIgnoreCase(sourceString);
+		}else if(newLength < sourceLength){
+			char[] newChars = new char[newLength];
+			sourceString.getChars(sourceLength - newLength, sourceLength, newChars, 0);
+			return newString.equalsIgnoreCase(String.valueOf(newChars));
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	 * 通过解析一个请求对象来获取请求地址
+	 * @param priorUrl 默认的请求地址，如果priorUrl不为null也不为空将直接返回priorUrl
+	 * @param requestObject 请求对象
+	 * @return 请求地址
+	 * @throws Exception 请求对象上既没有Url注解（或者值为空）也没有Host注解（或者值为空）
+	 */
+	public static final String getUrlFromRequestObject(String priorUrl, Object requestObject) throws Exception{
+		if(isNotNullAndEmpty(priorUrl)){
+			return priorUrl;
 		}else{
 			Class<?> requestClass = requestObject.getClass();
-			Host host = requestClass.getAnnotation(Host.class);
-			if(host == null || !isNotNullAndEmpty(host.value())){
-				throw new Exception(requestClass.getName()+"上没有Host注解");
-			}
-			//尝试从请求对象中获取路径地址
-			Path path = requestClass.getAnnotation(Path.class);
-			if(path == null || !isNotNullAndEmpty(path.value())){
-				throw new Exception(requestClass.getName()+"上没有Path注解");
-			}
 			
-			return host.value() + (startsWithIgnoreCase(host.value(), "/")?"":"/") + path.value();
+			/* 优先使用Url注解的值作为请求地址，如果没有Url注解再去用Host和Path注解来组合请求地址 */
+			Url url = requestClass.getAnnotation(Url.class);
+			String urlValue = url != null ? url.value() : null;
+			if(isNotNullAndEmpty(urlValue)){
+				return urlValue;
+			}else{
+				/* 如果有Host注解就继续，否则抛异常 */
+				Host host = requestClass.getAnnotation(Host.class);
+				String hostValue = host != null ? host.value() : null;
+				if(isNotNullAndEmpty(hostValue)){
+					/* 如果有Path注解就用Host注解的值拼接上Path注解的值作为请求地址，否则就只使用Host注解的值来作为请求地址 */
+					Path path = requestClass.getAnnotation(Path.class);
+					String pathValue = path != null ? path.value() : null;
+					if(isNotNullAndEmpty(pathValue)){
+						return hostValue + "/" + pathValue;
+					}else{
+						return hostValue;
+					}
+				}else{
+					throw new Exception(requestClass.getName()+"上既没有Url注解（或者值为空）也没有Host注解（或者值为空）");
+				}
+			}
 		}
 	}
 	

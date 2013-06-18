@@ -19,8 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="test.activity.ImageLoaderTestActivity" android:label="@string/activityTitle_imageLoader"/>
+        <activity android:name="test.activity.BinaryActivity" android:label="@string/activityTitle_binary"/>
         <activity android:name="test.activity.StringActivity" android:label="@string/activityTitle_string"/>
-        <activity android:name="test.activity.WeatherActivity" android:label="@string/activityTitle_weather"/>
+        <activity android:name="test.activity.JsonActivity" android:label="@string/activityTitle_json"/>
+        <activity android:name="test.activity.RequestObjectActivity" android:label="@string/activityTitle_requestObject"/>
+        <activity android:name="test.activity.ImageLoaderActivity" android:label="@string/activityTitle_imageLoader"/>
     </application>
 </manifest>

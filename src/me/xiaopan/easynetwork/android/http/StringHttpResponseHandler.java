@@ -25,7 +25,10 @@ import org.apache.http.util.EntityUtils;
 import android.os.Handler;
 import android.os.Message;
 
-public abstract class StringResponseHandler extends Handler implements HttpResponseHandler {
+/**
+ * 默认的字符串Http响应处理器
+ */
+public abstract class StringHttpResponseHandler extends Handler implements HttpResponseHandler {
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;
@@ -43,7 +46,7 @@ public abstract class StringResponseHandler extends Handler implements HttpRespo
 			/* 读取内容并转换成字符串 */
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
-				sendMessage(obtainMessage(MESSAGE_SUCCESS, EntityUtils.toString(new BufferedHttpEntity(httpEntity), EasyNetworkUtils.getResponseCharset(httpResponse))));
+				sendMessage(obtainMessage(MESSAGE_SUCCESS, EntityUtils.toString(new BufferedHttpEntity(httpEntity), EasyNetworkUtils.DEFAULT_CHARSET)));
 			}else{
 				sendMessage(obtainMessage(MESSAGE_SUCCESS));
 			}

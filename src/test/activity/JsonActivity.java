@@ -18,7 +18,7 @@ package test.activity;
 
 import me.xiaopan.easynetwork.android.R;
 import me.xiaopan.easynetwork.android.http.EasyHttpClient;
-import me.xiaopan.easynetwork.android.http.JsonResponseHandler;
+import me.xiaopan.easynetwork.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.HttpResponse;
 
@@ -33,7 +33,7 @@ import android.widget.TextView;
 /**
  * 获取天气信息
  */
-public class WeatherActivity extends Activity {
+public class JsonActivity extends Activity {
 	private TextView text;
 	
 	@Override
@@ -42,7 +42,7 @@ public class WeatherActivity extends Activity {
 		setContentView(R.layout.activity_text);
 		text = (TextView) findViewById(R.id.text1);
 		
-		EasyHttpClient.getInstance().sendRequest(new BeijingWeatherRequest(), new JsonResponseHandler<Weather>(Weather.class) {
+		EasyHttpClient.getInstance().sendRequest(new BeijingWeatherRequest(), new JsonHttpResponseHandler<Weather>(Weather.class) {
 			@Override
 			public void onStart() {
 				findViewById(R.id.loading).setVisibility(View.VISIBLE);

@@ -31,9 +31,9 @@ import android.os.Message;
 import com.google.gson.GsonBuilder;
 
 /**
- * 默认的JSON访问监听器
+ * 默认的JsonHttp响应处理器
  */
-public abstract class JsonResponseHandler<T> extends Handler implements HttpResponseHandler {
+public abstract class JsonHttpResponseHandler<T> extends Handler implements HttpResponseHandler {
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;
@@ -42,11 +42,11 @@ public abstract class JsonResponseHandler<T> extends Handler implements HttpResp
 	private Class<?> responseClass;
 	private Type responseType;
 	
-	public JsonResponseHandler(Class<?> responseClass){
+	public JsonHttpResponseHandler(Class<?> responseClass){
 		this.responseClass = responseClass;
 	}
 	
-	public JsonResponseHandler(Type responseType){
+	public JsonHttpResponseHandler(Type responseType){
 		this.responseType = responseType;
 	}
 	

@@ -24,9 +24,9 @@ import android.os.Handler;
 import android.os.Message;
 
 /**
- * 将Http响应转换为二进制数组的处理器
+ * 默认的二进制Http响应处理器
  */
-public abstract class BinaryResponseHandler extends Handler implements HttpResponseHandler {
+public abstract class BinaryHttpResponseHandler extends Handler implements HttpResponseHandler {
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;
@@ -65,7 +65,7 @@ public abstract class BinaryResponseHandler extends Handler implements HttpRespo
 			case MESSAGE_SUCCESS: onSuccess((byte[]) msg.obj); break;
 			case MESSAGE_FAILURE: onFailure((HttpResponse) msg.obj); break;
 			case MESSAGE_EXCEPTION: onException((Throwable) msg.obj); break;
-			case MESSAGE_END: end(); break;
+			case MESSAGE_END: onEnd(); break;
 		}
 	}
 	

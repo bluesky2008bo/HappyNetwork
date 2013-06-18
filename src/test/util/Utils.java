@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package test.net;
+package test.util;
 
-import me.xiaopan.easynetwork.android.http.Request;
+import android.app.Activity;
+import android.content.Context;
+import android.view.inputmethod.InputMethodManager;
 
-/**
- * 基本请求，可以将一些每个请求都必须有的参数定义在此
- */
-public class BaseRequest implements Request {
+public class Utils {
 
+	
+	/**
+	 * 关闭软键盘
+	 * @param context
+	 */
+	public static void closeSoftKeyboard(Activity activity){
+		InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+		//如果软键盘已经开启
+		if(inputMethodManager.isActive()){
+			inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+		}
+	}
 }

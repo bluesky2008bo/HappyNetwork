@@ -1,0 +1,6 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" style="@style/layout_body">
+	<WebView style="@style/base_match_match" android:id="@+id/web1"/>
+
+    <include layout="@layout/include_loading"/>
+    <include layout="@layout/include_shadow_down"/>
+</FrameLayout>

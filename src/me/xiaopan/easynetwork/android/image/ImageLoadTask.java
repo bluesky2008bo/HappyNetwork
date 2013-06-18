@@ -67,7 +67,7 @@ public class ImageLoadTask implements Runnable {
 	 * @return
 	 */
 	private Bitmap fromLocalLoadBitmap(File localFile){
-		BitmapLoadListener bitmapHandler = ImageLoaderUtils.getBitmapLoadListener(loadRequest.getOptions());
+		BitmapLoadHandler bitmapHandler = ImageLoaderUtils.getBitmapLoadListener(loadRequest.getOptions());
 		if(bitmapHandler != null){
 			return bitmapHandler.onFromByteArrayLoad(localFile, loadRequest.getShowImageView());
 		}else{
@@ -81,7 +81,7 @@ public class ImageLoadTask implements Runnable {
 	 * @return
 	 */
 	private Bitmap fromByteArrayLoadBitmap(byte[] byteArray){
-		BitmapLoadListener bitmapHandler = ImageLoaderUtils.getBitmapLoadListener(loadRequest.getOptions());
+		BitmapLoadHandler bitmapHandler = ImageLoaderUtils.getBitmapLoadListener(loadRequest.getOptions());
 		if(bitmapHandler != null){
 			return bitmapHandler.onFromLocalFileLoad(byteArray, loadRequest.getShowImageView());
 		}else{

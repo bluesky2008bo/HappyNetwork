@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package test.activity;
 
 import me.xiaopan.easynetwork.android.R;
@@ -21,28 +22,47 @@ import me.xiaopan.easynetwork.android.http.StringHttpResponseHandler;
 
 import org.apache.http.HttpResponse;
 
+import test.net.request.BaiduSearchRequest;
+import test.util.Utils;
 import test.util.WebViewManager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.WebView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
-/**
- * 字符串
- */
-public class StringActivity extends Activity {
+public class RequestObjectActivity extends Activity {
 	private WebViewManager webViewManager;
+	private EditText keywordEdit;
+	private Button searchButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_web);
+		setContentView(R.layout.activity_request_object);
+		keywordEdit = (EditText) findViewById(R.id.edit_requestObject_keyword);
+		searchButton = (Button) findViewById(R.id.button_requestObject_search);
 		webViewManager = new WebViewManager((WebView) findViewById(R.id.web1));
+		keywordEdit.setText("王力宏");
+		search(keywordEdit.getEditableText().toString().trim());
 		
-		EasyHttpClient.getInstance().get("http://www.miui.com/forum.php", new StringHttpResponseHandler(){
+		searchButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Utils.closeSoftKeyboard(RequestObjectActivity.this);
+				search(keywordEdit.getEditableText().toString().trim());
+			}
+		});
+	}
+	
+	private void search(String keyword){
+		EasyHttpClient.getInstance().get(new BaiduSearchRequest(keyword), new StringHttpResponseHandler(){
 			@Override
 			public void onStart() {
+				searchButton.setEnabled(false);
 				findViewById(R.id.loading).setVisibility(View.VISIBLE);
 			}
 
@@ -66,6 +86,7 @@ public class StringActivity extends Activity {
 
 			@Override
 			public void onEnd() {
+				searchButton.setEnabled(true);
 				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 		});

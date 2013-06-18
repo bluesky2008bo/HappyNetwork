@@ -124,11 +124,11 @@ public class ImageLoaderUtils {
 		}
 	}
 	
-	public static BitmapLoadListener getBitmapLoadListener(Options options){
-		if(options != null && options.getBitmapLoadListener() != null){
-			return options.getBitmapLoadListener();
-		}else if(ImageLoader.getDefaultOptions() != null && ImageLoader.getDefaultOptions().getBitmapLoadListener() != null){
-			return ImageLoader.getDefaultOptions().getBitmapLoadListener();
+	public static BitmapLoadHandler getBitmapLoadListener(Options options){
+		if(options != null && options.getBitmapLoadHandler() != null){
+			return options.getBitmapLoadHandler();
+		}else if(ImageLoader.getDefaultOptions() != null && ImageLoader.getDefaultOptions().getBitmapLoadHandler() != null){
+			return ImageLoader.getDefaultOptions().getBitmapLoadHandler();
 		}else{
 			return null;
 		}
