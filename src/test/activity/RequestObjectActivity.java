@@ -34,6 +34,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/**
+ * 请求对象演示Demo
+ */
 public class RequestObjectActivity extends Activity {
 	private WebViewManager webViewManager;
 	private EditText keywordEdit;
@@ -45,10 +48,6 @@ public class RequestObjectActivity extends Activity {
 		setContentView(R.layout.activity_request_object);
 		keywordEdit = (EditText) findViewById(R.id.edit_requestObject_keyword);
 		searchButton = (Button) findViewById(R.id.button_requestObject_search);
-		webViewManager = new WebViewManager((WebView) findViewById(R.id.web1));
-		keywordEdit.setText("王力宏");
-		search(keywordEdit.getEditableText().toString().trim());
-		
 		searchButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -56,6 +55,10 @@ public class RequestObjectActivity extends Activity {
 				search(keywordEdit.getEditableText().toString().trim());
 			}
 		});
+		webViewManager = new WebViewManager((WebView) findViewById(R.id.web1));
+		
+		keywordEdit.setText("王力宏");
+		search(keywordEdit.getEditableText().toString().trim());
 	}
 	
 	private void search(String keyword){
