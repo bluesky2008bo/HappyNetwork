@@ -170,7 +170,7 @@ ImageLoader是一个图片加载器，主要功能是从本地或者网络加载
 
 ###示例
 
->在Application中初始化ImagLoader
+####在Application中初始化ImagLoader
 
 ```java
 public class MyApplication extends Application {
@@ -197,7 +197,7 @@ public class MyApplication extends Application {
 }
 ```
 
->在适配器中使用ImageLoader
+####在适配器中使用ImageLoader
 
 ```java
 public class ImageAdapter extends BaseAdapter {
