@@ -68,7 +68,6 @@ public class EasyHttpClient {
     private static final int DEFAULT_MAX_RETRIES = 5;	//最大重试次数
     private static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;	//Socket缓存大小
     private static boolean enableOutputLogToConsole = true;
-    private static EasyHttpClient easyHttpClient;	//实例
     private DefaultHttpClient httpClient;	//Http客户端
 	private HttpContext httpContext;	//Http上下文
     private Map<Context, List<WeakReference<Future<?>>>> requestMap;	//请求Map
@@ -92,14 +91,18 @@ public class EasyHttpClient {
 	}
 	
 	/**
+	 * 实例持有器
+	 */
+	private static class EasyHttpClientInstanceHolder{
+		private static EasyHttpClient instance = new EasyHttpClient();
+	}
+	
+	/**
 	 * 获取实例
 	 * @return 实例
 	 */
 	public static final EasyHttpClient getInstance(){
-		if(easyHttpClient == null){
-			easyHttpClient = new EasyHttpClient();
-		}
-		return easyHttpClient;
+		return EasyHttpClientInstanceHolder.instance;
 	}
 	
 	/**

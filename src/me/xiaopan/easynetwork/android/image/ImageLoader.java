@@ -52,7 +52,6 @@ public class ImageLoader{
     private static boolean enableOutputLogToConsole = true;	//输出Log到控制台
     private static Context context;	//上下文
     private static Options defaultOptions;	//默认加载选项
-    private static ImageLoader imageLoader; //图片加载器的实例，用来实现单例模式
 	private static DefaultHttpClient httpClient;	//Http客户端
 	private static ConcurrentHashMap<String, SoftReference<Bitmap>> bitmapCacheMap;//软引用图片Map
 	
@@ -91,14 +90,18 @@ public class ImageLoader{
 	}
 	
 	/**
+	 * 实例持有器
+	 */
+	private static class ImageLoaderInstanceHolder{
+		private static ImageLoader instance = new ImageLoader();
+	}
+	
+	/**
 	 * 获取图片加载器的实例，每执行一次此方法就会清除一次历史记录
 	 * @return 图片加载器的实例
 	 */
 	public static final ImageLoader getInstance(){
-		if(imageLoader == null){
-			imageLoader = new ImageLoader();
-		}
-		return imageLoader;
+		return ImageLoaderInstanceHolder.instance;
 	}
 	
 	/**
