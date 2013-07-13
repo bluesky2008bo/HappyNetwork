@@ -41,7 +41,7 @@ public abstract class StringHttpResponseHandler extends Handler implements HttpR
 
 	@Override
 	public void handleResponse(HttpResponse httpResponse) throws Throwable {
-		if(httpResponse.getStatusLine().getStatusCode() < 300 ){
+		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			/* 读取内容并转换成字符串 */
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){

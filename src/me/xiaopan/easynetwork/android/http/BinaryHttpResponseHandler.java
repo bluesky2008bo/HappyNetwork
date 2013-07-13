@@ -39,7 +39,7 @@ public abstract class BinaryHttpResponseHandler extends Handler implements HttpR
 
 	@Override
 	public void handleResponse(HttpResponse httpResponse) throws Throwable {
-		if(httpResponse.getStatusLine().getStatusCode() < 300 ){
+		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			HttpEntity httpEntity = httpResponse.getEntity();
 			sendMessage(obtainMessage(MESSAGE_SUCCESS, httpEntity != null?EntityUtils.toByteArray(new BufferedHttpEntity(httpEntity)):null));
 		}else{

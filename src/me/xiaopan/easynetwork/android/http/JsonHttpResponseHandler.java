@@ -56,7 +56,7 @@ public abstract class JsonHttpResponseHandler<T> extends Handler implements Http
 
 	@Override
 	public void handleResponse(HttpResponse httpResponse) throws Throwable {
-		if(httpResponse.getStatusLine().getStatusCode() < 300 ){
+		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
 				/* 读取返回的JSON字符串并转换成对象 */
