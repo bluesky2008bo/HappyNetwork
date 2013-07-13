@@ -18,9 +18,6 @@ package test.activity;
 import me.xiaopan.easynetwork.android.R;
 import me.xiaopan.easynetwork.android.http.EasyHttpClient;
 import me.xiaopan.easynetwork.android.http.StringHttpResponseHandler;
-
-import org.apache.http.HttpResponse;
-
 import test.util.WebViewManager;
 import android.app.Activity;
 import android.os.Bundle;
@@ -50,17 +47,10 @@ public class StringActivity extends Activity {
 			public void onSuccess(String responseContent) {
 				webViewManager.getWebView().loadData(responseContent, "text/html;charset=utf-8", null);
 			}
-
+			
 			@Override
-			public void onFailure(HttpResponse httpResponse) {
-				Toast.makeText(getBaseContext(), "失败了，状态码："+httpResponse.getStatusLine().getStatusCode(), Toast.LENGTH_LONG).show();
-				finish();
-			}
-
-			@Override
-			public void onException(Throwable e) {
-				e.printStackTrace();
-				Toast.makeText(getBaseContext(), "异常了："+e.getMessage(), Toast.LENGTH_LONG).show();
+			public void onFailure(Throwable throwable) {
+				Toast.makeText(getBaseContext(), "失败了，信息："+throwable.getMessage(), Toast.LENGTH_LONG).show();
 				finish();
 			}
 

@@ -19,9 +19,6 @@ package test.activity;
 import me.xiaopan.easynetwork.android.R;
 import me.xiaopan.easynetwork.android.http.EasyHttpClient;
 import me.xiaopan.easynetwork.android.http.JsonHttpResponseHandler;
-
-import org.apache.http.HttpResponse;
-
 import test.beans.Weather;
 import test.net.request.BeijingWeatherRequest;
 import android.app.Activity;
@@ -68,14 +65,8 @@ public class JsonActivity extends Activity {
 			}
 
 			@Override
-			public void onFailure(HttpResponse httpResponse) {
-				text.setText(""+httpResponse.getStatusLine().getStatusCode());
-			}
-
-			@Override
-			public void onException(Throwable e) {
-				e.printStackTrace();
-				text.setText(e.getMessage());
+			public void onFailure(Throwable throwable) {
+				text.setText(throwable.getMessage());
 			}
 
 			@Override

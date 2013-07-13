@@ -16,11 +16,11 @@
 
 package test.net.request;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 import me.xiaopan.easynetwork.android.http.Url;
 import test.net.BaseRequest;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * 百度搜索请求

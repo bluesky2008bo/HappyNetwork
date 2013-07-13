@@ -30,8 +30,7 @@ public abstract class BinaryHttpResponseHandler extends Handler implements HttpR
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;
-	private static final int MESSAGE_EXCEPTION = 3;
-	private static final int MESSAGE_END = 4;
+	private static final int MESSAGE_END = 3;
 	
 	@Override
 	public void start() {
@@ -44,13 +43,13 @@ public abstract class BinaryHttpResponseHandler extends Handler implements HttpR
 			HttpEntity httpEntity = httpResponse.getEntity();
 			sendMessage(obtainMessage(MESSAGE_SUCCESS, httpEntity != null?EntityUtils.toByteArray(new BufferedHttpEntity(httpEntity)):null));
 		}else{
-			sendMessage(obtainMessage(MESSAGE_FAILURE, httpResponse));
+			sendMessage(obtainMessage(MESSAGE_FAILURE, new HttpStatusCodeException(httpResponse.getStatusLine().getStatusCode())));
 		}
 	}
 
 	@Override
 	public void exception(Throwable e) {
-		sendMessage(obtainMessage(MESSAGE_EXCEPTION, e));
+		sendMessage(obtainMessage(MESSAGE_FAILURE, e));
 	}
 
 	@Override
@@ -63,15 +62,13 @@ public abstract class BinaryHttpResponseHandler extends Handler implements HttpR
 		switch(msg.what) {
 			case MESSAGE_START: onStart(); break;
 			case MESSAGE_SUCCESS: onSuccess((byte[]) msg.obj); break;
-			case MESSAGE_FAILURE: onFailure((HttpResponse) msg.obj); break;
-			case MESSAGE_EXCEPTION: onException((Throwable) msg.obj); break;
+			case MESSAGE_FAILURE: onFailure((Throwable) msg.obj); break;
 			case MESSAGE_END: onEnd(); break;
 		}
 	}
 	
 	public abstract void onStart();
 	public abstract void onSuccess(byte[] binaryData);
-	public abstract void onFailure(HttpResponse httpResponse);
-	public abstract void onException(Throwable e);
+	public abstract void onFailure(Throwable throwable);
 	public abstract void onEnd();
 }

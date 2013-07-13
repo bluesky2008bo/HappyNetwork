@@ -37,8 +37,7 @@ public abstract class JsonHttpResponseHandler<T> extends Handler implements Http
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;
-	private static final int MESSAGE_EXCEPTION = 3;
-	private static final int MESSAGE_END = 4;
+	private static final int MESSAGE_END = 3;
 	private Class<?> responseClass;
 	private Type responseType;
 	
@@ -73,22 +72,22 @@ public abstract class JsonHttpResponseHandler<T> extends Handler implements Http
 					}else if(responseType != null){	//如果是要转换成一个集合
 						sendMessage(obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseType)));
 					}else{
-						sendMessage(obtainMessage(MESSAGE_EXCEPTION, new Exception("responseClass和responseType至少有一个不能为null")));
+						sendMessage(obtainMessage(MESSAGE_FAILURE, new Exception("responseClass和responseType至少有一个不能为null")));
 					}
 				}else{
-					sendMessage(obtainMessage(MESSAGE_EXCEPTION, new Exception("响应内容为空")));
+					sendMessage(obtainMessage(MESSAGE_FAILURE, new Exception("响应内容为空")));
 				}
 			}else{
-				sendMessage(obtainMessage(MESSAGE_EXCEPTION, new Exception("没有响应实体")));
+				sendMessage(obtainMessage(MESSAGE_FAILURE, new Exception("没有响应实体")));
 			}
 		}else{
-			sendMessage(obtainMessage(MESSAGE_FAILURE, httpResponse));
+			sendMessage(obtainMessage(MESSAGE_FAILURE, new HttpStatusCodeException(httpResponse.getStatusLine().getStatusCode())));
 		}
 	}
 	
 	@Override
 	public void exception(Throwable e) {
-		sendMessage(obtainMessage(MESSAGE_EXCEPTION, e));
+		sendMessage(obtainMessage(MESSAGE_FAILURE, e));
 	}
 
 	@Override
@@ -102,15 +101,13 @@ public abstract class JsonHttpResponseHandler<T> extends Handler implements Http
 		switch(msg.what) {
 			case MESSAGE_START: onStart(); break;
 			case MESSAGE_SUCCESS: onSuccess((T) msg.obj); break;
-			case MESSAGE_FAILURE: onFailure((HttpResponse) msg.obj); break;
-			case MESSAGE_EXCEPTION: onException((Throwable) msg.obj); break;
+			case MESSAGE_FAILURE: onFailure((Throwable) msg.obj); break;
 			case MESSAGE_END: onEnd(); break;
 		}
 	}
 	
 	public abstract void onStart();
 	public abstract void onSuccess(T responseObject);
-	public abstract void onFailure(HttpResponse httpResponse);
-	public abstract void onException(Throwable e);
+	public abstract void onFailure(Throwable throwable);
 	public abstract void onEnd();
 }

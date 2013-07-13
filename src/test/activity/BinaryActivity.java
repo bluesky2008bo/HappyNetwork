@@ -18,9 +18,6 @@ package test.activity;
 import me.xiaopan.easynetwork.android.R;
 import me.xiaopan.easynetwork.android.http.BinaryHttpResponseHandler;
 import me.xiaopan.easynetwork.android.http.EasyHttpClient;
-
-import org.apache.http.HttpResponse;
-
 import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -49,15 +46,8 @@ public class BinaryActivity extends Activity {
 			}
 			
 			@Override
-			public void onFailure(HttpResponse httpResponse) {
-				Toast.makeText(getBaseContext(), "失败了，状态码："+httpResponse.getStatusLine().getStatusCode(), Toast.LENGTH_LONG).show();
-				finish();
-			}
-			
-			@Override
-			public void onException(Throwable e) {
-				e.printStackTrace();
-				Toast.makeText(getBaseContext(), "异常了："+e.getMessage(), Toast.LENGTH_LONG).show();
+			public void onFailure(Throwable throwable) {
+				Toast.makeText(getBaseContext(), "失败了，信息："+throwable.getMessage(), Toast.LENGTH_LONG).show();
 				finish();
 			}
 			
