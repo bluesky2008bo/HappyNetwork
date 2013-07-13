@@ -120,6 +120,16 @@ public class ImageLoader{
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
+		}else{
+			if(showImageView != null){
+				showImageView.setTag(null);
+				int defaultDrawableResId = ImageLoaderUtils.getLoadingDrawbleResId(options);
+				if(defaultDrawableResId > 0){
+					showImageView.setImageResource(defaultDrawableResId);
+				}else{
+					showImageView.setImageDrawable(null);
+				}
+			}
 		}
 	}
 	
@@ -137,6 +147,16 @@ public class ImageLoader{
 				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
+			}
+		}else{
+			if(showImageView != null){
+				showImageView.setTag(null);
+				int defaultDrawableResId = ImageLoaderUtils.getLoadingDrawbleResId(null);
+				if(defaultDrawableResId > 0){
+					showImageView.setImageResource(defaultDrawableResId);
+				}else{
+					showImageView.setImageDrawable(null);
+				}
 			}
 		}
 	}
@@ -158,6 +178,16 @@ public class ImageLoader{
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
+		}else{
+			if(showImageView != null){
+				showImageView.setTag(null);
+				int defaultDrawableResId = ImageLoaderUtils.getLoadingDrawbleResId(options);
+				if(defaultDrawableResId > 0){
+					showImageView.setImageResource(defaultDrawableResId);
+				}else{
+					showImageView.setImageDrawable(null);
+				}
+			}
 		}
 	}
 	
@@ -177,6 +207,16 @@ public class ImageLoader{
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
+		}else{
+			if(showImageView != null){
+				showImageView.setTag(null);
+				int defaultDrawableResId = ImageLoaderUtils.getLoadingDrawbleResId(null);
+				if(defaultDrawableResId > 0){
+					showImageView.setImageResource(defaultDrawableResId);
+				}else{
+					showImageView.setImageDrawable(null);
+				}
+			}
 		}
 	}
 	
@@ -194,6 +234,16 @@ public class ImageLoader{
 				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
+			}
+		}else{
+			if(showImageView != null){
+				showImageView.setTag(null);
+				int defaultDrawableResId = ImageLoaderUtils.getLoadingDrawbleResId(null);
+				if(defaultDrawableResId > 0){
+					showImageView.setImageResource(defaultDrawableResId);
+				}else{
+					showImageView.setImageDrawable(null);
+				}
 			}
 		}
 	}

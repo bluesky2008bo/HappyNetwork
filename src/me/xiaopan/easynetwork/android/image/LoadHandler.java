@@ -63,22 +63,30 @@ public class LoadHandler extends Handler {
 			imageView = iterator.next();
 			if(imageView != null){
 				tagObject = imageView.getTag();
-				if(tagObject != null && loadRequest.getId().equals(tagObject.toString())){
-					imageView.clearAnimation();//先清除之前所有的动画
-					if(loadRequest.getResultBitmap() != null){
-						Animation animation = ImageLoaderUtils.getShowAnimationListener(loadRequest.getOptions());
-						if(animation != null){
-							imageView.setAnimation(animation);
-						}
-						imageView.setImageBitmap(loadRequest.getResultBitmap());
-					}else{
-						int loadFailedDrawableResId = ImageLoaderUtils.getLoadFailedDrawableResId(loadRequest.getOptions());
-						if(loadFailedDrawableResId > 0){
-							imageView.setImageResource(loadFailedDrawableResId);
+				//如果当前ImageView有要显示的图片，入如果没有的话就将其从等待集合中移除
+				if(tagObject != null){
+					//如果当前ImageView就是要找的
+					if(loadRequest.getId().equals(tagObject.toString())){
+						imageView.clearAnimation();//先清除之前所有的动画
+						//如果图片加载成功
+						if(loadRequest.getResultBitmap() != null){
+							Animation animation = ImageLoaderUtils.getShowAnimationListener(loadRequest.getOptions());
+							if(animation != null){
+								imageView.setAnimation(animation);
+							}
+							imageView.setImageBitmap(loadRequest.getResultBitmap());
 						}else{
-							imageView.setImageBitmap(null);
+							int loadFailedDrawableResId = ImageLoaderUtils.getLoadFailedDrawableResId(loadRequest.getOptions());
+							if(loadFailedDrawableResId > 0){
+								imageView.setImageResource(loadFailedDrawableResId);
+							}else{
+								imageView.setImageBitmap(null);
+							}
 						}
+						imageView.setTag(null);
+						iterator.remove();
 					}
+				}else{
 					iterator.remove();
 				}
 			}
