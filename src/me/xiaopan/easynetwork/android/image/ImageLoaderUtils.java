@@ -118,7 +118,14 @@ public class ImageLoaderUtils {
 		}else if(ImageLoader.getDefaultOptions() != null && isNotNullAndEmpty(ImageLoader.getDefaultOptions().getCacheDir())){
 			return new File(ImageLoader.getDefaultOptions().getCacheDir() + File.separator + fileName);
 		}else if(context != null){
-			return new File((Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ? context.getExternalCacheDir() : context.getCacheDir()).getPath() + File.separator + ImageLoader.getCacheDirName() + File.separator + fileName);
+			File dir = context.getCacheDir();
+			if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+				File externalDir = context.getExternalCacheDir();
+				if(externalDir != null){
+					dir = externalDir;
+				}
+			}
+			return new File(dir.getPath() + File.separator + ImageLoader.getCacheDirName() + File.separator + fileName);
 		}else{
 			return null;
 		}
