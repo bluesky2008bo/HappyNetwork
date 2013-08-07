@@ -38,8 +38,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 
-import android.util.Log;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -340,9 +338,7 @@ public class EasyNetworkUtils {
     }
     
 	public static final HttpEntity paramsToEntity(RequestParams params) {
-		if(EasyHttpClient.isEnableOutputLogToConsole()){
-			Log.i("请求参数", params.getParamString());
-		}
+		EasyHttpClient.log("请求参数："+params.getParamString());
 		return params != null?params.getEntity():null;
     }
 

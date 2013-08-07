@@ -58,16 +58,18 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.SyncBasicHttpContext;
 
 import android.content.Context;
+import android.util.Log;
 
 /**
  * Http客户端，所有的Http操作都将由此类来异步完成，同时此类提供一个单例模式来方便直接使用
  */
 public class EasyHttpClient {
-	private static final int DEFAULT_MAX_CONNECTIONS = 10;	//最大连接数
-    private static final int DEFAULT_SOCKET_TIMEOUT = 15 * 1000;	//连接超时时间
-    private static final int DEFAULT_MAX_RETRIES = 5;	//最大重试次数
-    private static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;	//Socket缓存大小
-    private static boolean enableOutputLogToConsole = true;
+	public static String logTag = "EasyHttpClient";	//Log Tag
+	public static int DEFAULT_MAX_CONNECTIONS = 10;	//最大连接数
+	public static int DEFAULT_SOCKET_TIMEOUT = 15 * 1000;	//连接超时时间
+	public static int DEFAULT_MAX_RETRIES = 5;	//最大重试次数
+	public static int DEFAULT_SOCKET_BUFFER_SIZE = 8192;	//Socket缓存大小
+	public static boolean enableOutputLogToConsole = true;
     private DefaultHttpClient httpClient;	//Http客户端
 	private HttpContext httpContext;	//Http上下文
     private Map<Context, List<WeakReference<Future<?>>>> requestMap;	//请求Map
@@ -1073,5 +1075,15 @@ public class EasyHttpClient {
 	 */
 	public static void setEnableOutputLogToConsole(boolean enableOutputLogToConsole) {
 		EasyHttpClient.enableOutputLogToConsole = enableOutputLogToConsole;
+	}
+	
+	/**
+	 * 输出LOG
+	 * @param logContent LOG内容
+	 */
+	public static void log(String logContent){
+		if(EasyHttpClient.isEnableOutputLogToConsole()){
+			Log.d(logTag, logContent);
+		}
 	}
 }

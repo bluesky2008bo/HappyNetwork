@@ -16,7 +16,6 @@
 
 package test.util;
 
-import android.annotation.SuppressLint;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -24,7 +23,6 @@ import android.webkit.WebViewClient;
 public class WebViewManager {
 	private WebView webView;
 	
-	@SuppressLint("SetJavaScriptEnabled")
 	public WebViewManager(WebView webView){
 		this.webView = webView;
 		WebSettings webSettings = webView.getSettings();

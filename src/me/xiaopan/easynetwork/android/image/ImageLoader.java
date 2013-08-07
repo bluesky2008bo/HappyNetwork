@@ -41,6 +41,7 @@ import org.apache.http.params.HttpProtocolParams;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
 /**
@@ -114,7 +115,7 @@ public class ImageLoader{
 		if(ImageLoaderUtils.isNotNullAndEmpty(url) && showImageView != null){
 			try {
 				String id = URLEncoder.encode(url, ImageLoaderUtils.CHARSET_NAME_UTF8);
-				if(!tryShowImage(id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(options))){	//尝试显示图片，如果显示失败了就尝试加载
+				if(!tryShowImage(url, id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(options))){	//尝试显示图片，如果显示失败了就尝试加载
 					tryLoad(id, url, ImageLoaderUtils.getCacheFile(context, options, id), showImageView, options, null);
 				}
 			} catch (UnsupportedEncodingException e) {
@@ -142,7 +143,7 @@ public class ImageLoader{
 		if(ImageLoaderUtils.isNotNullAndEmpty(url) && showImageView != null){
 			try {
 				String id = URLEncoder.encode(url, ImageLoaderUtils.CHARSET_NAME_UTF8);
-				if(!tryShowImage(id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(null))){	//尝试显示图片，如果显示失败了就尝试加载
+				if(!tryShowImage(url, id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(null))){	//尝试显示图片，如果显示失败了就尝试加载
 					tryLoad(id, url, ImageLoaderUtils.getCacheFile(context, null, id), showImageView, null, null);
 				}
 			} catch (UnsupportedEncodingException e) {
@@ -172,7 +173,7 @@ public class ImageLoader{
 		if((localFile != null || ImageLoaderUtils.isNotNullAndEmpty(url)) && showImageView != null){
 			try{
 				String id = URLEncoder.encode(localFile.getPath(), ImageLoaderUtils.CHARSET_NAME_UTF8);
-				if(!tryShowImage(id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(options))){	//尝试显示图片，如果显示失败了就尝试加载
+				if(!tryShowImage(localFile.getPath(), id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(options))){	//尝试显示图片，如果显示失败了就尝试加载
 					tryLoad(id, url, localFile, showImageView, options, null);
 				}
 			} catch (UnsupportedEncodingException e) {
@@ -201,7 +202,7 @@ public class ImageLoader{
 		if((localFile != null || ImageLoaderUtils.isNotNullAndEmpty(url)) && showImageView != null){
 			try{
 				String id = URLEncoder.encode(localFile.getPath(), ImageLoaderUtils.CHARSET_NAME_UTF8);
-				if(!tryShowImage(id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(null))){	//尝试显示图片，如果显示失败了就尝试加载
+				if(!tryShowImage(localFile.getPath(), id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(null))){	//尝试显示图片，如果显示失败了就尝试加载
 					tryLoad(id, url, localFile, showImageView, null, null);
 				}
 			} catch (UnsupportedEncodingException e) {
@@ -229,7 +230,7 @@ public class ImageLoader{
 		if(localFile != null && showImageView != null){
 			try{
 				String id = URLEncoder.encode(localFile.getPath(), ImageLoaderUtils.CHARSET_NAME_UTF8);
-				if(!tryShowImage(id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(null))){	//尝试显示图片，如果显示失败了就尝试加载
+				if(!tryShowImage(localFile.getPath(), id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(null))){	//尝试显示图片，如果显示失败了就尝试加载
 					tryLoad(id, null, localFile, showImageView, null, null);
 				}
 			} catch (UnsupportedEncodingException e) {
@@ -255,12 +256,13 @@ public class ImageLoader{
 	 * @param defaultDrawableResId 默认图片的资源ID
 	 * @return true：图片缓存中有图片并且已经显示了；false：缓存中没有对应的图片，需要开启新线程从网络或本地加载
 	 */
-	private final boolean tryShowImage(String id, ImageView showImageView, int defaultDrawableResId){
+	private final boolean tryShowImage(String url, String id, ImageView showImageView, int defaultDrawableResId){
 		showImageView.setTag(id);//绑定
 		
 		/* 根据地址从缓存中获取图片，如果缓存中存在相对的图片就显示，否则显示默认图片或者显示空 */
 		cacheBitmap = getBitmapFromCache(id);
 		if(cacheBitmap != null){
+			ImageLoader.log("从缓存加载图片："+url);
 			loadingImageViewSet.remove(showImageView);
 			showImageView.clearAnimation();
 			showImageView.setImageBitmap(cacheBitmap);
@@ -550,5 +552,15 @@ public class ImageLoader{
 	 */
 	public static final void setDefaultOptions(Options defaultOptions) {
 		ImageLoader.defaultOptions = defaultOptions;
+	}
+	
+	/**
+	 * 输出LOG
+	 * @param logContent LOG内容
+	 */
+	public static void log(String logContent){
+		if(isEnableOutputLogToConsole()){
+			Log.d(logTag, logContent);
+		}
 	}
 } 

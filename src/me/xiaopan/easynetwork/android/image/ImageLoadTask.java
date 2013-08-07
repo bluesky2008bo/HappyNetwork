@@ -33,7 +33,6 @@ import org.apache.http.util.EntityUtils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 public class ImageLoadTask implements Runnable {
 	private ImageLoader imageLoader;	//图片加载器
@@ -67,6 +66,7 @@ public class ImageLoadTask implements Runnable {
 	 * @return
 	 */
 	private Bitmap fromLocalLoadBitmap(File localFile){
+		ImageLoader.log("从本地加载图片："+localFile.getPath());
 		BitmapLoadHandler bitmapHandler = ImageLoaderUtils.getBitmapLoadListener(loadRequest.getOptions());
 		if(bitmapHandler != null){
 			return bitmapHandler.onFromByteArrayLoad(localFile, loadRequest.getShowImageView());
@@ -95,6 +95,7 @@ public class ImageLoadTask implements Runnable {
 	 * @return
 	 */
 	private Bitmap fromNetworkDownload(File localCacheFile){
+		ImageLoader.log("从网络加载图片："+loadRequest.getImageUrl());
 		boolean running = true;
 		boolean createNewDir = false;	//true：父目录之前不存在是现在才创建的，当发生异常时需要删除
 		boolean createNewFile = false;	//true：保存图片的文件之前不存在是现在才创建的，当发生异常时需要删除
@@ -155,9 +156,7 @@ public class ImageLoadTask implements Runnable {
 				}
 				running = false;
 			} catch (Throwable e2) {
-				if(ImageLoader.isEnableOutputLogToConsole()){
-					Log.e(ImageLoader.getLogTag(), loadRequest.getImageUrl()+"加载失败，异常信息："+e2.getClass().getName()+":"+e2.getMessage());
-				}
+				ImageLoader.log(loadRequest.getImageUrl()+"加载失败，异常信息："+e2.getClass().getName()+":"+e2.getMessage());
 				
 				//尝试关闭输入流
 				if(bufferedfInputStream != null){

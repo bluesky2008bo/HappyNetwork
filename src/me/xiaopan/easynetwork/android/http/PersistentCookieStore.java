@@ -30,7 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.http.client.CookieStore;
 import org.apache.http.cookie.Cookie;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
@@ -45,7 +44,6 @@ import android.text.TextUtils;
  * {@link AsyncHttpClient#setCookieStore}, but can also be used with a 
  * regular old apache HttpClient/HttpContext if you prefer.
  */
-@SuppressLint("DefaultLocale")
 public class PersistentCookieStore implements CookieStore {
     private static final String COOKIE_PREFS = "CookiePrefsFile";
     private static final String COOKIE_NAME_STORE = "names";
@@ -179,7 +177,6 @@ public class PersistentCookieStore implements CookieStore {
 
     // Using some super basic byte array <-> hex conversions so we don't have
     // to rely on any large Base64 libraries. Can be overridden if you like!
-    @SuppressLint("DefaultLocale")
 	protected String byteArrayToHexString(byte[] b) {
         StringBuffer sb = new StringBuffer(b.length * 2);
         for (byte element : b) {
