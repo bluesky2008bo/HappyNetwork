@@ -16,6 +16,7 @@
 package me.xiaopan.easynetwork.android;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,6 +97,21 @@ public class EasyNetworkUtils {
 	}
 	
 	/**
+	 * 获取一个枚举上的指定类型的注解
+	 * @param enumObject 给定的枚举
+	 * @param annoitaion 指定类型的注解
+	 * @return
+	 */
+	public static final <T extends Annotation> T getAnnotationFromEnum(Enum<?> enumObject, Class<T> annoitaion){
+		try {
+			return (T) enumObject.getClass().getField(enumObject.name()).getAnnotation(annoitaion);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
 	 * 获取响应编码，首先会尝试从响应体的Content-Type中获取，如果获取不到的话就返回默认的UTF-8
 	 * @param httpResponse
 	 * @return
@@ -138,7 +154,7 @@ public class EasyNetworkUtils {
 	 * @param isDESCGet 在最终获取的列表里，父类的字段是否需要排在子类的前面。只有需要把其父类中的字段也取出时此参数才有效
 	 * @return 给定类的所有字段
 	 */
-	public static List<Field> getFileds(Class<?> sourceClass, boolean isGetDeclaredField, boolean isFromSuperClassGet, boolean isDESCGet){
+	public static List<Field> getFields(Class<?> sourceClass, boolean isGetDeclaredField, boolean isFromSuperClassGet, boolean isDESCGet){
 		List<Field> fieldList = new ArrayList<Field>();
 		//如果需要从父类中获取
 		if(isFromSuperClassGet){
@@ -180,7 +196,7 @@ public class EasyNetworkUtils {
 			//循环处理所有字段
 			String paramValue;
 			Object paramValueObject;
-			for(Field field : getFileds(request.getClass(), true, true, true)){
+			for(Field field : getFields(request.getClass(), true, true, true)){
 				if(field.getAnnotation(Expose.class) != null){	//如果当前字段被标记为需要序列化
 					try {
 						field.setAccessible(true);
@@ -211,6 +227,14 @@ public class EasyNetworkUtils {
 									}else{
 										requestParams.put(getParamKey(field), paramValueObject.toString());
 									}
+								}
+							}if(paramValueObject instanceof Enum){	//如果当前字段是枚举
+								Enum<?> enumObject = (Enum<?>) paramValueObject;
+								SerializedName serializedName = EasyNetworkUtils.getAnnotationFromEnum(enumObject, SerializedName.class);
+								if(serializedName != null && isNotNullAndEmpty(serializedName.value())){
+									requestParams.put(getParamKey(field), serializedName.value());
+								}else{
+									requestParams.put(getParamKey(field), enumObject.name());
 								}
 							}else{	//如果以上几种情况都不是就直接转为字符串添加到请求参数集中
 								paramValue = paramValueObject.toString();
@@ -321,6 +345,16 @@ public class EasyNetworkUtils {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 通过解析一个请求对象来获取请求地址
+	 * @param requestObject 请求对象
+	 * @return 请求地址，例如：http://www.baidu.com/index.html
+	 * @throws Exception 请求对象上既没有Url注解（或者值为空）也没有Host注解（或者值为空）
+	 */
+	public static final String getUrlFromRequestObject(Object requestObject) throws Exception{
+		return getUrlFromRequestObject(null, requestObject);
 	}
 	
 	public static final String getUrlWithQueryString(String url, RequestParams params) {
