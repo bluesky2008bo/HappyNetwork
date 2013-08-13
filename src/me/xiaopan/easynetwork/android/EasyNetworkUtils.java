@@ -51,21 +51,20 @@ public class EasyNetworkUtils {
 	 * @param ch 给定的字符
 	 * @return 分割后的字符串数组
 	 */
-	public static String[] partition(String string, char ch) {
+	public static String[] split(String string, char ch) {
 		ArrayList<String> stringList = new ArrayList<String>();
 		char chars[] = string.toCharArray();
 		int nextStart = 0;
 		for (int w = 0; w < chars.length; w++){
 			if (ch == chars[w]) {
-				if(w != nextStart){					
-					stringList.add(new String(chars,nextStart, w-nextStart));
-					nextStart = w+1;
-				}else{
-					nextStart++;
+				stringList.add(new String(chars, nextStart, w-nextStart));
+				nextStart = w+1;
+				if(nextStart == chars.length){	//当最后一位是分割符的话，就再添加一个空的字符串到分割数组中去
+					stringList.add("");
 				}
 			}
 		}
-		if(nextStart < chars.length-1){
+		if(nextStart < chars.length){	//如果最后一位不是分隔符的话，就将最后一个分割符到最后一个字符中间的左右字符串作为一个字符串添加到分割数组中去
 			stringList.add(new String(chars,nextStart, chars.length-1-nextStart+1));
 		}
 		return stringList.toArray(new String[stringList.size()]);
@@ -228,7 +227,7 @@ public class EasyNetworkUtils {
 										requestParams.put(getParamKey(field), paramValueObject.toString());
 									}
 								}
-							}if(paramValueObject instanceof Enum){	//如果当前字段是枚举
+							}else if(paramValueObject instanceof Enum){	//如果当前字段是枚举
 								Enum<?> enumObject = (Enum<?>) paramValueObject;
 								SerializedName serializedName = EasyNetworkUtils.getAnnotationFromEnum(enumObject, SerializedName.class);
 								if(serializedName != null && isNotNullAndEmpty(serializedName.value())){

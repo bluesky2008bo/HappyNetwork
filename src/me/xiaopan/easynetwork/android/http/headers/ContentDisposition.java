@@ -53,12 +53,12 @@ public class ContentDisposition extends HttpHeader{
 	public void setValue(String value) {
 		this.value = value;
 		if(value != null){
-			String[] strs = EasyNetworkUtils.partition(value, ';');
+			String[] strs = EasyNetworkUtils.split(value, ';');
 			if(strs.length > 0){
 				setDisposition(strs[0]);
 			}
 			if(strs.length > 1){
-				strs = EasyNetworkUtils.partition(strs[1], '=');
+				strs = EasyNetworkUtils.split(strs[1], '=');
 				if(strs.length > 1){
 					setFileName(strs[1]);
 				}

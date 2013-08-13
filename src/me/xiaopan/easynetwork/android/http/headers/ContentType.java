@@ -105,12 +105,12 @@ public class ContentType extends HttpHeader{
 	public void setValue(String value) {
 		this.value = value;
 		if(value != null){
-			String[] strs = EasyNetworkUtils.partition(value, ';');
+			String[] strs = EasyNetworkUtils.split(value, ';');
 			if(strs.length > 0){
 				setType(strs[0]);
 			}
 			if(strs.length > 1){
-				strs = EasyNetworkUtils.partition(strs[1], '=');
+				strs = EasyNetworkUtils.split(strs[1], '=');
 				if(strs.length > 1){
 					setCharset(strs[1]);
 				}
