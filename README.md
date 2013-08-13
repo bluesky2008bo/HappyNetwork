@@ -25,7 +25,7 @@ EasyHttpClient是在开源项目android-async-http的基础上扩展而来的
 public class BaiduSearchRequest extends BaseRequest {
     @Expose
     public String rsv_spt = "1";
-	@Expose
+    @Expose
 	public String issp = "1";
 	@Expose
 	public String rsv_bp = "0";
@@ -66,11 +66,42 @@ public class BaiduSearchRequest extends BaseRequest {
     6. 在解析请求地址的时候会先检测``@Url``注解，如果有``@Url``注解并且值不为空就直接使用``@Url``注解的值作为请求地址，不会再考虑``@Host``和``@Path``注解；
     7. 在使用``@Host``和``@Path``注解来组织请求地址的时候会直接用“/”来拼接，所以请不要在``@Host``末尾或者``@Path``的开头加“/”。
 
->* 请求参数的配置。
+>* 请求参数的配置：
     1. 加了``@Expose``注解的字段才会被转换成请求参数，因此请不要忘记给字段加上``@Expose``注解。另``外@Expose``注解是google gson开源项目中的因此需要依赖于gson jar包；
     2. 你还可以使用``@SerializedName``注解来指定参数名称，如果不加此注解的话，将会使用字段名称来作为参数名称。同样的``@SerializedName``注解也是google gson包中的；
-    4. 对于``boolean``类型的字段你可以通过``@True``和``@False``注解来指定当字段值是true或false的时候其对应的转换成请求参数时的参数值；
-    5. 对于Map类型的字段会将其每一对键值对都转换成请求参数。
+    3. 默认使用请求字段的toString()方法来获取请求参数值，但以下几种类型的字段将会被特殊处理：
+        * Map
+            对于``Map``类型的字段``EasyHttpClient``会将其每一对键值对都转换成请求参数，而每一对键值对的键将作为参数名，键值对的值将作为参数值；
+        * File
+            对于``File``类型的字段EasyHttpClient将使用``RequestParams``的``put(String key, File file)``方法将其添加到``RequestParams``中；
+        * ArrayList 
+            对于``ArrayList``类型的字段EasyHttpClient将使用``RequestParams``的``put(String key, ArrayList<String> values)``方法将其添加到``RequestParams``中；
+        * Boolean 
+            对于``Boolean``类型的字段你可以通过``@True``和``@False``注解来指定当字段值是``true``或``false``的时候其对应的转换成请求参数时的参数值；
+        * Enum
+            对于``Enum``类型的参数你可以使用``@SerializedName``注解来指定其参数值，如果没有``@SerizlizedName``注解将使用Enum对象的name来作为参数值。Enum定义示例如下：
+            ```java 
+            /**
+             * 手机号验证类型
+	         */
+            public enum MobileNumberVerifyType{
+                /**
+    	         * 不验证
+		         */
+		        @SerializedName("0")
+		        NONE,
+                /**
+    	         * 必须未注册
+		         */
+		        @SerializedName("1")
+		        UNREGISTERED,
+                /**
+    	         * 必须已注册
+		         */
+		        @SerializedName("2")
+		        REGISTERED;
+            }
+            ```
 
 >* 请求方式的配置。
     1. 如果要用get方式请求就在请求对象上加上``@Get``注解；
