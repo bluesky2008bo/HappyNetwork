@@ -79,29 +79,7 @@ public class BaiduSearchRequest extends BaseRequest {
         * Boolean 
             对于``Boolean``类型的字段你可以通过``@True``和``@False``注解来指定当字段值是``true``或``false``的时候其对应的转换成请求参数时的参数值；
         * Enum
-            对于``Enum``类型的参数你可以使用``@SerializedName``注解来指定其参数值，如果没有``@SerizlizedName``注解将使用Enum对象的name来作为参数值。Enum定义示例如下：
-            ```java 
-            /**
-             * 手机号验证类型
-	         */
-            public enum MobileNumberVerifyType{
-                /**
-    	         * 不验证
-		         */
-		        @SerializedName("0")
-		        NONE,
-                /**
-    	         * 必须未注册
-		         */
-		        @SerializedName("1")
-		        UNREGISTERED,
-                /**
-    	         * 必须已注册
-		         */
-		        @SerializedName("2")
-		        REGISTERED;
-            }
-            ```
+            对于``Enum``类型的参数你可以使用``@SerializedName``注解来指定其参数值，如果没有``@SerizlizedName``注解将使用Enum对象的name来作为参数值。
 
 >* 请求方式的配置。
     1. 如果要用get方式请求就在请求对象上加上``@Get``注解；
