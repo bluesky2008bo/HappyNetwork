@@ -48,8 +48,8 @@ public class ImageLoadHandler extends Handler {
 		LoadRequest loadRequest = (LoadRequest) message.obj;
 		
 		/* 尝试缓存到内存中 */
-		if(loadRequest.getResultBitmap() != null && loadRequest.getOptions() != null && loadRequest.getOptions().isCachedInMemory()){
-			CacheDetermineListener determineCache = loadRequest.getOptions().getCacheDetermineListener();
+		if(loadRequest.getResultBitmap() != null && loadRequest.getImageLoadOptions() != null && loadRequest.getImageLoadOptions().isCachedInMemory()){
+			CacheDetermineListener determineCache = loadRequest.getImageLoadOptions().getCacheDetermineListener();
 			if(determineCache == null || determineCache.isCache(loadRequest.getResultBitmap())){
 				ImageLoader.putBitmapToCache(loadRequest.getId(), loadRequest.getResultBitmap());
 			}
@@ -70,14 +70,14 @@ public class ImageLoadHandler extends Handler {
 						imageView.clearAnimation();//先清除之前所有的动画
 						//如果图片加载成功
 						if(loadRequest.getResultBitmap() != null){
-							Animation animation = loadRequest.getOptions() != null ? loadRequest.getOptions().getShowAnimationListener().onGetShowAnimation() : null;
+							Animation animation = loadRequest.getImageLoadOptions() != null ? loadRequest.getImageLoadOptions().getShowAnimationListener().onGetShowAnimation() : null;
 							if(animation != null){
 								imageView.setAnimation(animation);
 							}
 							imageView.setImageBitmap(loadRequest.getResultBitmap());
 						}else{
-							if(loadRequest.getOptions() != null && loadRequest.getOptions().getLoadFailedDrawableResId() > 0){
-								imageView.setImageResource(loadRequest.getOptions().getLoadFailedDrawableResId());
+							if(loadRequest.getImageLoadOptions() != null && loadRequest.getImageLoadOptions().getLoadFailedDrawableResId() > 0){
+								imageView.setImageResource(loadRequest.getImageLoadOptions().getLoadFailedDrawableResId());
 							}else{
 								imageView.setImageBitmap(null);
 							}

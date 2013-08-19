@@ -18,12 +18,12 @@ package me.xiaopan.easynetwork.android.image;
 /**
  * 加载选项
  */
-public class Options {
+public class ImageLoadOptions {
 	private int loadingDrawableResId = -1;	//正在加载时显示的图片的资源ID
 	private int loadFailedDrawableResId = -1;	//加载失败时显示的图片的资源ID
 	private int maxRetryCount = -1;	//最大重试次数
 	private boolean isCachedInMemory;	//是否缓存在内存中
-	private boolean isCacheToLocal;	//是否需要将图片缓存到本地
+	private boolean isCacheInLocal;	//是否需要将图片缓存到本地
 	private String cacheDir;	//默认缓存目录
 	private ShowAnimationListener showAnimationListener;	//显示动画
 	private BitmapLoadHandler bitmapLoadHandler;	//位图加载处理器
@@ -81,16 +81,16 @@ public class Options {
 	 * 判断是否缓存到本地
 	 * @return 是否缓存到本地
 	 */
-	public boolean isCacheToLocal() {
-		return isCacheToLocal;
+	public boolean isCacheInLocal() {
+		return isCacheInLocal;
 	}
 
 	/**
 	 * 设置是否缓存到本地
-	 * @param isCacheToLocal 是否缓存到本地
+	 * @param isCacheInLocal 是否缓存到本地
 	 */
-	public void setCacheToLocal(boolean isCacheToLocal) {
-		this.isCacheToLocal = isCacheToLocal;
+	public void setCacheInLocal(boolean isCacheInLocal) {
+		this.isCacheInLocal = isCacheInLocal;
 	}
 	
 	/**

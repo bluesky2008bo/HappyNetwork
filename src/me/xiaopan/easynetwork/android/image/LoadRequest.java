@@ -28,15 +28,15 @@ public class LoadRequest {
 	private ImageView showImageView;	//显示图片的视图
 	private String imageUrl;	//要下载的图片的URL
 	private File localCacheFile;	//本地缓存文件
-	private Options options;	//加载选项
+	private ImageLoadOptions imageLoadOptions;	//加载选项
 	private Bitmap resultBitmap;
 	
-	public LoadRequest(String id, String imageUrl, File localCacheFile, ImageView imageView, Options options){
+	public LoadRequest(String id, String imageUrl, File localCacheFile, ImageView imageView, ImageLoadOptions imageLoadOptions){
 		this.id = id;
 		this.imageUrl = imageUrl;
 		this.localCacheFile = localCacheFile;
 		this.showImageView = imageView;
-		this.options = options;
+		this.imageLoadOptions = imageLoadOptions;
 	}
 	
 	/**
@@ -117,16 +117,16 @@ public class LoadRequest {
 	 * 获取加载选项
 	 * @return
 	 */
-	public Options getOptions() {
-		return options;
+	public ImageLoadOptions getImageLoadOptions() {
+		return imageLoadOptions;
 	}
 
 	/**
 	 * 设置加载选项
-	 * @param options
+	 * @param imageLoadOptions
 	 */
-	public void setOptions(Options options) {
-		this.options = options;
+	public void setImageLoadOptions(ImageLoadOptions imageLoadOptions) {
+		this.imageLoadOptions = imageLoadOptions;
 	}
 
 	public Bitmap getResultBitmap() {
