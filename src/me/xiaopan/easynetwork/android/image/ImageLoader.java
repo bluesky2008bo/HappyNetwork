@@ -48,20 +48,20 @@ import android.widget.ImageView;
  * 图片加载器，可以从网络或者本地加载图片，并且支持自动清除缓存
  */
 public class ImageLoader{
-    private static String cacheDirName = "image_loader";	//缓存文件夹名称
-    private static String logTag = "ImageLoader";	//LogTag
     private static boolean enableOutputLogToConsole = true;	//输出Log到控制台
     private static Context context;	//上下文
-    private static Options defaultOptions;	//默认加载选项
-	private static DefaultHttpClient httpClient;	//Http客户端
 	private static ConcurrentHashMap<String, SoftReference<Bitmap>> bitmapCacheMap;//软引用图片Map
 	
+	private String cacheDirName = "image_loader";	//缓存文件夹名称
+	private String logTag = "ImageLoader";	//LogTag
+	private Options defaultOptions;	//默认加载选项
+	private DefaultHttpClient httpClient;	//Http客户端
 	private int maxThreadNumber = 50;	//最大线程数
 	private int maxWaitingNumber = 30;	//最大等待数
 	private Set<ImageView> loadingImageViewSet;	//图片视图集合，这个集合里的每个尚未加载完成的视图身上都会携带有他要显示的图片的地址，当每一个图片加载完成之后都会在这个列表中遍历找到所有携带有这个这个图片的地址的视图，并把图片显示到这个视图上
 	private Set<String> loadingRequestSet;	//正在加载的Url列表，用来防止同一个URL被重复加载
 	private Circle<LoadRequest> waitingRequestCircle;	//等待处理的加载请求
-	private LoadHandler loadHandler;	//加载处理器
+	private ImageLoadHandler imageLoadHandler;	//加载处理器
 	
 	private Bitmap cacheBitmap;
 	
@@ -74,7 +74,7 @@ public class ImageLoader{
 			bitmapCacheMap = new ConcurrentHashMap<String, SoftReference<Bitmap>>();//软引用图片Map
 		}
 		
-		loadHandler = new LoadHandler(this);
+		imageLoadHandler = new ImageLoadHandler(this);
 		loadingImageViewSet = new HashSet<ImageView>();//初始化图片视图集合
 		loadingRequestSet = new HashSet<String>();//初始化加载中URL集合
 		waitingRequestCircle = new Circle<LoadRequest>(maxWaitingNumber);//初始化等待处理的加载请求集合
@@ -85,9 +85,9 @@ public class ImageLoader{
 	 * @param context 上下文
 	 * @param defaultOptions 默认加载选项
 	 */
-	public synchronized static final void init(Context context, Options defaultOptions){
+	public final void init(Context context, Options defaultOptions){
 		ImageLoader.context = context;
-		ImageLoader.defaultOptions = defaultOptions;
+		setDefaultOptions(defaultOptions);
 	}
 	
 	/**
@@ -115,8 +115,8 @@ public class ImageLoader{
 		if(ImageLoaderUtils.isNotNullAndEmpty(url) && showImageView != null){
 			try {
 				String id = URLEncoder.encode(url, ImageLoaderUtils.CHARSET_NAME_UTF8);
-				if(!tryShowImage(url, id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(options))){	//尝试显示图片，如果显示失败了就尝试加载
-					tryLoad(id, url, ImageLoaderUtils.getCacheFile(context, options, id), showImageView, options, null);
+				if(!tryShowImage(url, id, showImageView, options != null ? options.getLoadingDrawableResId() : -1)){	//尝试显示图片，如果显示失败了就尝试加载
+					tryLoad(id, url, ImageLoaderUtils.getCacheFile(this, context, options, id), showImageView, options, null);
 				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
@@ -124,9 +124,8 @@ public class ImageLoader{
 		}else{
 			if(showImageView != null){
 				showImageView.setTag(null);
-				int defaultDrawableResId = ImageLoaderUtils.getLoadingDrawbleResId(options);
-				if(defaultDrawableResId > 0){
-					showImageView.setImageResource(defaultDrawableResId);
+				if(options != null && options.getLoadingDrawableResId() > 0){
+					showImageView.setImageResource(options.getLoadingDrawableResId());
 				}else{
 					showImageView.setImageDrawable(null);
 				}
@@ -140,26 +139,7 @@ public class ImageLoader{
 	 * @param showImageView 显示图片的视图
 	 */
 	public final void load(String url, ImageView showImageView){
-		if(ImageLoaderUtils.isNotNullAndEmpty(url) && showImageView != null){
-			try {
-				String id = URLEncoder.encode(url, ImageLoaderUtils.CHARSET_NAME_UTF8);
-				if(!tryShowImage(url, id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(null))){	//尝试显示图片，如果显示失败了就尝试加载
-					tryLoad(id, url, ImageLoaderUtils.getCacheFile(context, null, id), showImageView, null, null);
-				}
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-		}else{
-			if(showImageView != null){
-				showImageView.setTag(null);
-				int defaultDrawableResId = ImageLoaderUtils.getLoadingDrawbleResId(null);
-				if(defaultDrawableResId > 0){
-					showImageView.setImageResource(defaultDrawableResId);
-				}else{
-					showImageView.setImageDrawable(null);
-				}
-			}
-		}
+		load(url, showImageView, getDefaultOptions());
 	}
 	
 	/**
@@ -173,7 +153,7 @@ public class ImageLoader{
 		if((localFile != null || ImageLoaderUtils.isNotNullAndEmpty(url)) && showImageView != null){
 			try{
 				String id = URLEncoder.encode(localFile.getPath(), ImageLoaderUtils.CHARSET_NAME_UTF8);
-				if(!tryShowImage(localFile.getPath(), id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(options))){	//尝试显示图片，如果显示失败了就尝试加载
+				if(!tryShowImage(localFile.getPath(), id, showImageView, options != null ? options.getLoadingDrawableResId() : -1)){	//尝试显示图片，如果显示失败了就尝试加载
 					tryLoad(id, url, localFile, showImageView, options, null);
 				}
 			} catch (UnsupportedEncodingException e) {
@@ -182,9 +162,8 @@ public class ImageLoader{
 		}else{
 			if(showImageView != null){
 				showImageView.setTag(null);
-				int defaultDrawableResId = ImageLoaderUtils.getLoadingDrawbleResId(options);
-				if(defaultDrawableResId > 0){
-					showImageView.setImageResource(defaultDrawableResId);
+				if(options != null && options.getLoadingDrawableResId() > 0){
+					showImageView.setImageResource(options.getLoadingDrawableResId());
 				}else{
 					showImageView.setImageDrawable(null);
 				}
@@ -199,26 +178,7 @@ public class ImageLoader{
 	 * @param imageUrl 图片下载地址，如果本地缓存文件不存在将从网络获取
 	 */
 	public final void load(File localFile, ImageView showImageView, String url){
-		if((localFile != null || ImageLoaderUtils.isNotNullAndEmpty(url)) && showImageView != null){
-			try{
-				String id = URLEncoder.encode(localFile.getPath(), ImageLoaderUtils.CHARSET_NAME_UTF8);
-				if(!tryShowImage(localFile.getPath(), id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(null))){	//尝试显示图片，如果显示失败了就尝试加载
-					tryLoad(id, url, localFile, showImageView, null, null);
-				}
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-		}else{
-			if(showImageView != null){
-				showImageView.setTag(null);
-				int defaultDrawableResId = ImageLoaderUtils.getLoadingDrawbleResId(null);
-				if(defaultDrawableResId > 0){
-					showImageView.setImageResource(defaultDrawableResId);
-				}else{
-					showImageView.setImageDrawable(null);
-				}
-			}
-		}
+		load(localFile, showImageView, url, getDefaultOptions());
 	}
 	
 	/**
@@ -227,26 +187,7 @@ public class ImageLoader{
 	 * @param showImageView 显示图片的视图
 	 */
 	public final void load(File localFile, ImageView showImageView){
-		if(localFile != null && showImageView != null){
-			try{
-				String id = URLEncoder.encode(localFile.getPath(), ImageLoaderUtils.CHARSET_NAME_UTF8);
-				if(!tryShowImage(localFile.getPath(), id, showImageView, ImageLoaderUtils.getLoadingDrawbleResId(null))){	//尝试显示图片，如果显示失败了就尝试加载
-					tryLoad(id, null, localFile, showImageView, null, null);
-				}
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-		}else{
-			if(showImageView != null){
-				showImageView.setTag(null);
-				int defaultDrawableResId = ImageLoaderUtils.getLoadingDrawbleResId(null);
-				if(defaultDrawableResId > 0){
-					showImageView.setImageResource(defaultDrawableResId);
-				}else{
-					showImageView.setImageDrawable(null);
-				}
-			}
-		}
+		load(localFile, showImageView, null, getDefaultOptions());
 	}
 	
 	/**
@@ -262,7 +203,7 @@ public class ImageLoader{
 		/* 根据地址从缓存中获取图片，如果缓存中存在相对的图片就显示，否则显示默认图片或者显示空 */
 		cacheBitmap = getBitmapFromCache(id);
 		if(cacheBitmap != null){
-			ImageLoader.log("从缓存加载图片："+url);
+			log("从缓存加载图片："+url);
 			loadingImageViewSet.remove(showImageView);
 			showImageView.clearAnimation();
 			showImageView.setImageBitmap(cacheBitmap);
@@ -378,16 +319,16 @@ public class ImageLoader{
 	 * 获取加载处理器
 	 * @return 加载处理器
 	 */
-	public final LoadHandler getLoadHandler() {
-		return loadHandler;
+	public final ImageLoadHandler getImageLoadHandler() {
+		return imageLoadHandler;
 	}
 
 	/**
 	 * 设置加载处理器
 	 * @param loadHandler 加载处理器
 	 */
-	public final void setLoadHandler(LoadHandler loadHandler) {
-		this.loadHandler = loadHandler;
+	public final void setImageLoadHandler(ImageLoadHandler loadHandler) {
+		this.imageLoadHandler = loadHandler;
 	}
 	
 	/**
@@ -445,7 +386,7 @@ public class ImageLoader{
      * 设置请求超时时间，默认是10秒
      * @param timeout 请求超时时间，单位毫秒
      */
-    public static final void setTimeout(int timeout){
+    public final void setTimeout(int timeout){
         final HttpParams httpParams = getHttpClient().getParams();
         ConnManagerParams.setTimeout(httpParams, timeout);
         HttpConnectionParams.setSoTimeout(httpParams, timeout);
@@ -456,7 +397,7 @@ public class ImageLoader{
 	 * 获取Http客户端用来发送请求
 	 * @return
 	 */
-	public static final DefaultHttpClient getHttpClient() {
+	public final DefaultHttpClient getHttpClient() {
 		if(httpClient == null){
 			BasicHttpParams httpParams = new BasicHttpParams();
 			
@@ -486,15 +427,15 @@ public class ImageLoader{
 	 * 设置Http客户端
 	 * @param httpClient Http客户端
 	 */
-	public static final void setHttpClient(DefaultHttpClient httpClient) {
-		ImageLoader.httpClient = httpClient;
+	public final void setHttpClient(DefaultHttpClient httpClient) {
+		this.httpClient = httpClient;
 	}
 
 	/**
 	 * 获取缓存目录名称
 	 * @return 缓存目录名称，默认为“image_loader”
 	 */
-	public static final String getCacheDirName() {
+	public final String getCacheDirName() {
 		return cacheDirName;
 	}
 
@@ -502,15 +443,15 @@ public class ImageLoader{
 	 * 设置缓存目录名称
 	 * @param cacheDirName 缓存目录名称，默认为“image_loader”
 	 */
-	public static final void setCacheDirName(String cacheDirName) {
-		ImageLoader.cacheDirName = cacheDirName;
+	public final void setCacheDirName(String cacheDirName) {
+		this.cacheDirName = cacheDirName;
 	}
 
 	/**
 	 * 获取Log Tag
 	 * @return Log Tag，默认为“ImageLoader”
 	 */
-	public static final String getLogTag() {
+	public final String getLogTag() {
 		return logTag;
 	}
 
@@ -518,8 +459,8 @@ public class ImageLoader{
 	 * 设置Log Tag
 	 * @param logTag，默认为“ImageLoader”
 	 */
-	public static final void setLogTag(String logTag) {
-		ImageLoader.logTag = logTag;
+	public final void setLogTag(String logTag) {
+		this.logTag = logTag;
 	}
 
 	/**
@@ -542,7 +483,7 @@ public class ImageLoader{
 	 * 获取默认的加载选项
 	 * @return 默认的加载选项
 	 */
-	public static final Options getDefaultOptions() {
+	public final Options getDefaultOptions() {
 		return defaultOptions;
 	}
 
@@ -550,17 +491,29 @@ public class ImageLoader{
 	 * 设置默认的加载选项
 	 * @param defaultOptions 默认的加载选项
 	 */
-	public static final void setDefaultOptions(Options defaultOptions) {
-		ImageLoader.defaultOptions = defaultOptions;
+	public final void setDefaultOptions(Options defaultOptions) {
+		this.defaultOptions = defaultOptions;
 	}
 	
 	/**
 	 * 输出LOG
 	 * @param logContent LOG内容
 	 */
-	public static void log(String logContent){
+	public void log(String logContent, boolean error){
 		if(isEnableOutputLogToConsole()){
-			Log.d(logTag, logContent);
+			if(error){
+				Log.e(logTag, logContent);
+			}else{
+				Log.d(logTag, logContent);
+			}
 		}
+	}
+	
+	/**
+	 * 输出LOG
+	 * @param logContent LOG内容
+	 */
+	public void log(String logContent){
+		log(logContent, false);
 	}
 } 

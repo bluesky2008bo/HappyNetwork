@@ -25,11 +25,11 @@ import android.widget.ImageView;
 /**
  * 加载处理器
  */
-public class LoadHandler extends Handler {
+public class ImageLoadHandler extends Handler {
 	public static final int WHAT_LOAD_FINISH = 12313;
 	private ImageLoader imageLoader;
 	
-	public LoadHandler(ImageLoader imageLoader){
+	public ImageLoadHandler(ImageLoader imageLoader){
 		this.imageLoader = imageLoader;
 	}
 	
@@ -48,8 +48,8 @@ public class LoadHandler extends Handler {
 		LoadRequest loadRequest = (LoadRequest) message.obj;
 		
 		/* 尝试缓存到内存中 */
-		if(loadRequest.getResultBitmap() != null && ImageLoaderUtils.isCachedInMemor(loadRequest.getOptions())){
-			CacheDetermineListener determineCache = ImageLoaderUtils.getCacheDetermineListener(loadRequest.getOptions());
+		if(loadRequest.getResultBitmap() != null && loadRequest.getOptions() != null && loadRequest.getOptions().isCachedInMemory()){
+			CacheDetermineListener determineCache = loadRequest.getOptions().getCacheDetermineListener();
 			if(determineCache == null || determineCache.isCache(loadRequest.getResultBitmap())){
 				ImageLoader.putBitmapToCache(loadRequest.getId(), loadRequest.getResultBitmap());
 			}
@@ -70,15 +70,14 @@ public class LoadHandler extends Handler {
 						imageView.clearAnimation();//先清除之前所有的动画
 						//如果图片加载成功
 						if(loadRequest.getResultBitmap() != null){
-							Animation animation = ImageLoaderUtils.getShowAnimationListener(loadRequest.getOptions());
+							Animation animation = loadRequest.getOptions() != null ? loadRequest.getOptions().getShowAnimationListener().onGetShowAnimation() : null;
 							if(animation != null){
 								imageView.setAnimation(animation);
 							}
 							imageView.setImageBitmap(loadRequest.getResultBitmap());
 						}else{
-							int loadFailedDrawableResId = ImageLoaderUtils.getLoadFailedDrawableResId(loadRequest.getOptions());
-							if(loadFailedDrawableResId > 0){
-								imageView.setImageResource(loadFailedDrawableResId);
+							if(loadRequest.getOptions() != null && loadRequest.getOptions().getLoadFailedDrawableResId() > 0){
+								imageView.setImageResource(loadRequest.getOptions().getLoadFailedDrawableResId());
 							}else{
 								imageView.setImageBitmap(null);
 							}

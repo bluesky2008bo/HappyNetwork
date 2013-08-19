@@ -30,7 +30,7 @@ public interface BitmapLoadHandler{
 	 * @param showImageView 图片视图
 	 * @return
 	 */
-	public Bitmap onFromByteArrayLoad(File localFile, ImageView showImageView);
+	public Bitmap onFromLocalFileLoad(File localFile, ImageView showImageView);
 	
 	/**
 	 * 从字节数组中加载
@@ -38,5 +38,5 @@ public interface BitmapLoadHandler{
 	 * @param showImageView 图片视图
 	 * @return
 	 */
-	public Bitmap onFromLocalFileLoad(byte[] byteArray, ImageView showImageView);
+	public Bitmap onFromByteArrayLoad(byte[] byteArray, ImageView showImageView);
 }

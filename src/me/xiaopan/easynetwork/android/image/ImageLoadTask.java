@@ -20,7 +20,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.SocketTimeoutException;
 
 import org.apache.http.Header;
@@ -51,13 +50,13 @@ public class ImageLoadTask implements Runnable {
 	@Override
 	public void run() {
 		if(loadRequest.getLocalCacheFile() !=null && loadRequest.getLocalCacheFile().exists()){
-			loadRequest.setResultBitmap(fromLocalLoadBitmap(loadRequest.getLocalCacheFile()));
+			loadRequest.setResultBitmap(fromLocalFileLoadBitmap(loadRequest.getLocalCacheFile()));
 		}else if(ImageLoaderUtils.isNotNullAndEmpty(loadRequest.getImageUrl())){
 			loadRequest.setResultBitmap(fromNetworkDownload(loadRequest.getLocalCacheFile()));
 		}else{
 			loadRequest.setResultBitmap(null);
 		}
-		imageLoader.getLoadHandler().obtainMessage(LoadHandler.WHAT_LOAD_FINISH, loadRequest).sendToTarget();
+		imageLoader.getImageLoadHandler().obtainMessage(ImageLoadHandler.WHAT_LOAD_FINISH, loadRequest).sendToTarget();
 	}
 	
 	/**
@@ -65,11 +64,10 @@ public class ImageLoadTask implements Runnable {
 	 * @param localFile
 	 * @return
 	 */
-	private Bitmap fromLocalLoadBitmap(File localFile){
-		ImageLoader.log("从本地加载图片："+localFile.getPath());
-		BitmapLoadHandler bitmapHandler = ImageLoaderUtils.getBitmapLoadListener(loadRequest.getOptions());
-		if(bitmapHandler != null){
-			return bitmapHandler.onFromByteArrayLoad(localFile, loadRequest.getShowImageView());
+	private Bitmap fromLocalFileLoadBitmap(File localFile){
+		imageLoader.log("从本地加载图片："+localFile.getPath());
+		if(loadRequest.getOptions() != null && loadRequest.getOptions().getBitmapLoadHandler() != null){
+			return loadRequest.getOptions().getBitmapLoadHandler().onFromLocalFileLoad(localFile, loadRequest.getShowImageView());
 		}else{
 			return BitmapFactory.decodeFile(localFile.getPath());
 		}
@@ -81,9 +79,8 @@ public class ImageLoadTask implements Runnable {
 	 * @return
 	 */
 	private Bitmap fromByteArrayLoadBitmap(byte[] byteArray){
-		BitmapLoadHandler bitmapHandler = ImageLoaderUtils.getBitmapLoadListener(loadRequest.getOptions());
-		if(bitmapHandler != null){
-			return bitmapHandler.onFromLocalFileLoad(byteArray, loadRequest.getShowImageView());
+		if(loadRequest.getOptions() != null && loadRequest.getOptions().getBitmapLoadHandler() != null){
+			return loadRequest.getOptions().getBitmapLoadHandler().onFromByteArrayLoad(byteArray, loadRequest.getShowImageView());
 		}else{
 			return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 		}
@@ -95,7 +92,7 @@ public class ImageLoadTask implements Runnable {
 	 * @return
 	 */
 	private Bitmap fromNetworkDownload(File localCacheFile){
-		ImageLoader.log("从网络加载图片："+loadRequest.getImageUrl());
+		imageLoader.log("从网络加载图片："+loadRequest.getImageUrl());
 		boolean running = true;
 		boolean createNewDir = false;	//true：父目录之前不存在是现在才创建的，当发生异常时需要删除
 		boolean createNewFile = false;	//true：保存图片的文件之前不存在是现在才创建的，当发生异常时需要删除
@@ -110,33 +107,30 @@ public class ImageLoadTask implements Runnable {
 		while(running){
 			numberOfLoaded++;//加载次数加1
 			try {
-				httpResponse = ImageLoader.getHttpClient().execute(new HttpGet(loadRequest.getImageUrl()));//请求数据
+				httpResponse = imageLoader.getHttpClient().execute(new HttpGet(loadRequest.getImageUrl()));//请求数据
 				
-				//读取文件长度
+				//读取响应体长度，如果没有响应体长度字段或者长度为0就抛出异常
 				long fileLength;
 				Header[] contentTypeString = httpResponse.getHeaders("Content-Length");
 				if(contentTypeString.length > 0){
 					fileLength = Long.valueOf(contentTypeString[0].getValue());
+					if(fileLength <= 0){
+						throw new Exception("文件长度为0");
+					}
 				}else{
 					throw new Exception("文件长度为0");
 				}
 				
 				//如果需要缓存并且缓存文件不null，就尝试先创建文件在下载数据存到缓存文件中再读取
-				if(localCacheFile != null && ImageLoaderUtils.isCacheToLocal(loadRequest.getOptions())){
+				if((loadRequest.getOptions() == null || loadRequest.getOptions().isCacheToLocal()) && localCacheFile != null){
 					/* 尝试创建父目录并创建新的缓存文件 */
 					localCacheParentDir = localCacheFile.getParentFile();	//获取其父目录
 					if(!localCacheParentDir.exists()){	//如果父目录同样不存在
 						createNewDir = localCacheParentDir.mkdirs();	//创建父目录
 					}
 					
-					//如果文件创建成功了
+					//如果文件创建成功了，就读取数据并写入本地文件，然后再从本地读取图片
 					if(createNewFile = localCacheFile.createNewFile()){
-						/* 设置文件长度 */
-						RandomAccessFile raf = new RandomAccessFile(localCacheFile, "rwd");
-						raf.setLength(fileLength);
-						raf.close();
-						
-						/* 读取数据并写入本地文件 */
 						bufferedfInputStream = new BufferedInputStream(httpResponse.getEntity().getContent());
 						bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(localCacheFile, false));
 						while((readNumber = bufferedfInputStream.read(cacheBytes)) != -1){
@@ -145,9 +139,7 @@ public class ImageLoadTask implements Runnable {
 						bufferedfInputStream.close();
 						bufferedOutputStream.flush();
 						bufferedOutputStream.close();
-						
-						/* 再从本地读取图片 */
-						resultBitmap = fromLocalLoadBitmap(localCacheFile);
+						resultBitmap = fromLocalFileLoadBitmap(localCacheFile);
 					}else{
 						throw new Exception("文件"+localCacheFile.getPath()+"创建失败");
 					}
@@ -156,7 +148,7 @@ public class ImageLoadTask implements Runnable {
 				}
 				running = false;
 			} catch (Throwable e2) {
-				ImageLoader.log(loadRequest.getImageUrl()+"加载失败，异常信息："+e2.getClass().getName()+":"+e2.getMessage());
+				imageLoader.log(loadRequest.getImageUrl()+"加载失败，异常信息："+e2.getClass().getName()+":"+e2.getMessage(), true);
 				
 				//尝试关闭输入流
 				if(bufferedfInputStream != null){
@@ -188,8 +180,8 @@ public class ImageLoadTask implements Runnable {
 				}
 				
 				//如果是请求超时异常，就尝试再请求一次
-				if((e2 instanceof ConnectTimeoutException || e2 instanceof SocketTimeoutException  || e2 instanceof  ConnectionPoolTimeoutException) && ImageLoaderUtils.getMaxRetryCount(loadRequest.getOptions()) > 0){
-					running = numberOfLoaded < ImageLoaderUtils.getMaxRetryCount(loadRequest.getOptions());	//如果尚未达到最大重试次数，那么就再尝试一次
+				if((e2 instanceof ConnectTimeoutException || e2 instanceof SocketTimeoutException  || e2 instanceof  ConnectionPoolTimeoutException) && loadRequest.getOptions() != null && loadRequest.getOptions().getMaxRetryCount() > 0){
+					running = numberOfLoaded < loadRequest.getOptions().getMaxRetryCount();	//如果尚未达到最大重试次数，那么就再尝试一次
 				}else{
 					running = false;
 				}

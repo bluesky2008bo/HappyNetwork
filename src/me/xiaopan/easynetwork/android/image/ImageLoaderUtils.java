@@ -19,7 +19,7 @@ import java.io.File;
 
 import android.content.Context;
 import android.os.Environment;
-import android.view.animation.Animation;
+
 
 /**
  * 工具箱
@@ -52,71 +52,9 @@ public class ImageLoaderUtils {
 		return result;
 	}
 	
-	public static Animation getShowAnimationListener(Options options){
-		if(options != null && options.getShowAnimationListener() != null){
-			return options.getShowAnimationListener().onGetShowAnimation();
-		}else if(ImageLoader.getDefaultOptions() != null && ImageLoader.getDefaultOptions().getShowAnimationListener() != null){
-			return ImageLoader.getDefaultOptions().getShowAnimationListener().onGetShowAnimation();
-		}else{
-			return null;
-		}
-	}
-	
-	public static int getMaxRetryCount(Options options){
-		if(options != null && options.getMaxRetryCount() > 0){
-			return options.getMaxRetryCount();
-		}else if(ImageLoader.getDefaultOptions() != null && ImageLoader.getDefaultOptions().getMaxRetryCount() > 0){
-			return ImageLoader.getDefaultOptions().getMaxRetryCount();
-		}else{
-			return -1;
-		}
-	}
-	
-	public static int getLoadingDrawbleResId(Options options){
-		if(options != null && options.getLoadingDrawableResId() > 0){
-			return options.getLoadingDrawableResId();
-		}else if(ImageLoader.getDefaultOptions() != null && ImageLoader.getDefaultOptions().getLoadingDrawableResId() > 0){
-			return ImageLoader.getDefaultOptions().getLoadingDrawableResId();
-		}else{
-			return -1;
-		}
-	}
-	
-	public static int getLoadFailedDrawableResId(Options options){
-		if(options != null && options.getLoadFailedDrawableResId() > 0){
-			return options.getLoadFailedDrawableResId();
-		}else if(ImageLoader.getDefaultOptions() != null && ImageLoader.getDefaultOptions().getLoadFailedDrawableResId() > 0){
-			return ImageLoader.getDefaultOptions().getLoadFailedDrawableResId();
-		}else{
-			return -1;
-		}
-	}
-	
-	public static boolean isCacheToLocal(Options options){
-		if(options != null){
-			return options.isCacheToLocal();
-		}else if(ImageLoader.getDefaultOptions() != null){
-			return ImageLoader.getDefaultOptions().isCacheToLocal();
-		}else{
-			return false;
-		}
-	}
-	
-	public static boolean isCachedInMemor(Options options){
-		if(options != null){
-			return options.isCachedInMemory();
-		}else if(ImageLoader.getDefaultOptions() != null){
-			return ImageLoader.getDefaultOptions().isCachedInMemory();
-		}else{
-			return false;
-		}
-	}
-	
-	public static File getCacheFile(Context context, Options options, String fileName){
+	public static File getCacheFile(ImageLoader imageLoader, Context context, Options options, String fileName){
 		if(options != null && isNotNullAndEmpty(options.getCacheDir())){
 			return new File(options.getCacheDir() + File.separator + fileName);
-		}else if(ImageLoader.getDefaultOptions() != null && isNotNullAndEmpty(ImageLoader.getDefaultOptions().getCacheDir())){
-			return new File(ImageLoader.getDefaultOptions().getCacheDir() + File.separator + fileName);
 		}else if(context != null){
 			File dir = context.getCacheDir();
 			if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
@@ -125,27 +63,7 @@ public class ImageLoaderUtils {
 					dir = externalDir;
 				}
 			}
-			return new File(dir.getPath() + File.separator + ImageLoader.getCacheDirName() + File.separator + fileName);
-		}else{
-			return null;
-		}
-	}
-	
-	public static BitmapLoadHandler getBitmapLoadListener(Options options){
-		if(options != null && options.getBitmapLoadHandler() != null){
-			return options.getBitmapLoadHandler();
-		}else if(ImageLoader.getDefaultOptions() != null && ImageLoader.getDefaultOptions().getBitmapLoadHandler() != null){
-			return ImageLoader.getDefaultOptions().getBitmapLoadHandler();
-		}else{
-			return null;
-		}
-	}
-	
-	public static CacheDetermineListener getCacheDetermineListener(Options options){
-		if(options != null && options.getCacheDetermineListener() != null){
-			return options.getCacheDetermineListener();
-		}else if(ImageLoader.getDefaultOptions() != null && ImageLoader.getDefaultOptions().getCacheDetermineListener() != null){
-			return ImageLoader.getDefaultOptions().getCacheDetermineListener();
+			return new File(dir.getPath() + File.separator + imageLoader.getCacheDirName() + File.separator + fileName);
 		}else{
 			return null;
 		}

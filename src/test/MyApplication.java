@@ -43,6 +43,6 @@ public class MyApplication extends Application {
 			}
 		});
 		options.setBitmapLoadHandler(new RoundedBitmapLoadHandler());	//设置图片加载监听器，这里传入的是一个可以将图片都处理为圆角的图片加载监听器
-		ImageLoader.init(getBaseContext(), options);
+		ImageLoader.getInstance().init(getBaseContext(), options);
 	}
 }

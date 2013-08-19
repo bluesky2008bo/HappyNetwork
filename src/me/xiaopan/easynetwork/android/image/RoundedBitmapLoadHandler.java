@@ -43,12 +43,12 @@ public class RoundedBitmapLoadHandler implements BitmapLoadHandler {
 	}
 	
 	@Override
-	public Bitmap onFromByteArrayLoad(File localFile, ImageView showImageView) {
+	public Bitmap onFromLocalFileLoad(File localFile, ImageView showImageView) {
 		return roundCorners(BitmapFactory.decodeFile(localFile.getPath()), showImageView, roundPixels);
 	}
 
 	@Override
-	public Bitmap onFromLocalFileLoad(byte[] byteArray, ImageView showImageView) {
+	public Bitmap onFromByteArrayLoad(byte[] byteArray, ImageView showImageView) {
 		return roundCorners(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length), showImageView, roundPixels);
 	}
 	

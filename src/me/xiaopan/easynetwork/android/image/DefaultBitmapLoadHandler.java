@@ -11,7 +11,7 @@ import android.widget.ImageView;
  */
 public class DefaultBitmapLoadHandler implements BitmapLoadHandler{
 	@Override
-	public Bitmap onFromLocalFileLoad(byte[] byteArray, ImageView showImageView) {
+	public Bitmap onFromByteArrayLoad(byte[] byteArray, ImageView showImageView) {
 		if(showImageView.getWidth() > 0){
 			//先读取图片的原图的宽高
 			BitmapFactory.Options options = new BitmapFactory.Options(); 
@@ -31,7 +31,7 @@ public class DefaultBitmapLoadHandler implements BitmapLoadHandler{
 	}
 	
 	@Override
-	public Bitmap onFromByteArrayLoad(File localFile, ImageView showImageView) {
+	public Bitmap onFromLocalFileLoad(File localFile, ImageView showImageView) {
 		if(showImageView.getWidth() > 0){
 			//先读取图片的原图的宽高
 			BitmapFactory.Options options = new BitmapFactory.Options(); 
