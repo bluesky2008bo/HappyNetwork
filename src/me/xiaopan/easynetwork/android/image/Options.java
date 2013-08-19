@@ -22,8 +22,8 @@ public class Options {
 	private int loadingDrawableResId = -1;	//正在加载时显示的图片的资源ID
 	private int loadFailedDrawableResId = -1;	//加载失败时显示的图片的资源ID
 	private int maxRetryCount = -1;	//最大重试次数
-	private boolean isCachedInMemory = true;	//是否缓存在内存中
-	private boolean isCacheToLocal = true;	//是否需要将图片缓存到本地
+	private boolean isCachedInMemory;	//是否缓存在内存中
+	private boolean isCacheToLocal;	//是否需要将图片缓存到本地
 	private String cacheDir;	//默认缓存目录
 	private ShowAnimationListener showAnimationListener;	//显示动画
 	private BitmapLoadHandler bitmapLoadHandler;	//位图加载处理器

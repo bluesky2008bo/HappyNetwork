@@ -63,7 +63,7 @@ public class ImageLoader{
 	private Circle<LoadRequest> waitingRequestCircle;	//等待处理的加载请求
 	private ImageLoadHandler imageLoadHandler;	//加载处理器
 	
-	private Bitmap cacheBitmap;
+	private Bitmap tempCacheBitmap;
 	
 	/**
 	 * 创建图片加载器
@@ -115,7 +115,7 @@ public class ImageLoader{
 		if(ImageLoaderUtils.isNotNullAndEmpty(url) && showImageView != null){
 			try {
 				String id = URLEncoder.encode(url, ImageLoaderUtils.CHARSET_NAME_UTF8);
-				if(!tryShowImage(url, id, showImageView, options != null ? options.getLoadingDrawableResId() : -1)){	//尝试显示图片，如果显示失败了就尝试加载
+				if(!tryShowImage(url, id, showImageView, options)){	//尝试显示图片，如果显示失败了就尝试加载
 					tryLoad(id, url, ImageLoaderUtils.getCacheFile(this, context, options, id), showImageView, options, null);
 				}
 			} catch (UnsupportedEncodingException e) {
@@ -153,7 +153,7 @@ public class ImageLoader{
 		if((localFile != null || ImageLoaderUtils.isNotNullAndEmpty(url)) && showImageView != null){
 			try{
 				String id = URLEncoder.encode(localFile.getPath(), ImageLoaderUtils.CHARSET_NAME_UTF8);
-				if(!tryShowImage(localFile.getPath(), id, showImageView, options != null ? options.getLoadingDrawableResId() : -1)){	//尝试显示图片，如果显示失败了就尝试加载
+				if(!tryShowImage(localFile.getPath(), id, showImageView, options)){	//尝试显示图片，如果显示失败了就尝试加载
 					tryLoad(id, url, localFile, showImageView, options, null);
 				}
 			} catch (UnsupportedEncodingException e) {
@@ -194,23 +194,22 @@ public class ImageLoader{
 	 * 尝试显示图片
 	 * @param id ID，根据此ID从缓存中获取图片
 	 * @param showImageView 显示视图
-	 * @param defaultDrawableResId 默认图片的资源ID
+	 * @param options 加载选项
 	 * @return true：图片缓存中有图片并且已经显示了；false：缓存中没有对应的图片，需要开启新线程从网络或本地加载
 	 */
-	private final boolean tryShowImage(String url, String id, ImageView showImageView, int defaultDrawableResId){
-		showImageView.setTag(id);//绑定
-		
-		/* 根据地址从缓存中获取图片，如果缓存中存在相对的图片就显示，否则显示默认图片或者显示空 */
-		cacheBitmap = getBitmapFromCache(id);
-		if(cacheBitmap != null){
+	private final boolean tryShowImage(String url, String id, ImageView showImageView, Options options){
+		//如果需要从缓存中读取，就根据地址从缓存中获取图片，如果缓存中存在相对的图片就显示，否则显示默认图片或者显示空
+		if(options != null && options.isCachedInMemory() && (tempCacheBitmap = getBitmapFromCache(id)) != null){
+			showImageView.setTag(null);	//清空绑定关系
 			log("从缓存加载图片："+url);
 			loadingImageViewSet.remove(showImageView);
 			showImageView.clearAnimation();
-			showImageView.setImageBitmap(cacheBitmap);
+			showImageView.setImageBitmap(tempCacheBitmap);
 			return true;
 		}else{
-			if(defaultDrawableResId > 0){
-				showImageView.setImageResource(defaultDrawableResId);
+			showImageView.setTag(id);	//将ImageView和当前图片绑定，以便在下载完成后通过此ID来找到此ImageView
+			if(options != null && options.getLoadingDrawableResId() > 0){
+				showImageView.setImageResource(options.getLoadingDrawableResId());
 			}else{
 				showImageView.setImageDrawable(null);
 			}
@@ -227,8 +226,8 @@ public class ImageLoader{
 	 * @param options
 	 */
 	final void tryLoad(String id, String url, File localCacheFile, ImageView showImageView, Options options, LoadRequest loadRequest){
-		loadingImageViewSet.add(showImageView);	//将当前视图存起来
-		if(!loadingRequestSet.contains(id)){		//如果没有加载
+		loadingImageViewSet.add(showImageView);	//先将当前ImageView存起来
+		if(!loadingRequestSet.contains(id)){		//如果当前图片没有正在加载
 			if(loadRequest == null){
 				loadRequest = new LoadRequest(id, url, localCacheFile, showImageView, options);
 			}

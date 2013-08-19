@@ -31,6 +31,7 @@ public class MyApplication extends Application {
 		
 		/* 初始化图片加载器 */
 		Options options = new Options();
+		options.setCacheToLocal(true);
 		options.setLoadingDrawableResId(R.drawable.image_loading);	//设置加载中显示的图片
 		options.setLoadFailedDrawableResId(R.drawable.image_load_failed);	//设置加载失败时显示的图片
 		options.setShowAnimationListener(new ShowAnimationListener() {	//设置显示动画监听器，用来获取显示图片的动画
