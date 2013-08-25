@@ -175,38 +175,73 @@ ImageLoader是一个图片加载器，主要功能是从本地或者网络加载
 
 >* 异步加载。ImageLoader采用线程池来处理每一个请求，可确保每一个请求都在一个单独的线程中加载。另外线程数量是有限制的（默认是50），当线程池负荷已满的时候，新的加载请求会放到等待区域中，而等待区域也是有数量限制的（默认是30），新的等待请求会将最旧的等待请求挤出等待区域，保证最新的请求会被及时处理。
 
->* 强大的自定义功能。通过Options对象可以自定义动画、默认图片、加载失败图片、图片处理、超时重试、缓存目录、缓存判定。另外你可以给ImageLoder设置一个默认的Options，也可以针对每一个请求都使用不一样的Options。
+>* 强大的自定义功能。通过ImageLoadOptions对象可以自定义动画、默认图片、加载失败图片、图片处理、超时重试、缓存目录、缓存判定。另外你可以给ImageLoder设置一个默认的ImageLoadOptions，也可以针对每一个请求都使用不一样的ImageLoadOptions。
 
 ###示例
 
-####在Application中初始化ImagLoader
+####先创建一个ImageLoadOptions工厂类
 
 ```java
-public class MyApplication extends Application {
-    @Override
-	public void onCreate() {
-		super.onCreate();
-		
-		/* 初始化图片加载器 */
-		Options options = new Options();
-		options.setLoadingDrawableResId(R.drawable.image_loading);	//设置加载中显示的图片
-		options.setLoadFailedDrawableResId(R.drawable.image_load_failed);	//设置加载失败时显示的图片
-		options.setShowAnimationListener(new ShowAnimationListener() {	//设置显示动画监听器，用来获取显示图片的动画
-			@Override
-			public Animation onGetShowAnimation() {
-				/* 创建一个从50%放大到100%并且持续0.5秒的缩放动画 */
-				ScaleAnimation scaleAnimation = new ScaleAnimation(0.5f, 1.0f, 0.5f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-				scaleAnimation.setDuration(500);
-				return scaleAnimation;
-			}
-		});
-		options.setBitmapLoadListener(new RoundedBitmapLoadListener());	//设置图片加载监听器，这里传入的是一个可以将图片都处理为圆角的图片加载监听器
-		ImageLoader.init(getBaseContext(), options);
+/**
+ * ImageLoadOptions工厂类，专门提供适合各种场景的ImageLoadOptions
+ */
+public class ImageLoadOptionsFactory {
+	private static ImageLoadOptions defaultImageLoadOptions;	//默认的ImageLoadOptions
+	private static ImageLoadOptions listImageLoadOptions;	//列表用的ImageLoadOptions
+	
+	/**
+	 * 获取默认的ImageLoadOptions，默认的ImageLoadOptions的特别之处在于不会将Bitmap缓存在内存中
+	 * @return
+	 */
+	public static final ImageLoadOptions getDefaultImageLoadOptions(Context context){
+		if(defaultImageLoadOptions == null){
+			defaultImageLoadOptions = new ImageLoadOptions();
+			defaultImageLoadOptions.setCacheInLocal(true);	//将图片缓存到本地
+			defaultImageLoadOptions.setLoadingDrawableResId(R.drawable.images_loading);	//设置加载中显示的图片
+			defaultImageLoadOptions.setLoadFailureDrawableResId(R.drawable.images_load_failure);	//设置当加载失败时显示的图片
+			defaultImageLoadOptions.setShowAnimationListener(new DefaultAlphaAnimationListener());	//设置一个透明度由50%渐变到100%的显示动画
+			defaultImageLoadOptions.setBitmapLoadHandler(new DefaultBitmapLoadHandler(context));	//设置一个图片处理器，保证读取到大小合适的Bitmap，避免内存溢出
+		}
+		return listImageLoadOptions;
+	}
+	
+	/**
+	 * 获取列表用的ImageLoadOptions，其同默认的ImageLoadOptions的不同之处在于其会将Bitmap缓存到内存中
+	 * @return
+	 */
+	public static final ImageLoadOptions getListImageLoadOptions(Context context){
+		if(listImageLoadOptions == null){
+			listImageLoadOptions = new ImageLoadOptions();
+			listImageLoadOptions.setCachedInMemory(true);	//每次加载图片的时候先从内存中去找，并且加载完成后将图片缓存在内存中
+			listImageLoadOptions.setCacheInLocal(true);	//将图片缓存到本地
+			listImageLoadOptions.setLoadingDrawableResId(R.drawable.images_loading);	//设置加载中显示的图片
+			listImageLoadOptions.setLoadFailureDrawableResId(R.drawable.images_load_failure);	//设置当加载失败时显示的图片
+			listImageLoadOptions.setShowAnimationListener(new DefaultAlphaAnimationListener());	//设置一个透明度由50%渐变到100%的显示动画
+			listImageLoadOptions.setBitmapLoadHandler(new DefaultBitmapLoadHandler(context));	//设置一个图片处理器，保证读取到大小合适的Bitmap，避免内存溢出
+		}
+		return listImageLoadOptions;
 	}
 }
 ```
 
-####在适配器中使用ImageLoader
+####然后在Application中使用默认的ImageLoadOptions初始化ImagLoader
+
+```java
+public class MyApplication extends Application {
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		ImageLoader.getInstance().init(getBaseContext(), ImageLoadOptionsFactory.getDefaultImageLoadOptions(getBaseContext()));	//初始化图片加载器
+	}
+}
+```
+
+####使用ImageLoader
+```java
+ImageLoader.getInstance().load("http://d.hiphotos.baidu.com/album/w%3D2048/sign=c52356e20c3387449cc5287c6537d8f9/ac345982b2b7d0a23ff30c2fcbef76094b369a4d.jpg", (ImageView) findViewById(R.id.image));
+```
+
+####在适配器中使用ImageLoader，此时要使用适合列表用的ImageLoadOptions
 
 ```java
 public class ImageAdapter extends BaseAdapter {
@@ -245,7 +280,7 @@ public class ImageAdapter extends BaseAdapter {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		
-		ImageLoader.getInstance().load(imageUrls[realPosition], viewHolder.image);
+		ImageLoader.getInstance().load(imageUrls[realPosition], viewHolder.image, ImageLoadOptionsFactory.getListImageLoadOptions(context);
 		return convertView;
 	}
 	
@@ -257,6 +292,9 @@ public class ImageAdapter extends BaseAdapter {
 
 ###注意事项
 
-1. 在使用ImageLoader之前你需要调用ImageLoader.init(Context, Options)方法来初始化ImageLoader。因为ImageLoader需要一个上下文来将下载好的图片缓存到Android/data/下面，另外也需要一个默认的Options来处理所有的加载请求。
+1. 在使用ImageLoader之前你需要调用ImageLoader.getInstance().init(Context, Options)方法来初始化ImageLoader。因为ImageLoader需要一个上下文来将下载好的图片缓存到Android/data/下面，另外也需要一个默认的ImageLoadOptions来处理所有的加载请求。
 
 2. ImageLoader提供了一个单例，所以没有特殊需求的话，你只须通过ImageLoader.getInstance()方法获取其实例即可。
+
+3. 之所以ImageLoadOptions会有默认版和列表版之分是因为碰到下面这种情况的时候就会很费劲：
+	假设现在有一个产品列表页面和一个产品详情页面，两个页面的图片地址是一样的。然而列表页需要的是小图，详情页需要的却是大图。此时如果在列表页把小图给缓存到了内存中，那么跳到详情页的时候通过这个地址去缓存中取到的将会是小图，这当然不是我们想要的。所以我将默认的ImageLoadOptions设为不往内存中缓存也不从缓存中读取，这样就可以避免此类问题了。
