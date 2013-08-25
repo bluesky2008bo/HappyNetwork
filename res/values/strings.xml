@@ -2,9 +2,9 @@
 <resources>
     <string name="app_name">EasyNetwork</string>
     
-    <string name="activityTitle_binary">使用BinaryResponseHandler下载图片</string>
-    <string name="activityTitle_string">使用StringResponseHandler获取文本</string>
-    <string name="activityTitle_json">使用JsonResponseHandler获取北京的天气信息</string>
+    <string name="activityTitle_binary">使用BinaryHttpResponseHandler下载图片</string>
+    <string name="activityTitle_string">使用StringHttpResponseHandler获取文本</string>
+    <string name="activityTitle_json">使用JsonHttpResponseHandler获取北京的天气信息</string>
     <string name="activityTitle_requestObject">使用请求对象来获取百度搜索结果</string>
     <string name="activityTitle_imageLoader">图片加载器</string>
     

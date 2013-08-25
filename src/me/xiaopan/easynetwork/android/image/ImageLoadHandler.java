@@ -76,8 +76,8 @@ public class ImageLoadHandler extends Handler {
 							}
 							imageView.setImageBitmap(loadRequest.getResultBitmap());
 						}else{
-							if(loadRequest.getImageLoadOptions() != null && loadRequest.getImageLoadOptions().getLoadFailedDrawableResId() > 0){
-								imageView.setImageResource(loadRequest.getImageLoadOptions().getLoadFailedDrawableResId());
+							if(loadRequest.getImageLoadOptions() != null && loadRequest.getImageLoadOptions().getLoadFailureDrawableResId() > 0){
+								imageView.setImageResource(loadRequest.getImageLoadOptions().getLoadFailureDrawableResId());
 							}else{
 								imageView.setImageBitmap(null);
 							}

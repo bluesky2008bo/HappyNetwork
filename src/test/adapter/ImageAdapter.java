@@ -17,6 +17,7 @@ package test.adapter;
 
 import me.xiaopan.easynetwork.android.R;
 import me.xiaopan.easynetwork.android.image.ImageLoader;
+import test.util.ImageLoadOptionsFactory;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,7 +61,7 @@ public class ImageAdapter extends BaseAdapter {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		
-		ImageLoader.getInstance().load(imageUrls[realPosition], viewHolder.image);
+		ImageLoader.getInstance().load(imageUrls[realPosition], viewHolder.image, ImageLoadOptionsFactory.getListImageLoadOptions(context));
 		return convertView;
 	}
 	

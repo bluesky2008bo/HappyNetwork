@@ -15,25 +15,14 @@
  */
 package test;
 
-import me.xiaopan.easynetwork.android.R;
-import me.xiaopan.easynetwork.android.image.DefaultBitmapLoadHandler;
-import me.xiaopan.easynetwork.android.image.DefaultScaleAnimationListener;
-import me.xiaopan.easynetwork.android.image.ImageLoadOptions;
 import me.xiaopan.easynetwork.android.image.ImageLoader;
+import test.util.ImageLoadOptionsFactory;
 import android.app.Application;
 
 public class MyApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		
-		/* 初始化图片加载器 */
-		ImageLoadOptions imageLoadOptions = new ImageLoadOptions();
-		imageLoadOptions.setCacheInLocal(true);
-		imageLoadOptions.setLoadingDrawableResId(R.drawable.image_loading);	//设置加载中显示的图片
-		imageLoadOptions.setLoadFailedDrawableResId(R.drawable.image_load_failed);	//设置加载失败时显示的图片
-		imageLoadOptions.setShowAnimationListener(new DefaultScaleAnimationListener());	//设置显示动画监听器，用来获取显示图片的动画
-		imageLoadOptions.setBitmapLoadHandler(new DefaultBitmapLoadHandler(getBaseContext()));	//设置图片加载监听器，这里传入的是一个可以将图片都处理为圆角的图片加载监听器
-		ImageLoader.getInstance().init(getBaseContext(), imageLoadOptions);
+		ImageLoader.getInstance().init(getBaseContext(), ImageLoadOptionsFactory.getDefaultImageLoadOptions(getBaseContext()));	//初始化图片加载器
 	}
 }

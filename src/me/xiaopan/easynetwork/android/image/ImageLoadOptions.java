@@ -20,9 +20,9 @@ package me.xiaopan.easynetwork.android.image;
  */
 public class ImageLoadOptions {
 	private int loadingDrawableResId = -1;	//正在加载时显示的图片的资源ID
-	private int loadFailedDrawableResId = -1;	//加载失败时显示的图片的资源ID
+	private int loadFailureDrawableResId = -1;	//加载失败时显示的图片的资源ID
 	private int maxRetryCount = -1;	//最大重试次数
-	private boolean isCachedInMemory;	//是否缓存在内存中
+	private boolean isCachedInMemory;	//是否每次加载图片的时候先从内存中去找，并且加载完成后将图片缓存在内存中
 	private boolean isCacheInLocal;	//是否需要将图片缓存到本地
 	private String cacheDir;	//默认缓存目录
 	private ShowAnimationListener showAnimationListener;	//显示动画
@@ -49,20 +49,20 @@ public class ImageLoadOptions {
 	 * 获取加载失败时显示的图片的资源ID
 	 * @return 加载失败时显示的图片的资源ID
 	 */
-	public int getLoadFailedDrawableResId() {
-		return loadFailedDrawableResId;
+	public int getLoadFailureDrawableResId() {
+		return loadFailureDrawableResId;
 	}
 
 	/**
 	 * 设置加载失败时显示的图片的资源ID
-	 * @param loadFailedDrawableResId 加载失败时显示的图片的资源ID
+	 * @param loadFailureDrawableResId 加载失败时显示的图片的资源ID
 	 */
-	public void setLoadFailedDrawableResId(int loadFailedDrawableResId) {
-		this.loadFailedDrawableResId = loadFailedDrawableResId;
+	public void setLoadFailureDrawableResId(int loadFailureDrawableResId) {
+		this.loadFailureDrawableResId = loadFailureDrawableResId;
 	}
 
 	/**
-	 * 判断是否缓存在内存中
+	 * 判断是否每次加载图片的时候先从内存中去找，并且加载完成后将图片缓存在内存中
 	 * @return 
 	 */
 	public boolean isCachedInMemory() {
@@ -70,8 +70,8 @@ public class ImageLoadOptions {
 	}
 	
 	/**
-	 * 设置是否缓存在内存中
-	 * @param isCachedInMemory 是否缓存在内存中
+	 * 设置是否每次加载图片的时候先从内存中去找，并且加载完成后将图片缓存在内存中
+	 * @param isCachedInMemory 是否每次加载图片的时候先从内存中去找，并且加载完成后将图片缓存在内存中
 	 */
 	public void setCachedInMemory(boolean isCachedInMemory) {
 		this.isCachedInMemory = isCachedInMemory;
