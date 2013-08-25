@@ -144,9 +144,9 @@ public class ImageLoader{
 	
 	/**
 	 * 加载图片
-	 * @param localFile 本地缓存文件，始终会优先加载本地缓存文件，只有在本地缓存文件不存在的话才会从网络获取
+	 * @param localFile 本地图片文件，如果本地文件不存在会尝试从imageUrl下载图片并创建localFile
 	 * @param showImageView 显示图片的视图
-	 * @param imageUrl 图片下载地址，如果本地缓存文件不存在将从网络获取
+	 * @param imageUrl 图片下载地址，如果本地图片文件不存在将从网络获取
 	 * @param imageLoadOptions 加载选项
 	 */
 	public final void load(File localFile, ImageView showImageView, String url, ImageLoadOptions imageLoadOptions){
@@ -173,9 +173,9 @@ public class ImageLoader{
 	
 	/**
 	 * 加载图片
-	 * @param localFile 本地缓存文件，始终会优先加载本地缓存文件，只有在本地缓存文件不存在的话才会从网络获取
+	 * @param localFile 本地图片文件，如果本地文件不存在会尝试从imageUrl下载图片并创建localFile
 	 * @param showImageView 显示图片的视图
-	 * @param imageUrl 图片下载地址，如果本地缓存文件不存在将从网络获取
+	 * @param imageUrl 图片下载地址，如果本地图片文件不存在将从网络获取
 	 */
 	public final void load(File localFile, ImageView showImageView, String url){
 		load(localFile, showImageView, url, getDefaultImageLoadOptions());
@@ -183,7 +183,17 @@ public class ImageLoader{
 	
 	/**
 	 * 加载图片
-	 * @param localFile 本地缓存文件，始终会优先加载本地缓存文件，只有在本地缓存文件不存在的话才会从网络获取
+	 * @param localFile 本地图片文件
+	 * @param showImageView 显示图片的视图
+	 * @param imageLoadOptions 加载选项
+	 */
+	public final void load(File localFile, ImageView showImageView, ImageLoadOptions imageLoadOptions){
+		load(localFile, showImageView, null, imageLoadOptions);
+	}
+	
+	/**
+	 * 加载图片
+	 * @param localFile 本地图片文件
 	 * @param showImageView 显示图片的视图
 	 */
 	public final void load(File localFile, ImageView showImageView){
