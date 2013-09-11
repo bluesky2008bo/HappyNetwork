@@ -16,7 +16,7 @@
 
 package test.adapter;
 
-import me.xiaopan.easynetwork.android.R;
+import me.xiaopan.easy.network.android.R;
 import test.beans.ActivityItem;
 import android.content.Context;
 import android.content.Intent;

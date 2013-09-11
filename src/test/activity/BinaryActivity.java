@@ -15,9 +15,9 @@
  */
 package test.activity;
 
-import me.xiaopan.easynetwork.android.R;
-import me.xiaopan.easynetwork.android.http.BinaryHttpResponseHandler;
-import me.xiaopan.easynetwork.android.http.EasyHttpClient;
+import me.xiaopan.easy.network.android.http.BinaryHttpResponseHandler;
+import me.xiaopan.easy.network.android.http.EasyHttpClient;
+import me.xiaopan.easy.network.android.R;
 import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;

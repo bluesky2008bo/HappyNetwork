@@ -15,7 +15,7 @@
  */
 package test.fragment;
 
-import me.xiaopan.easynetwork.android.R;
+import me.xiaopan.easy.network.android.R;
 import test.adapter.ImageAdapter;
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -18,7 +18,7 @@ package test.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.xiaopan.easynetwork.android.R;
+import me.xiaopan.easy.network.android.R;
 import test.adapter.TitleFragmentPagerAdapter;
 import test.fragment.ImageGalleryFragment;
 import test.fragment.ImageGridFragment;

@@ -16,7 +16,7 @@
 
 package test.net.request;
 
-import me.xiaopan.easynetwork.android.http.Path;
+import me.xiaopan.easy.network.android.http.Path;
 
 /**
  * 北京天气请求

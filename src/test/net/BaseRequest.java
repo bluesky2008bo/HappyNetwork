@@ -16,7 +16,7 @@
 
 package test.net;
 
-import me.xiaopan.easynetwork.android.http.Request;
+import me.xiaopan.easy.network.android.http.Request;
 
 /**
  * 基本请求，可以将一些每个请求都必须有的参数定义在此

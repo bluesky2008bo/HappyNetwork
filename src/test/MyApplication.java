@@ -15,7 +15,7 @@
  */
 package test;
 
-import me.xiaopan.easynetwork.android.image.ImageLoader;
+import me.xiaopan.easy.network.android.image.ImageLoader;
 import test.util.ImageLoadOptionsFactory;
 import android.app.Application;
 

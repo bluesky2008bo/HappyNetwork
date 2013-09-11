@@ -16,7 +16,7 @@
 
 package test.net.request;
 
-import me.xiaopan.easynetwork.android.http.Host;
+import me.xiaopan.easy.network.android.http.Host;
 import test.net.BaseRequest;
 
 /**

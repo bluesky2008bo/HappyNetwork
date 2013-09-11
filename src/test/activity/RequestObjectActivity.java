@@ -16,9 +16,9 @@
 
 package test.activity;
 
-import me.xiaopan.easynetwork.android.R;
-import me.xiaopan.easynetwork.android.http.EasyHttpClient;
-import me.xiaopan.easynetwork.android.http.StringHttpResponseHandler;
+import me.xiaopan.easy.network.android.http.EasyHttpClient;
+import me.xiaopan.easy.network.android.http.StringHttpResponseHandler;
+import me.xiaopan.easy.network.android.R;
 import test.net.request.BaiduSearchRequest;
 import test.util.Utils;
 import test.util.WebViewManager;

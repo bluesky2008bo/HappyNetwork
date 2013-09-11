@@ -15,7 +15,7 @@
  */
 package test.beans;
 
-import me.xiaopan.easynetwork.android.http.ResponseBodyKey;
+import me.xiaopan.easy.network.android.http.ResponseBodyKey;
 
 import com.google.gson.annotations.Expose;
 
