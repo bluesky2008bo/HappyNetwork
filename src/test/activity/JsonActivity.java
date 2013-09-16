@@ -16,9 +16,9 @@
 
 package test.activity;
 
+import me.xiaopan.easy.network.android.R;
 import me.xiaopan.easy.network.android.http.EasyHttpClient;
 import me.xiaopan.easy.network.android.http.JsonHttpResponseHandler;
-import me.xiaopan.easy.network.android.R;
 import test.beans.Weather;
 import test.net.request.BeijingWeatherRequest;
 import android.app.Activity;

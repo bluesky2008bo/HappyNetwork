@@ -49,6 +49,9 @@ public class HttpRequestRunnable implements Runnable {
 					}
     			}
     		} catch (Throwable e) {
+    			if(httpUriRequest != null){
+    				httpUriRequest.abort();
+    			}
     			if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null) {
     				httpResponseHandler.exception(e);
     			}
