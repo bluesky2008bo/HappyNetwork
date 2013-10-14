@@ -12,17 +12,17 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <!-- 声明应用需要的各种组件 -->
-    <application android:name="test.MyApplication" android:allowBackup="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/AppTheme" >
-        <activity android:name="test.activity.MainActivity" android:label="@string/app_name" >
+    <application android:name="me.xiaopan.easy.network.android.examples.MyApplication" android:allowBackup="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/AppTheme">
+        <activity android:name="me.xiaopan.easy.network.android.examples.activity.MainActivity" android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="test.activity.BinaryActivity" android:label="@string/activityTitle_binary"/>
-        <activity android:name="test.activity.StringActivity" android:label="@string/activityTitle_string"/>
-        <activity android:name="test.activity.JsonActivity" android:label="@string/activityTitle_json"/>
-        <activity android:name="test.activity.RequestObjectActivity" android:label="@string/activityTitle_requestObject"/>
-        <activity android:name="test.activity.ImageLoaderActivity" android:label="@string/activityTitle_imageLoader"/>
+        <activity android:name="me.xiaopan.easy.network.android.examples.activity.BinaryActivity" android:label="@string/activityTitle_binary"/>
+        <activity android:name="me.xiaopan.easy.network.android.examples.activity.StringActivity" android:label="@string/activityTitle_string"/>
+        <activity android:name="me.xiaopan.easy.network.android.examples.activity.JsonActivity" android:label="@string/activityTitle_json"/>
+        <activity android:name="me.xiaopan.easy.network.android.examples.activity.RequestObjectActivity" android:label="@string/activityTitle_requestObject"/>
+        <activity android:name="me.xiaopan.easy.network.android.examples.activity.ImageLoaderActivity" android:label="@string/activityTitle_imageLoader"/>
     </application>
 </manifest>
