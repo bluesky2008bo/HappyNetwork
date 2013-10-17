@@ -18,7 +18,7 @@ package me.xiaopan.easy.network.android.image;
 /**
  * 这是一个圆圈
  */
-public class Circle<T> {
+public class WaitCircle<T> {
 	/**
 	 * 最大容量
 	 */
@@ -40,7 +40,7 @@ public class Circle<T> {
 	 * 创建一个圆圈，同时你必须指定它的最大容量
 	 * @param maxSize 最大容量
 	 */
-	public Circle(int maxSize){
+	public WaitCircle(int maxSize){
 		setMaxSize(maxSize);
 	}
 	
@@ -120,7 +120,7 @@ public class Circle<T> {
 	/**
 	 * 节点
 	 */
-	public class Node {
+	private class Node {
 		/**
 		 * 当前节点存储的对象
 		 */
@@ -129,10 +129,6 @@ public class Circle<T> {
 		 * 下一个节点
 		 */
 		private Node next;
-		/**
-		 * 上一个节点
-		 */
-		private Node last;
 		
 		/**
 		 * 创建一个节点
@@ -140,28 +136,6 @@ public class Circle<T> {
 		 */
 		public Node(Object object){
 			setObject(object);
-		}
-		
-		/**
-		 * 创建一个节点
-		 * @param object 当前节点存储的对象
-		 * @param next 下一个节点
-		 */
-		public Node(Object object, Node next){
-			setObject(object);
-			setNext(next);
-		}
-		
-		/**
-		 * 创建一个节点
-		 * @param object 当前节点存储的对象
-		 * @param next 下一个节点
-		 * @param last 上一个节点
-		 */
-		public Node(Object object, Node next, Node last){
-			setObject(object);
-			setNext(next);
-			setLast(last);
 		}
 		
 		/**
@@ -194,22 +168,6 @@ public class Circle<T> {
 		 */
 		public void setNext(Node next) {
 			this.next = next;
-		}
-		
-		/**
-		 * 获取上一个节点
-		 * @return 上一个节点
-		 */
-		public Node getLast() {
-			return last;
-		}
-		
-		/**
-		 * 设置上一个节点
-		 * @param last 上一个节点
-		 */
-		public void setLast(Node last) {
-			this.last = last;
 		}
 	}
 }
