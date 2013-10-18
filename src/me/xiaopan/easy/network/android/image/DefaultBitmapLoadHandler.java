@@ -2,9 +2,12 @@ package me.xiaopan.easy.network.android.image;
 
 import java.io.File;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.os.Build;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -17,11 +20,20 @@ public class DefaultBitmapLoadHandler implements BitmapLoadHandler{
 	private int displayWidth;
 	private int displayHeight;
 	
+	@SuppressWarnings("deprecation")
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 	public DefaultBitmapLoadHandler(Context conetxt){
 		WindowManager windowManager = (WindowManager) conetxt.getSystemService(Context.WINDOW_SERVICE);
 		Display display = windowManager.getDefaultDisplay();
-		displayWidth = display.getWidth();
-		displayHeight = display.getHeight();
+		if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR2){
+			displayWidth = display.getWidth();
+			displayHeight = display.getHeight();
+		}else{
+			Point point = new Point();
+			display.getSize(point);
+			displayWidth = point.x;
+			displayHeight = point.y;
+		}
 	}
 	
 	@Override

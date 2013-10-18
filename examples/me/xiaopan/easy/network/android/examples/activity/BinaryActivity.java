@@ -18,6 +18,7 @@ package me.xiaopan.easy.network.android.examples.activity;
 import me.xiaopan.easy.network.android.R;
 import me.xiaopan.easy.network.android.http.BinaryHttpResponseHandler;
 import me.xiaopan.easy.network.android.http.EasyHttpClient;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import android.widget.Toast;
  */
 public class BinaryActivity extends Activity {
 	
+	@SuppressLint("HandlerLeak")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

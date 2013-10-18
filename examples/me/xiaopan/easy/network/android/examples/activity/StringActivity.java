@@ -19,6 +19,7 @@ import me.xiaopan.easy.network.android.R;
 import me.xiaopan.easy.network.android.examples.util.WebViewManager;
 import me.xiaopan.easy.network.android.http.EasyHttpClient;
 import me.xiaopan.easy.network.android.http.StringHttpResponseHandler;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 public class StringActivity extends Activity {
 	private WebViewManager webViewManager;
 	
+	@SuppressLint("HandlerLeak")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -18,7 +18,6 @@ package me.xiaopan.easy.network.android.examples.adapter;
 import java.util.List;
 
 import me.xiaopan.easy.network.android.examples.fragment.TitleFragment;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;

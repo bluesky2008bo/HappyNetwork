@@ -16,10 +16,12 @@
 
 package me.xiaopan.easy.network.android.examples.util;
 
+import android.annotation.SuppressLint;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+@SuppressLint("SetJavaScriptEnabled")
 public class WebViewManager {
 	private WebView webView;
 	

@@ -21,6 +21,7 @@ import me.xiaopan.easy.network.android.examples.beans.Weather;
 import me.xiaopan.easy.network.android.examples.net.request.BeijingWeatherRequest;
 import me.xiaopan.easy.network.android.http.EasyHttpClient;
 import me.xiaopan.easy.network.android.http.JsonHttpResponseHandler;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Html;
@@ -33,6 +34,7 @@ import android.widget.TextView;
 public class JsonActivity extends Activity {
 	private TextView text;
 	
+	@SuppressLint("HandlerLeak")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

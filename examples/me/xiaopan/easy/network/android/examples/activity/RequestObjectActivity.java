@@ -22,6 +22,7 @@ import me.xiaopan.easy.network.android.examples.util.Utils;
 import me.xiaopan.easy.network.android.examples.util.WebViewManager;
 import me.xiaopan.easy.network.android.http.EasyHttpClient;
 import me.xiaopan.easy.network.android.http.StringHttpResponseHandler;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -58,6 +59,7 @@ public class RequestObjectActivity extends Activity {
 		search(keywordEdit.getEditableText().toString().trim());
 	}
 	
+	@SuppressLint("HandlerLeak")
 	private void search(String keyword){
 		EasyHttpClient.getInstance().get(new BaiduSearchRequest(keyword), new StringHttpResponseHandler(){
 			@Override

@@ -1,8 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" style="@style/layout_body">
 	<LinearLayout style="@style/layout_body_content">
 	    <LinearLayout style="@style/base_match_wrap" android:padding="@dimen/base_padding_littleSmall" android:layout_marginTop="@dimen/base_margin_littleSmall">
-	        <EditText style="@style/base_weight_wrap" android:hint="请输入搜索关键字" android:id="@+id/edit_requestObject_keyword"/>
-	        <Button style="@style/base_wrap_wrap" android:text="搜索" android:id="@+id/button_requestObject_search" android:layout_marginLeft="@dimen/base_margin_verySmall"/>
+	        <EditText style="@style/base_weight_wrap" android:hint="@string/editHint_search" android:id="@+id/edit_requestObject_keyword"/>
+	        <Button style="@style/base_wrap_wrap" android:text="@string/button_search" android:id="@+id/button_requestObject_search" android:layout_marginLeft="@dimen/base_margin_verySmall"/>
 	    </LinearLayout>
 	    <FrameLayout style="@style/base_match_weight">
 			<WebView style="@style/base_match_match" android:id="@+id/web1"/>

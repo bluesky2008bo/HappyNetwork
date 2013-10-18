@@ -18,9 +18,6 @@
     <!-- 编辑器 - 最小高度 -->
     <dimen name="edit_minHeight">60dp</dimen>
     
-    <!-- 下拉刷新头的高度 -->
-    <dimen name="pull_height">90dp</dimen>
-    
     <!-- 阴影 - 高度 -->
     <dimen name="shadow_height">4dp</dimen>
     
