@@ -15,6 +15,9 @@
  */
 package me.xiaopan.easy.network.android.image;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 这是一个圆圈
  */
@@ -48,24 +51,28 @@ public class WaitCircle<T> {
 	 * 放入一个对象
 	 * @param object
 	 */
-	public void put(T object){
-		//如果还没有满
-		if(size < maxSize){
-			//如果头节点还是空的，说明当前是空的
-			if(headerNode == null){
-				headerNode = new Node(object);
-				footerNode = headerNode;
+	public void add(T object){
+		if(maxSize > 0){
+			//如果还没有满
+			if(size < maxSize){
+				//如果头节点还是空的，说明当前是空的
+				if(headerNode == null){
+					headerNode = new Node(object);
+					footerNode = headerNode;
+				}else{
+					Node endNode = new Node(object);
+					footerNode.setNext(endNode);
+					footerNode = endNode;
+				}
+				size++;
 			}else{
-				Node endNode = new Node(object);
-				footerNode.setNext(endNode);
-				footerNode = endNode;
+				if(footerNode != null && headerNode != null){
+					Node endNode = new Node(object);
+					footerNode.setNext(endNode);
+					footerNode = endNode;
+					headerNode = headerNode.getNext();
+				}
 			}
-			size++;
-		}else{
-			Node endNode = new Node(object);
-			footerNode.setNext(endNode);
-			footerNode = endNode;
-			headerNode = headerNode.getNext();
 		}
 	}
 	
@@ -74,14 +81,15 @@ public class WaitCircle<T> {
 	 * @return 被删除的对象
 	 */
 	@SuppressWarnings("unchecked")
-	public T remove(){
-		T object = null;
+	public T poll(){
 		if(headerNode != null){
-			object = (T) headerNode.getObject();
+			T object = (T) headerNode.getObject();
 			headerNode = headerNode.getNext();
 			size--;
+			return object;
+		}else{
+			return null;
 		}
-		return object;
 	}
 	
 	/**
@@ -91,6 +99,23 @@ public class WaitCircle<T> {
 		headerNode = null;
 		footerNode = null;
 		size = 0;
+	}
+	
+	/**
+	 * 获取当前存储的所有实体
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<T> entrys(){
+		List<T> entrys = new ArrayList<T>(size);
+		if(size > 0 && headerNode != null){
+			Node currentNode = null;
+			do{
+				currentNode = currentNode == null?headerNode:currentNode.getNext();
+				entrys.add((T) currentNode.getObject());
+			}while(currentNode.getNext() != null);
+		}
+		return entrys;
 	}
 	
 	/**
@@ -114,13 +139,34 @@ public class WaitCircle<T> {
 	 * @param maxSize 最大容量
 	 */
 	public void setMaxSize(int maxSize) {
+		if(maxSize < 0){
+			maxSize = 0;
+		}
 		this.maxSize = maxSize;
+		if(maxSize == 0){
+			clear();
+		}else{
+			if(maxSize < size && headerNode != null){
+				int index = 0;
+				Node currentNode = headerNode;
+				while(index < size){
+					if(index == maxSize - 1){
+						currentNode.setNext(null);
+						footerNode = currentNode;
+						break;
+					}else{
+						currentNode = currentNode.getNext();
+					}
+					index++;
+				}
+			}
+		}
 	}
 	
 	/**
 	 * 节点
 	 */
-	private class Node {
+	public class Node {
 		/**
 		 * 当前节点存储的对象
 		 */
@@ -129,6 +175,10 @@ public class WaitCircle<T> {
 		 * 下一个节点
 		 */
 		private Node next;
+		/**
+		 * 上一个节点
+		 */
+		private Node last;
 		
 		/**
 		 * 创建一个节点
@@ -136,6 +186,28 @@ public class WaitCircle<T> {
 		 */
 		public Node(Object object){
 			setObject(object);
+		}
+		
+		/**
+		 * 创建一个节点
+		 * @param object 当前节点存储的对象
+		 * @param next 下一个节点
+		 */
+		public Node(Object object, Node next){
+			setObject(object);
+			setNext(next);
+		}
+		
+		/**
+		 * 创建一个节点
+		 * @param object 当前节点存储的对象
+		 * @param next 下一个节点
+		 * @param last 上一个节点
+		 */
+		public Node(Object object, Node next, Node last){
+			setObject(object);
+			setNext(next);
+			setLast(last);
 		}
 		
 		/**
@@ -168,6 +240,22 @@ public class WaitCircle<T> {
 		 */
 		public void setNext(Node next) {
 			this.next = next;
+		}
+		
+		/**
+		 * 获取上一个节点
+		 * @return 上一个节点
+		 */
+		public Node getLast() {
+			return last;
+		}
+		
+		/**
+		 * 设置上一个节点
+		 * @param last 上一个节点
+		 */
+		public void setLast(Node last) {
+			this.last = last;
 		}
 	}
 }

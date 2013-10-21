@@ -103,7 +103,7 @@ public class ImageLoadHandler extends Handler {
 		/* 从等待队列中取出等待加载的请求并尝试加载 */
 		LoadRequest waitImageLoadRequest;
 		synchronized (imageLoader.getWaitingRequestCircle()) {
-			waitImageLoadRequest = imageLoader.getWaitingRequestCircle().remove();
+			waitImageLoadRequest = imageLoader.getWaitingRequestCircle().poll();
 		}
 		if(waitImageLoadRequest != null){
 			imageLoader.tryLoad(waitImageLoadRequest.getId(), null, null, null, null, waitImageLoadRequest);

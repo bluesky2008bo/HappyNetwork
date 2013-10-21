@@ -249,7 +249,7 @@ public class ImageLoader{
 				EasyNetwork.getThreadPool().submit(new ImageLoadTask(this, loadRequest));
 			}else{
 				synchronized (waitingRequestCircle) {	//否则，加到等待队列中
-					waitingRequestCircle.put(loadRequest);
+					waitingRequestCircle.add(loadRequest);
 				}
 			}
 		}
