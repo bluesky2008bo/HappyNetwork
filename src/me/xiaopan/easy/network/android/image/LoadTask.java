@@ -33,7 +33,7 @@ import org.apache.http.util.EntityUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-public class ImageLoadTask implements Runnable {
+public class LoadTask implements Runnable {
 	private ImageLoader imageLoader;	//图片加载器
 	private LoadRequest loadRequest;	//加载请求
 	private int numberOfLoaded;	//已加载次数
@@ -42,7 +42,7 @@ public class ImageLoadTask implements Runnable {
 	 * 创建一个加载图片任务
 	 * @param loadRequest 加载请求
 	 */
-	public ImageLoadTask(ImageLoader imageLoader, LoadRequest loadRequest){
+	public LoadTask(ImageLoader imageLoader, LoadRequest loadRequest){
 		this.imageLoader = imageLoader;
 		this.loadRequest = loadRequest;
 	}

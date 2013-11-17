@@ -236,7 +236,7 @@ public class ImageLoader{
 			}
 			if(loadingRequestSet.size() < configuration.getMaxThreadNumber()){	//如果尚未达到最大负荷，就开启线程加载
 				loadingRequestSet.add(id);
-				EasyNetwork.getThreadPool().submit(new ImageLoadTask(this, loadRequest));
+				EasyNetwork.getThreadPool().submit(new LoadTask(this, loadRequest));
 			}else{
 				synchronized (waitingRequestCircle) {	//否则，加到等待队列中
 					waitingRequestCircle.add(loadRequest);
