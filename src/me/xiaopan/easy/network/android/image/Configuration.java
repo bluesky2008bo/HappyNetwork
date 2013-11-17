@@ -25,7 +25,7 @@ public class Configuration {
 	private boolean enableOutputLogToConsole = true;	//输出Log到控制台
 	private String cacheDirName = "image_loader";	//缓存文件夹名称
 	private String logTag = "ImageLoader";	//LogTag
-	private ImageLoadOptions defaultImageLoadOptions;	//默认加载选项
+	private Options defaultOptions;	//默认加载选项
 	private DefaultBitmapLoadHandler defaultBitmapLoadHandler;	//默认的图片加载处理器
 	private BitmapCacher bitmapCacher;	//位图缓存器
 	
@@ -69,12 +69,12 @@ public class Configuration {
 		this.logTag = logTag;
 	}
 	
-	public ImageLoadOptions getDefaultImageLoadOptions() {
-		return defaultImageLoadOptions;
+	public Options getDefaultOptions() {
+		return defaultOptions;
 	}
 	
-	public void setDefaultImageLoadOptions(ImageLoadOptions defaultImageLoadOptions) {
-		this.defaultImageLoadOptions = defaultImageLoadOptions;
+	public void setDefaultOptions(Options defaultOptions) {
+		this.defaultOptions = defaultOptions;
 	}
 	
 	public DefaultBitmapLoadHandler getDefaultBitmapLoadHandler() {

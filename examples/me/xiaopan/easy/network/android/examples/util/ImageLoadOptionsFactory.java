@@ -3,23 +3,23 @@ package me.xiaopan.easy.network.android.examples.util;
 import me.xiaopan.easy.network.android.R;
 import me.xiaopan.easy.network.android.image.DefaultAlphaAnimationListener;
 import me.xiaopan.easy.network.android.image.DefaultBitmapLoadHandler;
-import me.xiaopan.easy.network.android.image.ImageLoadOptions;
+import me.xiaopan.easy.network.android.image.Options;
 import android.content.Context;
 
 /**
  * ImageLoadOptions工厂类，专门提供适合各种场景的ImageLoadOptions
  */
 public class ImageLoadOptionsFactory {
-	private static ImageLoadOptions defaultImageLoadOptions;	//默认的ImageLoadOptions
-	private static ImageLoadOptions listImageLoadOptions;	//列表用的ImageLoadOptions
+	private static Options defaultImageLoadOptions;	//默认的ImageLoadOptions
+	private static Options listImageLoadOptions;	//列表用的ImageLoadOptions
 	
 	/**
 	 * 获取默认的ImageLoadOptions，默认的ImageLoadOptions的特别之处在于不会将Bitmap缓存在内存中
 	 * @return
 	 */
-	public static final ImageLoadOptions getDefaultImageLoadOptions(Context context){
+	public static final Options getDefaultImageLoadOptions(Context context){
 		if(defaultImageLoadOptions == null){
-			defaultImageLoadOptions = new ImageLoadOptions();
+			defaultImageLoadOptions = new Options();
 			defaultImageLoadOptions.setCacheInLocal(true);	//将图片缓存到本地
 			defaultImageLoadOptions.setLoadingDrawableResId(R.drawable.images_loading);	//设置加载中显示的图片
 			defaultImageLoadOptions.setLoadFailureDrawableResId(R.drawable.images_load_failure);	//设置当加载失败时显示的图片
@@ -33,9 +33,9 @@ public class ImageLoadOptionsFactory {
 	 * 获取列表用的ImageLoadOptions，其同默认的ImageLoadOptions的不同之处在于其会将Bitmap缓存到内存中
 	 * @return
 	 */
-	public static final ImageLoadOptions getListImageLoadOptions(Context context){
+	public static final Options getListImageLoadOptions(Context context){
 		if(listImageLoadOptions == null){
-			listImageLoadOptions = new ImageLoadOptions();
+			listImageLoadOptions = new Options();
 			listImageLoadOptions.setCachedInMemory(true);	//每次加载图片的时候先从内存中去找，并且加载完成后将图片缓存在内存中
 			listImageLoadOptions.setCacheInLocal(true);	//将图片缓存到本地
 			listImageLoadOptions.setLoadingDrawableResId(R.drawable.images_loading);	//设置加载中显示的图片

@@ -66,8 +66,8 @@ public class ImageLoadTask implements Runnable {
 	 */
 	private Bitmap fromLocalFileLoadBitmap(File localFile){
 		imageLoader.log("从本地加载图片："+localFile.getPath());
-		if(loadRequest.getImageLoadOptions() != null && loadRequest.getImageLoadOptions().getBitmapLoadHandler() != null){
-			return loadRequest.getImageLoadOptions().getBitmapLoadHandler().onFromLocalFileLoad(localFile, loadRequest.getShowImageView());
+		if(loadRequest.getOptions() != null && loadRequest.getOptions().getBitmapLoadHandler() != null){
+			return loadRequest.getOptions().getBitmapLoadHandler().onFromLocalFileLoad(localFile, loadRequest.getShowImageView());
 		}else{
 			return BitmapFactory.decodeFile(localFile.getPath());
 		}
@@ -79,8 +79,8 @@ public class ImageLoadTask implements Runnable {
 	 * @return
 	 */
 	private Bitmap fromByteArrayLoadBitmap(byte[] byteArray){
-		if(loadRequest.getImageLoadOptions() != null && loadRequest.getImageLoadOptions().getBitmapLoadHandler() != null){
-			return loadRequest.getImageLoadOptions().getBitmapLoadHandler().onFromByteArrayLoad(byteArray, loadRequest.getShowImageView());
+		if(loadRequest.getOptions() != null && loadRequest.getOptions().getBitmapLoadHandler() != null){
+			return loadRequest.getOptions().getBitmapLoadHandler().onFromByteArrayLoad(byteArray, loadRequest.getShowImageView());
 		}else{
 			return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 		}
@@ -124,7 +124,7 @@ public class ImageLoadTask implements Runnable {
 				}
 				
 				//如果需要缓存并且缓存文件不null，就尝试先创建文件在下载数据存到缓存文件中再读取
-				if((loadRequest.getImageLoadOptions() == null || loadRequest.getImageLoadOptions().isCacheInLocal()) && localCacheFile != null){
+				if((loadRequest.getOptions() == null || loadRequest.getOptions().isCacheInLocal()) && localCacheFile != null){
 					/* 尝试创建父目录并创建新的缓存文件 */
 					localCacheParentDir = localCacheFile.getParentFile();	//获取其父目录
 					if(!localCacheParentDir.exists()){	//如果父目录同样不存在
@@ -186,8 +186,8 @@ public class ImageLoadTask implements Runnable {
 				}
 				
 				//如果是请求超时异常，就尝试再请求一次
-				if((e2 instanceof ConnectTimeoutException || e2 instanceof SocketTimeoutException  || e2 instanceof  ConnectionPoolTimeoutException) && loadRequest.getImageLoadOptions() != null && loadRequest.getImageLoadOptions().getMaxRetryCount() > 0){
-					running = numberOfLoaded < loadRequest.getImageLoadOptions().getMaxRetryCount();	//如果尚未达到最大重试次数，那么就再尝试一次
+				if((e2 instanceof ConnectTimeoutException || e2 instanceof SocketTimeoutException  || e2 instanceof  ConnectionPoolTimeoutException) && loadRequest.getOptions() != null && loadRequest.getOptions().getMaxRetryCount() > 0){
+					running = numberOfLoaded < loadRequest.getOptions().getMaxRetryCount();	//如果尚未达到最大重试次数，那么就再尝试一次
 				}else{
 					running = false;
 				}

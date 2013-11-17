@@ -18,7 +18,7 @@ package me.xiaopan.easy.network.android.image;
 /**
  * 加载选项
  */
-public class ImageLoadOptions {
+public class Options {
 	private int loadingDrawableResId = -1;	//正在加载时显示的图片的资源ID
 	private int loadFailureDrawableResId = -1;	//加载失败时显示的图片的资源ID
 	private int maxRetryCount = -1;	//最大重试次数

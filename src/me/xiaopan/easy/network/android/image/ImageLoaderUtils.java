@@ -53,9 +53,9 @@ public class ImageLoaderUtils {
 		return result;
 	}
 	
-	public static File getCacheFile(ImageLoader imageLoader, Context context, ImageLoadOptions imageLoadOptions, String fileName){
-		if(imageLoadOptions != null && isNotNullAndEmpty(imageLoadOptions.getCacheDir())){
-			return new File(imageLoadOptions.getCacheDir() + File.separator + fileName);
+	public static File getCacheFile(ImageLoader imageLoader, Context context, Options options, String fileName){
+		if(options != null && isNotNullAndEmpty(options.getCacheDir())){
+			return new File(options.getCacheDir() + File.separator + fileName);
 		}else if(context != null){
 			File dir = context.getCacheDir();
 			if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){

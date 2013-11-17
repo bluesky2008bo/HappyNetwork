@@ -48,8 +48,8 @@ public class ImageLoadHandler extends Handler {
 		LoadRequest loadRequest = (LoadRequest) message.obj;
 		
 		/* 尝试缓存到内存中 */
-		if(loadRequest.getResultBitmap() != null && loadRequest.getImageLoadOptions() != null && loadRequest.getImageLoadOptions().isCachedInMemory()){
-			CacheDetermineListener determineCache = loadRequest.getImageLoadOptions().getCacheDetermineListener();
+		if(loadRequest.getResultBitmap() != null && loadRequest.getOptions() != null && loadRequest.getOptions().isCachedInMemory()){
+			CacheDetermineListener determineCache = loadRequest.getOptions().getCacheDetermineListener();
 			if(determineCache == null || determineCache.isCache(loadRequest.getResultBitmap())){
 				imageLoader.putBitmap(loadRequest.getId(), loadRequest.getResultBitmap());
 			}
@@ -70,16 +70,16 @@ public class ImageLoadHandler extends Handler {
 						imageView.clearAnimation();//先清除之前所有的动画
 						//如果图片加载成功
 						if(loadRequest.getResultBitmap() != null){
-							Animation animation = loadRequest.getImageLoadOptions() != null ? loadRequest.getImageLoadOptions().getShowAnimationListener().onGetShowAnimation() : null;
+							Animation animation = loadRequest.getOptions() != null ? loadRequest.getOptions().getShowAnimationListener().onGetShowAnimation() : null;
 							if(animation != null){
 								imageView.setAnimation(animation);
 							}
 							imageView.setImageBitmap(loadRequest.getResultBitmap());
 						}else{
-							if(loadRequest.getImageLoadOptions() != null){
-								if(loadRequest.getImageLoadOptions().getLoadFailureDrawableResId() > 0){
-									imageView.setImageResource(loadRequest.getImageLoadOptions().getLoadFailureDrawableResId());
-								}else if(loadRequest.getImageLoadOptions().getLoadingDrawableResId() > 0){
+							if(loadRequest.getOptions() != null){
+								if(loadRequest.getOptions().getLoadFailureDrawableResId() > 0){
+									imageView.setImageResource(loadRequest.getOptions().getLoadFailureDrawableResId());
+								}else if(loadRequest.getOptions().getLoadingDrawableResId() > 0){
 									
 								}else{
 									imageView.setImageBitmap(null);
