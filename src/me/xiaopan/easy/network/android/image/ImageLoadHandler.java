@@ -51,7 +51,7 @@ public class ImageLoadHandler extends Handler {
 		if(loadRequest.getResultBitmap() != null && loadRequest.getImageLoadOptions() != null && loadRequest.getImageLoadOptions().isCachedInMemory()){
 			CacheDetermineListener determineCache = loadRequest.getImageLoadOptions().getCacheDetermineListener();
 			if(determineCache == null || determineCache.isCache(loadRequest.getResultBitmap())){
-				ImageLoader.putBitmapToCache(loadRequest.getId(), loadRequest.getResultBitmap());
+				imageLoader.putBitmap(loadRequest.getId(), loadRequest.getResultBitmap());
 			}
 		}
 			

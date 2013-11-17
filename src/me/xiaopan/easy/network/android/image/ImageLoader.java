@@ -17,11 +17,9 @@ package me.xiaopan.easy.network.android.image;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.lang.ref.SoftReference;
 import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import me.xiaopan.easy.network.android.EasyNetwork;
 
@@ -48,7 +46,6 @@ import android.widget.ImageView;
  * 图片加载器，可以从网络或者本地加载图片，并且支持自动清除缓存
  */
 public class ImageLoader{
-	private static ConcurrentHashMap<String, SoftReference<Bitmap>> bitmapCacheMap;	//软引用图片Map
 	private int maxThreadNumber = 50;	//最大线程数
 	private int maxWaitingNumber = 30;	//最大等待数
 	private String cacheDirName = "image_loader";	//缓存文件夹名称
@@ -63,16 +60,14 @@ public class ImageLoader{
 	private ImageLoadHandler imageLoadHandler;	//加载处理器
 	private WaitCircle<LoadRequest> waitingRequestCircle;	//等待处理的加载请求
 	private DefaultBitmapLoadHandler defaultBitmapLoadHandler;	//默认的图片加载处理器
+	private BitmapCacheAdapter bitmapCacheAdapter;
 	
 	/**
 	 * 创建图片加载器
 	 * @param defaultDrawableResId 默认显示的图片
 	 */
 	public ImageLoader(){
-		if(bitmapCacheMap == null){
-			bitmapCacheMap = new ConcurrentHashMap<String, SoftReference<Bitmap>>();//软引用图片Map
-		}
-		
+		bitmapCacheAdapter = new BitmapLruCacher();
 		imageLoadHandler = new ImageLoadHandler(this);
 		loadingImageViewSet = new HashSet<ImageView>();//初始化图片视图集合
 		loadingRequestSet = new HashSet<String>();//初始化加载中URL集合
@@ -211,7 +206,7 @@ public class ImageLoader{
 	 */
 	private final boolean tryShowImage(String url, String id, ImageView showImageView, ImageLoadOptions imageLoadOptions){
 		//如果需要从缓存中读取，就根据地址从缓存中获取图片，如果缓存中存在相对的图片就显示，否则显示默认图片或者显示空
-		if(imageLoadOptions != null && imageLoadOptions.isCachedInMemory() && (tempCacheBitmap = getBitmapFromCache(id)) != null){
+		if(imageLoadOptions != null && imageLoadOptions.isCachedInMemory() && (tempCacheBitmap = getBitmap(id)) != null){
 			showImageView.setTag(null);	//清空绑定关系
 			log("从缓存加载图片："+url);
 			loadingImageViewSet.remove(showImageView);
@@ -348,8 +343,8 @@ public class ImageLoader{
 	 * @param bitmap 图片
 	 * @return 
 	 */
-	public static final SoftReference<Bitmap> putBitmapToCache(String id, Bitmap bitmap){
-		return bitmapCacheMap.put(id, new SoftReference<Bitmap>(bitmap));
+	public final void putBitmap(String id, Bitmap bitmap){
+		bitmapCacheAdapter.put(id, bitmap);
 	}
 	
 	/**
@@ -357,17 +352,12 @@ public class ImageLoader{
 	 * @param id 地址
 	 * @return 图片
 	 */
-	public static final Bitmap getBitmapFromCache(String id){
-		SoftReference<Bitmap> softReferenceBitmap = bitmapCacheMap.get(id);
-		if(softReferenceBitmap != null){
-			Bitmap bitmap = softReferenceBitmap.get();
-			if(bitmap == null){
-				bitmapCacheMap.remove(id);//将当前地址从Map中删除
-			}
-			return bitmap;
-		}else{
-			return null;
+	public final Bitmap getBitmap(String id){
+		Bitmap bitmap = bitmapCacheAdapter.get(id);
+		if(bitmap == null){
+			bitmapCacheAdapter.remove(id);//将当前地址从Map中删除
 		}
+		return bitmap;
 	}
 	
 	/**
@@ -375,21 +365,16 @@ public class ImageLoader{
 	 * @param id 地址
 	 * @return 图片
 	 */
-	public static final Bitmap removeBitmapFromCache(String id){
-		SoftReference<Bitmap> softReferenceBitmap = bitmapCacheMap.remove(id);
-		if(softReferenceBitmap != null){
-			return softReferenceBitmap.get();
-		}else{
-			return null;
-		}
+	public final Bitmap removeBitmap(String id){
+		return bitmapCacheAdapter.remove(id);
 	}
 	
 	/**
 	 * 清除缓存
 	 */
-	public static final void clearCache(){
-		if(bitmapCacheMap != null){
-			bitmapCacheMap.clear();
+	public final void clearCache(){
+		if(bitmapCacheAdapter != null){
+			bitmapCacheAdapter.clear();
 		}
 	}
 
