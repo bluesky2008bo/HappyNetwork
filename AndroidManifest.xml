@@ -5,7 +5,7 @@
     android:versionName="1.2.2" >
 
     <!-- 声明兼容的系统版本 -->
-    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="18" />
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="19" />
     
     <!-- 声明要使用的权限 -->
     <uses-permission android:name="android.permission.INTERNET"/>
