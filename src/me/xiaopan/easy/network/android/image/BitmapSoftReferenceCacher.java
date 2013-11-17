@@ -39,7 +39,15 @@ public class BitmapSoftReferenceCacher implements BitmapCacher {
 	@Override
 	public Bitmap get(String key) {
 		SoftReference<Bitmap> bitmapReference = bitmapCacheMap.get(key);
-		return bitmapReference != null?bitmapReference.get():null;
+		if(bitmapReference != null){
+			Bitmap bitmap = bitmapReference.get();
+			if(bitmap == null){
+				bitmapCacheMap.remove(key);
+			}
+			return bitmap;
+		}else{
+			return null;
+		}
 	}
 
 	@Override

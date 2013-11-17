@@ -49,12 +49,12 @@ public class ImageLoader{
 	private Bitmap tempCacheBitmap;	//临时存储缓存的图片
 	private Context context;	//上下文
 	private Set<String> loadingRequestSet;	//正在加载的Url列表，用来防止同一个URL被重复加载
+	private BitmapCacher bitmapCacher;
+	private Configuration configuration;
 	private Set<ImageView> loadingImageViewSet;	//图片视图集合，这个集合里的每个尚未加载完成的视图身上都会携带有他要显示的图片的地址，当每一个图片加载完成之后都会在这个列表中遍历找到所有携带有这个这个图片的地址的视图，并把图片显示到这个视图上
 	private DefaultHttpClient httpClient;	//Http客户端
 	private ImageLoadHandler imageLoadHandler;	//加载处理器
 	private WaitCircle<LoadRequest> waitingRequestCircle;	//等待处理的加载请求
-	private BitmapCacher bitmapCacheAdapter;
-	private Configuration configuration;
 	
 	/**
 	 * 创建图片加载器
@@ -62,7 +62,7 @@ public class ImageLoader{
 	 */
 	public ImageLoader(){
 		configuration = new Configuration();
-		bitmapCacheAdapter = new BitmapLruCacher();
+		bitmapCacher = new BitmapLruCacher();
 		imageLoadHandler = new ImageLoadHandler(this);
 		loadingImageViewSet = new HashSet<ImageView>();//初始化图片视图集合
 		loadingRequestSet = new HashSet<String>();//初始化加载中URL集合
@@ -201,7 +201,7 @@ public class ImageLoader{
 	 */
 	private final boolean tryShowImage(String url, String id, ImageView showImageView, Options options){
 		//如果需要从缓存中读取，就根据地址从缓存中获取图片，如果缓存中存在相对的图片就显示，否则显示默认图片或者显示空
-		if(options != null && options.isCachedInMemory() && (tempCacheBitmap = getBitmap(id)) != null){
+		if(options != null && options.isCachedInMemory() && (tempCacheBitmap = bitmapCacher.get(id)) != null){
 			showImageView.setTag(null);	//清空绑定关系
 			log("从缓存加载图片："+url);
 			loadingImageViewSet.remove(showImageView);
@@ -300,47 +300,6 @@ public class ImageLoader{
 		this.imageLoadHandler = loadHandler;
 	}
 	
-	/**
-	 * 往缓存中添加图片
-	 * @param id 地址
-	 * @param bitmap 图片
-	 * @return 
-	 */
-	public final void putBitmap(String id, Bitmap bitmap){
-		bitmapCacheAdapter.put(id, bitmap);
-	}
-	
-	/**
-	 * 从缓存中获取图片
-	 * @param id 地址
-	 * @return 图片
-	 */
-	public final Bitmap getBitmap(String id){
-		Bitmap bitmap = bitmapCacheAdapter.get(id);
-		if(bitmap == null){
-			bitmapCacheAdapter.remove(id);//将当前地址从Map中删除
-		}
-		return bitmap;
-	}
-	
-	/**
-	 * 从缓存中删除图片
-	 * @param id 地址
-	 * @return 图片
-	 */
-	public final Bitmap removeBitmap(String id){
-		return bitmapCacheAdapter.remove(id);
-	}
-	
-	/**
-	 * 清除缓存
-	 */
-	public final void clearCache(){
-		if(bitmapCacheAdapter != null){
-			bitmapCacheAdapter.clear();
-		}
-	}
-
     /**
      * 设置请求超时时间，默认是10秒
      * @param timeout 请求超时时间，单位毫秒
@@ -418,5 +377,13 @@ public class ImageLoader{
 
 	public void setConfiguration(Configuration configuration) {
 		this.configuration = configuration;
+	}
+
+	public BitmapCacher getBitmapCacher() {
+		return bitmapCacher;
+	}
+
+	public void setBitmapCacher(BitmapCacher bitmapCacher) {
+		this.bitmapCacher = bitmapCacher;
 	}
 } 
