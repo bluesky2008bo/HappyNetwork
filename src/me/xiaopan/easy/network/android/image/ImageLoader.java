@@ -39,6 +39,7 @@ import org.apache.http.params.HttpProtocolParams;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -47,13 +48,13 @@ import android.widget.ImageView;
  */
 public class ImageLoader{
 	private Bitmap tempCacheBitmap;	//临时存储缓存的图片
+	private Handler handler;
 	private Context context;	//上下文
 	private Set<String> loadingRequestSet;	//正在加载的Url列表，用来防止同一个URL被重复加载
 	private BitmapCacher bitmapCacher;
 	private Configuration configuration;
 	private Set<ImageView> loadingImageViewSet;	//图片视图集合，这个集合里的每个尚未加载完成的视图身上都会携带有他要显示的图片的地址，当每一个图片加载完成之后都会在这个列表中遍历找到所有携带有这个这个图片的地址的视图，并把图片显示到这个视图上
 	private DefaultHttpClient httpClient;	//Http客户端
-	private LoadTaskHandler imageLoadHandler;	//加载处理器
 	private WaitCircle<LoadRequest> waitingRequestCircle;	//等待处理的加载请求
 	
 	/**
@@ -63,7 +64,7 @@ public class ImageLoader{
 	public ImageLoader(){
 		configuration = new Configuration();
 		bitmapCacher = new BitmapLruCacher();
-		imageLoadHandler = new LoadTaskHandler(this);
+		handler = new Handler();
 		loadingImageViewSet = new HashSet<ImageView>();//初始化图片视图集合
 		loadingRequestSet = new HashSet<String>();//初始化加载中URL集合
 		waitingRequestCircle = new WaitCircle<LoadRequest>(configuration.getMaxWaitingNumber());//初始化等待处理的加载请求集合
@@ -236,7 +237,7 @@ public class ImageLoader{
 			}
 			if(loadingRequestSet.size() < configuration.getMaxThreadNumber()){	//如果尚未达到最大负荷，就开启线程加载
 				loadingRequestSet.add(id);
-				EasyNetwork.getThreadPool().submit(new LoadTask(this, loadRequest));
+				EasyNetwork.getThreadPool().submit(new LoadRunable(this, loadRequest));
 			}else{
 				synchronized (waitingRequestCircle) {	//否则，加到等待队列中
 					waitingRequestCircle.add(loadRequest);
@@ -285,21 +286,13 @@ public class ImageLoader{
 	}
 
 	/**
-	 * 获取加载处理器
-	 * @return 加载处理器
+	 * 获取Handler
+	 * @return Handler
 	 */
-	public final LoadTaskHandler getImageLoadHandler() {
-		return imageLoadHandler;
+	final Handler getHandler() {
+		return handler;
 	}
 
-	/**
-	 * 设置加载处理器
-	 * @param loadHandler 加载处理器
-	 */
-	public final void setImageLoadHandler(LoadTaskHandler loadHandler) {
-		this.imageLoadHandler = loadHandler;
-	}
-	
     /**
      * 设置请求超时时间，默认是10秒
      * @param timeout 请求超时时间，单位毫秒

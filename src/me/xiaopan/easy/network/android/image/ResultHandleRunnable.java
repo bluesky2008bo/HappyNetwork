@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,40 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package me.xiaopan.easy.network.android.image;
 
 import java.util.Iterator;
 
-import android.os.Handler;
-import android.os.Message;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
-/**
- * 加载任务处理器，任务完成后通过此处理器在主线程中显示图片
- */
-public class LoadTaskHandler extends Handler {
-	public static final int WHAT_LOAD_FINISH = 12313;
+public class ResultHandleRunnable implements Runnable {
 	private ImageLoader imageLoader;
+	private LoadRequest loadRequest;
 	
-	public LoadTaskHandler(ImageLoader imageLoader){
+	public ResultHandleRunnable(ImageLoader imageLoader, LoadRequest loadRequest){
 		this.imageLoader = imageLoader;
+		this.loadRequest = loadRequest;
 	}
 	
 	@Override
-	public void handleMessage(Message msg) {
-		switch(msg.what){
-			case WHAT_LOAD_FINISH : onLoadFinish(msg); break; 
-		}
-	}
-	
-	/**
-	 * 当加载完成
-	 * @param message
-	 */
-	private void onLoadFinish(Message message){
-		LoadRequest loadRequest = (LoadRequest) message.obj;
-		
+	public void run() {
 		/* 尝试缓存到内存中 */
 		if(loadRequest.getResultBitmap() != null && loadRequest.getOptions() != null && loadRequest.getOptions().isCachedInMemory()){
 			imageLoader.getBitmapCacher().put(loadRequest.getId(), loadRequest.getResultBitmap());
