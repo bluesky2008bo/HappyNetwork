@@ -46,32 +46,27 @@ import android.widget.ImageView;
  * 图片加载器，可以从网络或者本地加载图片，并且支持自动清除缓存
  */
 public class ImageLoader{
-	private int maxThreadNumber = 50;	//最大线程数
-	private int maxWaitingNumber = 30;	//最大等待数
-	private String cacheDirName = "image_loader";	//缓存文件夹名称
-	private String logTag = "ImageLoader";	//LogTag
 	private Bitmap tempCacheBitmap;	//临时存储缓存的图片
 	private Context context;	//上下文
-	private boolean enableOutputLogToConsole = true;	//输出Log到控制台
 	private Set<String> loadingRequestSet;	//正在加载的Url列表，用来防止同一个URL被重复加载
 	private Set<ImageView> loadingImageViewSet;	//图片视图集合，这个集合里的每个尚未加载完成的视图身上都会携带有他要显示的图片的地址，当每一个图片加载完成之后都会在这个列表中遍历找到所有携带有这个这个图片的地址的视图，并把图片显示到这个视图上
 	private DefaultHttpClient httpClient;	//Http客户端
-	private ImageLoadOptions defaultImageLoadOptions;	//默认加载选项
 	private ImageLoadHandler imageLoadHandler;	//加载处理器
 	private WaitCircle<LoadRequest> waitingRequestCircle;	//等待处理的加载请求
-	private DefaultBitmapLoadHandler defaultBitmapLoadHandler;	//默认的图片加载处理器
-	private BitmapCacheAdapter bitmapCacheAdapter;
+	private BitmapCacher bitmapCacheAdapter;
+	private Configuration configuration;
 	
 	/**
 	 * 创建图片加载器
 	 * @param defaultDrawableResId 默认显示的图片
 	 */
 	public ImageLoader(){
+		configuration = new Configuration();
 		bitmapCacheAdapter = new BitmapLruCacher();
 		imageLoadHandler = new ImageLoadHandler(this);
 		loadingImageViewSet = new HashSet<ImageView>();//初始化图片视图集合
 		loadingRequestSet = new HashSet<String>();//初始化加载中URL集合
-		waitingRequestCircle = new WaitCircle<LoadRequest>(maxWaitingNumber);//初始化等待处理的加载请求集合
+		waitingRequestCircle = new WaitCircle<LoadRequest>(configuration.getMaxWaitingNumber());//初始化等待处理的加载请求集合
 	}
 	
 	/**
@@ -81,9 +76,9 @@ public class ImageLoader{
 	 */
 	public final void init(Context context, ImageLoadOptions defaultOptions){
 		this.context = context;
-		setDefaultImageLoadOptions(defaultOptions);
-		if(context != null && defaultBitmapLoadHandler != null){
-			defaultBitmapLoadHandler = new DefaultBitmapLoadHandler(context);
+		configuration.setDefaultImageLoadOptions(defaultOptions);
+		if(context != null && configuration.getDefaultBitmapLoadHandler() == null){
+			configuration.setDefaultBitmapLoadHandler(new DefaultBitmapLoadHandler(context));
 		}
 	}
 	
@@ -136,7 +131,7 @@ public class ImageLoader{
 	 * @param showImageView 显示图片的视图
 	 */
 	public final void load(String url, ImageView showImageView){
-		load(url, showImageView, getDefaultImageLoadOptions());
+		load(url, showImageView, configuration.getDefaultImageLoadOptions());
 	}
 	
 	/**
@@ -175,7 +170,7 @@ public class ImageLoader{
 	 * @param imageUrl 图片下载地址，如果本地图片文件不存在将从网络获取
 	 */
 	public final void load(File localFile, ImageView showImageView, String url){
-		load(localFile, showImageView, url, getDefaultImageLoadOptions());
+		load(localFile, showImageView, url, configuration.getDefaultImageLoadOptions());
 	}
 	
 	/**
@@ -194,7 +189,7 @@ public class ImageLoader{
 	 * @param showImageView 显示图片的视图
 	 */
 	public final void load(File localFile, ImageView showImageView){
-		load(localFile, showImageView, null, getDefaultImageLoadOptions());
+		load(localFile, showImageView, null, configuration.getDefaultImageLoadOptions());
 	}
 	
 	/**
@@ -239,7 +234,7 @@ public class ImageLoader{
 			if(loadRequest == null){
 				loadRequest = new LoadRequest(id, url, localCacheFile, showImageView, imageLoadOptions);
 			}
-			if(loadingRequestSet.size() < maxThreadNumber){	//如果尚未达到最大负荷，就开启线程加载
+			if(loadingRequestSet.size() < configuration.getMaxThreadNumber()){	//如果尚未达到最大负荷，就开启线程加载
 				loadingRequestSet.add(id);
 				EasyNetwork.getThreadPool().submit(new ImageLoadTask(this, loadRequest));
 			}else{
@@ -265,38 +260,6 @@ public class ImageLoader{
 		}
 	}
 	
-	/**
-	 * 获取最大线程数
-	 * @return 最大线程数
-	 */
-	public final int getMaxThreadNumber() {
-		return maxThreadNumber;
-	}
-
-	/**
-	 * 设置最大线程数 
-	 * @param maxThreadNumber 最大线程数
-	 */
-	public final void setMaxThreadNumber(int maxThreadNumber) {
-		this.maxThreadNumber = maxThreadNumber;
-	}
-
-	/**
-	 * 获取最大等待数
-	 * @return 最大等待数
-	 */
-	public final int getMaxWaitingNumber() {
-		return maxWaitingNumber;
-	}
-
-	/**
-	 * 设置最大等待数
-	 * @param maxWaitingNumber 最大等待数
-	 */
-	public final void setMaxWaitingNumber(int maxWaitingNumber) {
-		this.maxWaitingNumber = maxWaitingNumber;
-	}
-
 	/**
 	 * 获取加载中显示视图集合
 	 * @return
@@ -428,96 +391,15 @@ public class ImageLoader{
 	}
 
 	/**
-	 * 获取缓存目录名称
-	 * @return 缓存目录名称，默认为“image_loader”
-	 */
-	public final String getCacheDirName() {
-		return cacheDirName;
-	}
-
-	/**
-	 * 设置缓存目录名称
-	 * @param cacheDirName 缓存目录名称，默认为“image_loader”
-	 */
-	public final void setCacheDirName(String cacheDirName) {
-		this.cacheDirName = cacheDirName;
-	}
-
-	/**
-	 * 获取Log Tag
-	 * @return Log Tag，默认为“ImageLoader”
-	 */
-	public final String getLogTag() {
-		return logTag;
-	}
-
-	/**
-	 * 设置Log Tag
-	 * @param logTag，默认为“ImageLoader”
-	 */
-	public final void setLogTag(String logTag) {
-		this.logTag = logTag;
-	}
-
-	/**
-	 * 判断是否输出Log到控制台
-	 * @return 是否输出Log到控制台
-	 */
-	public boolean isEnableOutputLogToConsole() {
-		return enableOutputLogToConsole;
-	}
-
-	/**
-	 * 设置是否输出Log到控制台
-	 * @param enableOutputLogToConsole 是否输出Log到控制台
-	 */
-	public void setEnableOutputLogToConsole(boolean enableOutputLogToConsole) {
-		this.enableOutputLogToConsole = enableOutputLogToConsole;
-	}
-
-	/**
-	 * 获取默认的加载选项
-	 * @return 默认的加载选项
-	 */
-	public final ImageLoadOptions getDefaultImageLoadOptions() {
-		return defaultImageLoadOptions;
-	}
-
-	/**
-	 * 设置默认的加载选项
-	 * @param defaultImageLoadOptions 默认的加载选项
-	 */
-	public final void setDefaultImageLoadOptions(ImageLoadOptions defaultImageLoadOptions) {
-		this.defaultImageLoadOptions = defaultImageLoadOptions;
-	}
-	
-	/**
-	 * 获取默认的Btimap加载处理器
-	 * @return 默认的Btimap加载处理器
-	 */
-	public DefaultBitmapLoadHandler getDefaultBitmapLoadHandler() {
-		return defaultBitmapLoadHandler;
-	}
-
-	/**
-	 * 设置默认的Btimap加载处理器
-	 * @param defaultBitmapLoadHandler 默认的Btimap加载处理器
-	 */
-	public void setDefaultBitmapLoadHandler(
-			DefaultBitmapLoadHandler defaultBitmapLoadHandler) {
-		this.defaultBitmapLoadHandler = defaultBitmapLoadHandler;
-	}
-
-	/**
 	 * 输出LOG
 	 * @param logContent LOG内容
 	 */
 	public void log(String logContent, boolean error){
-		if(isEnableOutputLogToConsole()){
+		if(configuration.isEnableOutputLogToConsole()){
 			if(error){
-				Log.e(logTag, logContent);
+				Log.e(configuration.getLogTag(), logContent);
 			}else{
-				Log.d(logTag, logContent);
+				Log.d(configuration.getLogTag(), logContent);
 			}
 		}
 	}
@@ -528,5 +410,13 @@ public class ImageLoader{
 	 */
 	public void log(String logContent){
 		log(logContent, false);
+	}
+
+	public Configuration getConfiguration() {
+		return configuration;
+	}
+
+	public void setConfiguration(Configuration configuration) {
+		this.configuration = configuration;
 	}
 } 

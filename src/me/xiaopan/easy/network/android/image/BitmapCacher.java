@@ -21,7 +21,7 @@ import android.graphics.Bitmap;
 /**
  * 位图缓存适配器
  */
-public interface BitmapCacheAdapter {
+public interface BitmapCacher {
 	/**
 	 * 放进去一个位图
 	 * @param key

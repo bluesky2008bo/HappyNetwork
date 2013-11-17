@@ -22,11 +22,16 @@ import android.support.v4.util.LruCache;
 /**
  * 使用Lru算法来缓存位图
  */
-public class BitmapLruCacher implements BitmapCacheAdapter {
-	private BitmapLruCache bitmapLruCache;
+public class BitmapLruCacher implements BitmapCacher {
+	private LruCache<String, Bitmap> bitmapLruCache;
 	
 	public BitmapLruCacher(){
-		bitmapLruCache = new BitmapLruCache();
+		bitmapLruCache = new LruCache<String, Bitmap> ((int) (Runtime.getRuntime().maxMemory()/1024/8)){
+			@Override
+			protected int sizeOf(String key, Bitmap value) {
+				return value.getRowBytes() * value.getHeight() / 1024;
+			}
+		};
 	}
 	
 	@Override
@@ -47,20 +52,5 @@ public class BitmapLruCacher implements BitmapCacheAdapter {
 	@Override
 	public void clear() {
 		bitmapLruCache.evictAll();
-	}
-	
-	private class BitmapLruCache extends LruCache<String, Bitmap> {
-		public BitmapLruCache(int maxSize) {
-			super(maxSize);
-		}
-
-		public BitmapLruCache() {
-			this((int) (Runtime.getRuntime().maxMemory()/1024/8));
-		}
-
-		@Override
-		protected int sizeOf(String key, Bitmap value) {
-			return value.getRowBytes() * value.getHeight() / 1024;
-		}
 	}
 }

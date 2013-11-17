@@ -24,7 +24,7 @@ import android.graphics.Bitmap;
 /**
  * 使用软引用的方式来缓存位图
  */
-public class BitmapSoftReferenceCacher implements BitmapCacheAdapter {
+public class BitmapSoftReferenceCacher implements BitmapCacher {
 	private ConcurrentHashMap<String, SoftReference<Bitmap>> bitmapCacheMap;
 	
 	public BitmapSoftReferenceCacher(){

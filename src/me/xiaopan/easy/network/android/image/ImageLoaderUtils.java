@@ -64,7 +64,7 @@ public class ImageLoaderUtils {
 					dir = externalDir;
 				}
 			}
-			return new File(dir.getPath() + File.separator + imageLoader.getCacheDirName() + File.separator + fileName);
+			return new File(dir.getPath() + File.separator + imageLoader.getConfiguration().getCacheDirName() + File.separator + fileName);
 		}else{
 			return null;
 		}
