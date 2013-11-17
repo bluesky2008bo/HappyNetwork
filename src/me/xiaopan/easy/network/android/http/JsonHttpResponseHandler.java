@@ -17,8 +17,6 @@ package me.xiaopan.easy.network.android.http;
 
 import java.lang.reflect.Type;
 
-import me.xiaopan.easy.network.android.EasyNetworkUtils;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.BufferedHttpEntity;
@@ -60,7 +58,7 @@ public abstract class JsonHttpResponseHandler<T> extends Handler implements Http
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
 				/* 读取返回的JSON字符串并转换成对象 */
-				String jsonString = EntityUtils.toString(new BufferedHttpEntity(httpEntity), EasyNetworkUtils.getResponseCharset(httpResponse));
+				String jsonString = EntityUtils.toString(new BufferedHttpEntity(httpEntity), HttpUtils.getResponseCharset(httpResponse));
 				if(jsonString != null && !"".equals(jsonString)){
 					if(responseClass != null){	//如果是要转换成一个对象
 						ResponseBodyKey responseBodyKey = responseClass.getAnnotation(ResponseBodyKey.class);

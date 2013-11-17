@@ -24,7 +24,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.Future;
 
 import me.xiaopan.easy.network.android.EasyNetwork;
-import me.xiaopan.easy.network.android.EasyNetworkUtils;
 import me.xiaopan.easy.network.android.http.interceptor.AddRequestHeaderRequestInterceptor;
 import me.xiaopan.easy.network.android.http.interceptor.GzipProcessRequestInterceptor;
 import me.xiaopan.easy.network.android.http.interceptor.GzipProcessResponseInterceptor;
@@ -183,7 +182,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void get(Context context, String url, Header[] headers, RequestParams params, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setHeaders(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(url, params)), headers), httpResponseHandler);
+        sendRequest(context, HttpUtils.setHeaders(new HttpGet(HttpUtils.getUrlWithQueryString(url, params)), headers), httpResponseHandler);
     }
     
     /**
@@ -194,7 +193,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void get(Context context, String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, new HttpGet(EasyNetworkUtils.getUrlWithQueryString(url, params)), httpResponseHandler);
+        sendRequest(context, new HttpGet(HttpUtils.getUrlWithQueryString(url, params)), httpResponseHandler);
     }
     
     /**
@@ -217,7 +216,7 @@ public class EasyHttpClient {
      */
     public void get(Context context, String url, Header[] headers, Request request, HttpResponseHandler httpResponseHandler){
 		try {
-			sendRequest(context, EasyNetworkUtils.setHeaders(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(url, request), EasyNetworkUtils.requestToRequestParams(request))), headers), httpResponseHandler);
+			sendRequest(context, HttpUtils.setHeaders(new HttpGet(HttpUtils.getUrlWithQueryString(HttpUtils.getUrlFromRequestObject(url, request), HttpUtils.requestToRequestParams(request))), headers), httpResponseHandler);
 		} catch (Exception e) {
 			if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -234,7 +233,7 @@ public class EasyHttpClient {
      */
     public void get(Context context, String url, Request request, HttpResponseHandler httpResponseHandler){
 		try {
-			sendRequest(context, new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(url, request), EasyNetworkUtils.requestToRequestParams(request))), httpResponseHandler);
+			sendRequest(context, new HttpGet(HttpUtils.getUrlWithQueryString(HttpUtils.getUrlFromRequestObject(url, request), HttpUtils.requestToRequestParams(request))), httpResponseHandler);
 		} catch (Exception e) {
 			if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -250,7 +249,7 @@ public class EasyHttpClient {
      */
     public void get(Request request, HttpResponseHandler httpResponseHandler){
 		try {
-			sendRequest(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(null, request), EasyNetworkUtils.requestToRequestParams(request))), httpResponseHandler);
+			sendRequest(new HttpGet(HttpUtils.getUrlWithQueryString(HttpUtils.getUrlFromRequestObject(null, request), HttpUtils.requestToRequestParams(request))), httpResponseHandler);
 		} catch (Exception e) {
 			if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -267,7 +266,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void get(String url, Header[] headers, RequestParams params, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setHeaders(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(url, params)), headers), httpResponseHandler);
+        sendRequest(HttpUtils.setHeaders(new HttpGet(HttpUtils.getUrlWithQueryString(url, params)), headers), httpResponseHandler);
     }
     
     /**
@@ -277,7 +276,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void get(String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
-        sendRequest(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(url, params)), httpResponseHandler);
+        sendRequest(new HttpGet(HttpUtils.getUrlWithQueryString(url, params)), httpResponseHandler);
     }
     
     /**
@@ -299,7 +298,7 @@ public class EasyHttpClient {
      */
     public void get(String url, Header[] headers, Request request, HttpResponseHandler httpResponseHandler){
 		try {
-			sendRequest(EasyNetworkUtils.setHeaders(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(url, request), EasyNetworkUtils.requestToRequestParams(request))), headers), httpResponseHandler);
+			sendRequest(HttpUtils.setHeaders(new HttpGet(HttpUtils.getUrlWithQueryString(HttpUtils.getUrlFromRequestObject(url, request), HttpUtils.requestToRequestParams(request))), headers), httpResponseHandler);
 		} catch (Exception e) {
 			if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -315,7 +314,7 @@ public class EasyHttpClient {
      */
     public void get(String url, Request request, HttpResponseHandler httpResponseHandler){
 		try {
-			sendRequest(new HttpGet(EasyNetworkUtils.getUrlWithQueryString(EasyNetworkUtils.getUrlFromRequestObject(url, request), EasyNetworkUtils.requestToRequestParams(request))), httpResponseHandler);
+			sendRequest(new HttpGet(HttpUtils.getUrlWithQueryString(HttpUtils.getUrlFromRequestObject(url, request), HttpUtils.requestToRequestParams(request))), httpResponseHandler);
 		} catch (Exception e) {
 			if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -336,7 +335,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(Context context, String url, Header[] headers, HttpEntity entity, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(url), entity, headers), contentType, httpResponseHandler);
+        sendRequest(context, HttpUtils.setEntity(new HttpPost(url), entity, headers), contentType, httpResponseHandler);
     }
     
     /**
@@ -348,7 +347,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(Context context, String url, HttpEntity entity, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(url), entity), contentType, httpResponseHandler);
+        sendRequest(context, HttpUtils.setEntity(new HttpPost(url), entity), contentType, httpResponseHandler);
     }
     
     /**
@@ -359,7 +358,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(Context context, String url, HttpEntity entity, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(url), entity), httpResponseHandler);
+        sendRequest(context, HttpUtils.setEntity(new HttpPost(url), entity), httpResponseHandler);
     }
     
     /**
@@ -382,7 +381,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(Context context, String url, Header[] headers, RequestParams params, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(url), EasyNetworkUtils.paramsToEntity(params), headers), contentType, httpResponseHandler);
+        sendRequest(context, HttpUtils.setEntity(new HttpPost(url), HttpUtils.paramsToEntity(params), headers), contentType, httpResponseHandler);
     }
     
     /**
@@ -394,7 +393,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(Context context, String url, RequestParams params, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(url), EasyNetworkUtils.paramsToEntity(params)), contentType, httpResponseHandler);
+        sendRequest(context, HttpUtils.setEntity(new HttpPost(url), HttpUtils.paramsToEntity(params)), contentType, httpResponseHandler);
     }
     
     /**
@@ -405,7 +404,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(Context context, String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(url), EasyNetworkUtils.paramsToEntity(params)), httpResponseHandler);
+        sendRequest(context, HttpUtils.setEntity(new HttpPost(url), HttpUtils.paramsToEntity(params)), httpResponseHandler);
     }
 
     /**
@@ -419,7 +418,7 @@ public class EasyHttpClient {
      */
     public void post(Context context, String url, Header[] headers, Request request, String contentType, HttpResponseHandler httpResponseHandler){
 	    try {
-	        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request)), headers), contentType, httpResponseHandler);
+	        sendRequest(context, HttpUtils.setEntity(new HttpPost(HttpUtils.getUrlFromRequestObject(url, request)), HttpUtils.paramsToEntity(HttpUtils.requestToRequestParams(request)), headers), contentType, httpResponseHandler);
 	    } catch (Exception e) {
 	    	if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -437,7 +436,7 @@ public class EasyHttpClient {
      */
     public void post(Context context, String url, Request request, String contentType, HttpResponseHandler httpResponseHandler){
 	    try {
-	        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), contentType, httpResponseHandler);
+	        sendRequest(context, HttpUtils.setEntity(new HttpPost(HttpUtils.getUrlFromRequestObject(url, request)), HttpUtils.paramsToEntity(HttpUtils.requestToRequestParams(request))), contentType, httpResponseHandler);
 	    } catch (Exception e) {
 	    	if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -454,7 +453,7 @@ public class EasyHttpClient {
      */
     public void post(Context context, String url, Request request, HttpResponseHandler httpResponseHandler){
 	    try {
-	        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), httpResponseHandler);
+	        sendRequest(context, HttpUtils.setEntity(new HttpPost(HttpUtils.getUrlFromRequestObject(url, request)), HttpUtils.paramsToEntity(HttpUtils.requestToRequestParams(request))), httpResponseHandler);
 	    } catch (Exception e) {
 	    	if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -470,7 +469,7 @@ public class EasyHttpClient {
      */
     public void post(Context context, Request request, HttpResponseHandler httpResponseHandler){
 	    try {
-	        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(null, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), httpResponseHandler);
+	        sendRequest(context, HttpUtils.setEntity(new HttpPost(HttpUtils.getUrlFromRequestObject(null, request)), HttpUtils.paramsToEntity(HttpUtils.requestToRequestParams(request))), httpResponseHandler);
 	    } catch (Exception e) {
 	    	if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -487,7 +486,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(String url, Header[] headers, HttpEntity entity, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(url), entity, headers), contentType, httpResponseHandler);
+        sendRequest(HttpUtils.setEntity(new HttpPost(url), entity, headers), contentType, httpResponseHandler);
     }
     
     /**
@@ -498,7 +497,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(String url, HttpEntity entity, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(url), entity), contentType, httpResponseHandler);
+        sendRequest(HttpUtils.setEntity(new HttpPost(url), entity), contentType, httpResponseHandler);
     }
     
     /**
@@ -508,7 +507,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(String url, HttpEntity entity, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(url), entity), httpResponseHandler);
+        sendRequest(HttpUtils.setEntity(new HttpPost(url), entity), httpResponseHandler);
     }
     
     /**
@@ -530,7 +529,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(String url, Header[] headers, RequestParams params, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(url), EasyNetworkUtils.paramsToEntity(params), headers), contentType, httpResponseHandler);
+        sendRequest(HttpUtils.setEntity(new HttpPost(url), HttpUtils.paramsToEntity(params), headers), contentType, httpResponseHandler);
     }
     
     /**
@@ -541,7 +540,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(String url, RequestParams params, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(url), EasyNetworkUtils.paramsToEntity(params)), contentType, httpResponseHandler);
+        sendRequest(HttpUtils.setEntity(new HttpPost(url), HttpUtils.paramsToEntity(params)), contentType, httpResponseHandler);
     }
     
     /**
@@ -551,7 +550,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(url), EasyNetworkUtils.paramsToEntity(params)), httpResponseHandler);
+        sendRequest(HttpUtils.setEntity(new HttpPost(url), HttpUtils.paramsToEntity(params)), httpResponseHandler);
     }
 
     /**
@@ -564,7 +563,7 @@ public class EasyHttpClient {
      */
     public void post(String url, Header[] headers, Request request, String contentType, HttpResponseHandler httpResponseHandler){
 	    try {
-	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request)), headers), contentType, httpResponseHandler);
+	        sendRequest(HttpUtils.setEntity(new HttpPost(HttpUtils.getUrlFromRequestObject(url, request)), HttpUtils.paramsToEntity(HttpUtils.requestToRequestParams(request)), headers), contentType, httpResponseHandler);
 	    } catch (Exception e) {
 	    	if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -581,7 +580,7 @@ public class EasyHttpClient {
      */
     public void post(String url, Request request, String contentType, HttpResponseHandler httpResponseHandler){
 	    try {
-	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), contentType, httpResponseHandler);
+	        sendRequest(HttpUtils.setEntity(new HttpPost(HttpUtils.getUrlFromRequestObject(url, request)), HttpUtils.paramsToEntity(HttpUtils.requestToRequestParams(request))), contentType, httpResponseHandler);
 	    } catch (Exception e) {
 	    	if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -597,7 +596,7 @@ public class EasyHttpClient {
      */
     public void post(String url, Request request, HttpResponseHandler httpResponseHandler){
 	    try {
-	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(url, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), httpResponseHandler);
+	        sendRequest(HttpUtils.setEntity(new HttpPost(HttpUtils.getUrlFromRequestObject(url, request)), HttpUtils.paramsToEntity(HttpUtils.requestToRequestParams(request))), httpResponseHandler);
 	    } catch (Exception e) {
 	    	if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -613,7 +612,7 @@ public class EasyHttpClient {
      */
     public void post(Request request, String contentType, HttpResponseHandler httpResponseHandler){
 	    try {
-	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(null, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), contentType, httpResponseHandler);
+	        sendRequest(HttpUtils.setEntity(new HttpPost(HttpUtils.getUrlFromRequestObject(null, request)), HttpUtils.paramsToEntity(HttpUtils.requestToRequestParams(request))), contentType, httpResponseHandler);
 	    } catch (Exception e) {
 	    	if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -628,7 +627,7 @@ public class EasyHttpClient {
      */
     public void post(Request request, HttpResponseHandler httpResponseHandler){
 	    try {
-	        sendRequest(EasyNetworkUtils.setEntity(new HttpPost(EasyNetworkUtils.getUrlFromRequestObject(null, request)), EasyNetworkUtils.paramsToEntity(EasyNetworkUtils.requestToRequestParams(request))), httpResponseHandler);
+	        sendRequest(HttpUtils.setEntity(new HttpPost(HttpUtils.getUrlFromRequestObject(null, request)), HttpUtils.paramsToEntity(HttpUtils.requestToRequestParams(request))), httpResponseHandler);
 	    } catch (Exception e) {
 	    	if(httpResponseHandler != null){
 				httpResponseHandler.exception(e);
@@ -649,7 +648,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(Context context, String url, Header[] headers, HttpEntity entity, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPut(url), entity, headers), contentType, httpResponseHandler);
+        sendRequest(context, HttpUtils.setEntity(new HttpPut(url), entity, headers), contentType, httpResponseHandler);
     }
     
     /**
@@ -661,7 +660,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(Context context, String url, HttpEntity entity, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPut(url), entity), contentType, httpResponseHandler);
+        sendRequest(context, HttpUtils.setEntity(new HttpPut(url), entity), contentType, httpResponseHandler);
     }
     
     /**
@@ -672,7 +671,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(Context context, String url, HttpEntity entity, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPut(url), entity), httpResponseHandler);
+        sendRequest(context, HttpUtils.setEntity(new HttpPut(url), entity), httpResponseHandler);
     }
     
     /**
@@ -696,7 +695,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(Context context, String url, Header[] headers, RequestParams params, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPut(url), EasyNetworkUtils.paramsToEntity(params), headers), contentType, httpResponseHandler);
+        sendRequest(context, HttpUtils.setEntity(new HttpPut(url), HttpUtils.paramsToEntity(params), headers), contentType, httpResponseHandler);
     }
 
     /**
@@ -708,7 +707,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(Context context, String url, RequestParams params, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPut(url), EasyNetworkUtils.paramsToEntity(params)), contentType, httpResponseHandler);
+        sendRequest(context, HttpUtils.setEntity(new HttpPut(url), HttpUtils.paramsToEntity(params)), contentType, httpResponseHandler);
     }
 
     /**
@@ -719,7 +718,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(Context context, String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setEntity(new HttpPut(url), EasyNetworkUtils.paramsToEntity(params)), httpResponseHandler);
+        sendRequest(context, HttpUtils.setEntity(new HttpPut(url), HttpUtils.paramsToEntity(params)), httpResponseHandler);
     }
     
     /**
@@ -732,7 +731,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(String url, Header[] headers, HttpEntity entity, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setEntity(new HttpPut(url), entity, headers), contentType, httpResponseHandler);
+        sendRequest(HttpUtils.setEntity(new HttpPut(url), entity, headers), contentType, httpResponseHandler);
     }
     
     /**
@@ -744,7 +743,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(String url, HttpEntity entity, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setEntity(new HttpPut(url), entity), contentType, httpResponseHandler);
+        sendRequest(HttpUtils.setEntity(new HttpPut(url), entity), contentType, httpResponseHandler);
     }
     
     /**
@@ -754,7 +753,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(String url, HttpEntity entity, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setEntity(new HttpPut(url), entity), httpResponseHandler);
+        sendRequest(HttpUtils.setEntity(new HttpPut(url), entity), httpResponseHandler);
     }
     
     /**
@@ -776,7 +775,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(String url, Header[] headers, RequestParams params, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setEntity(new HttpPut(url), EasyNetworkUtils.paramsToEntity(params), headers), contentType, httpResponseHandler);
+        sendRequest(HttpUtils.setEntity(new HttpPut(url), HttpUtils.paramsToEntity(params), headers), contentType, httpResponseHandler);
     }
 
     /**
@@ -787,7 +786,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(String url, RequestParams params, String contentType, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setEntity(new HttpPut(url), EasyNetworkUtils.paramsToEntity(params)), contentType, httpResponseHandler);
+        sendRequest(HttpUtils.setEntity(new HttpPut(url), HttpUtils.paramsToEntity(params)), contentType, httpResponseHandler);
     }
 
     /**
@@ -797,7 +796,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setEntity(new HttpPut(url), EasyNetworkUtils.paramsToEntity(params)), httpResponseHandler);
+        sendRequest(HttpUtils.setEntity(new HttpPut(url), HttpUtils.paramsToEntity(params)), httpResponseHandler);
     }
 
     
@@ -811,7 +810,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void delete(Context context, String url, Header[] headers, HttpResponseHandler httpResponseHandler) {
-        sendRequest(context, EasyNetworkUtils.setHeaders(new HttpDelete(url), headers), null, httpResponseHandler);
+        sendRequest(context, HttpUtils.setHeaders(new HttpDelete(url), headers), null, httpResponseHandler);
     }
     
     /**
@@ -831,7 +830,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void delete(String url, Header[] headers, HttpResponseHandler httpResponseHandler) {
-        sendRequest(EasyNetworkUtils.setHeaders(new HttpDelete(url), headers), null, httpResponseHandler);
+        sendRequest(HttpUtils.setHeaders(new HttpDelete(url), headers), null, httpResponseHandler);
     }
     
     /**

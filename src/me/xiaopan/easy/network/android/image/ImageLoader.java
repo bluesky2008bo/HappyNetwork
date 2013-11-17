@@ -50,7 +50,6 @@ import android.widget.ImageView;
  * 图片加载器，可以从网络或者本地加载图片，并且支持自动清除缓存
  */
 public class ImageLoader{
-	public static final String CHARSET_NAME_UTF8 = "UTF-8";
 	private Bitmap tempCacheBitmap;	//临时存储缓存的图片
 	private Handler handler;
 	private Context context;	//上下文
@@ -111,7 +110,7 @@ public class ImageLoader{
 	public final void load(String url, ImageView showImageView, Options options){
 		if(StringUtils.isNotEmpty(url) && showImageView != null){
 			try {
-				String id = URLEncoder.encode(url, CHARSET_NAME_UTF8);
+				String id = URLEncoder.encode(url, EasyNetwork.CHARSET_NAME_UTF8);
 				if(!tryShowImage(url, id, showImageView, options)){	//尝试显示图片，如果显示失败了就尝试加载
 					tryLoad(id, url, getCacheFile(this, context, options, id), showImageView, options, null);
 				}
@@ -149,7 +148,7 @@ public class ImageLoader{
 	public final void load(File localFile, ImageView showImageView, String url, Options options){
 		if((localFile != null || StringUtils.isNotEmpty(url)) && showImageView != null){
 			try{
-				String id = URLEncoder.encode(localFile.getPath(), CHARSET_NAME_UTF8);
+				String id = URLEncoder.encode(localFile.getPath(), EasyNetwork.CHARSET_NAME_UTF8);
 				if(!tryShowImage(localFile.getPath(), id, showImageView, options)){	//尝试显示图片，如果显示失败了就尝试加载
 					tryLoad(id, url, localFile, showImageView, options, null);
 				}
