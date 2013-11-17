@@ -41,11 +41,15 @@ public class OptimalBitmapHandler implements BitmapHandler{
 		/* 首先，计算最终的宽度，具体计算方法是，如果ImageView的宽度是固定的并且其宽度小于屏幕宽度，那么最终宽度就是ImageView的宽度，否则就是屏幕的宽度 */
 		int finalWidth = displayWidth;	//最总宽度默认为屏幕的宽度
 		int finalHeight = displayHeight;	//最总宽度默认为屏幕的宽度
-		if(showImageView.getLayoutParams().width > 0 && showImageView.getLayoutParams().width < finalWidth){
-			finalWidth = showImageView.getLayoutParams().width;
+		
+		int width = showImageView.getLayoutParams().width > 0?showImageView.getLayoutParams().width:showImageView.getWidth();
+		if(width > 0 && width < finalWidth){
+			finalWidth = width;
 		}
-		if(showImageView.getLayoutParams().height > 0 && showImageView.getLayoutParams().height < finalHeight){
-			finalWidth = showImageView.getLayoutParams().height;
+		
+		int height = showImageView.getLayoutParams().height > 0?showImageView.getLayoutParams().height:showImageView.getHeight();
+		if(height > 0 && height < finalHeight){
+			finalWidth = height;
 		}
 		
 		/* 然后，读取原图的宽度 */
@@ -67,11 +71,15 @@ public class OptimalBitmapHandler implements BitmapHandler{
 		/* 首先，计算最终的宽度，具体计算方法是，如果ImageView的宽度是固定的并且其宽度小于屏幕宽度，那么最终宽度就是ImageView的宽度，否则就是屏幕的宽度 */
 		int finalWidth = displayWidth;	//最总宽度默认为屏幕的宽度
 		int finalHeight = displayHeight;	//最总宽度默认为屏幕的宽度
-		if(showImageView.getLayoutParams().width > 0 && showImageView.getLayoutParams().width < finalWidth){
-			finalWidth = showImageView.getLayoutParams().width;
+		
+		int width = showImageView.getLayoutParams().width > 0?showImageView.getLayoutParams().width:showImageView.getWidth();
+		if(width > 0 && width < finalWidth){
+			finalWidth = width;
 		}
-		if(showImageView.getLayoutParams().height > 0 && showImageView.getLayoutParams().height < finalHeight){
-			finalWidth = showImageView.getLayoutParams().height;
+		
+		int height = showImageView.getLayoutParams().height > 0?showImageView.getLayoutParams().height:showImageView.getHeight();
+		if(height > 0 && height < finalHeight){
+			finalWidth = height;
 		}
 		
 		/* 然后，读取原图的宽度 */
