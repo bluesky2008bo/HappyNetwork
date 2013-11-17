@@ -26,7 +26,7 @@ public class Configuration {
 	private String cacheDirName = "image_loader";	//缓存文件夹名称
 	private String logTag = "ImageLoader";	//LogTag
 	private Options defaultOptions;	//默认加载选项
-	private OptimalBitmapHandler defaultBitmapLoadHandler;	//默认的图片加载处理器
+	private BitmapHandler defaultBitmapHandler;	//默认的图片加载处理器
 	private BitmapCacher bitmapCacher;	//位图缓存器
 	
 	public int getMaxThreadNumber() {
@@ -77,12 +77,12 @@ public class Configuration {
 		this.defaultOptions = defaultOptions;
 	}
 	
-	public OptimalBitmapHandler getDefaultBitmapLoadHandler() {
-		return defaultBitmapLoadHandler;
+	public BitmapHandler getDefaultBitmapHandler() {
+		return defaultBitmapHandler;
 	}
 	
-	public void setDefaultBitmapLoadHandler(OptimalBitmapHandler defaultBitmapLoadHandler) {
-		this.defaultBitmapLoadHandler = defaultBitmapLoadHandler;
+	public void setDefaultBitmapHandler(BitmapHandler defaultBitmapHandler) {
+		this.defaultBitmapHandler = defaultBitmapHandler;
 	}
 	
 	public BitmapCacher getBitmapCacher() {

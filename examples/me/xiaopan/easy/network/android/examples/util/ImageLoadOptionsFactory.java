@@ -2,7 +2,7 @@ package me.xiaopan.easy.network.android.examples.util;
 
 import me.xiaopan.easy.network.android.R;
 import me.xiaopan.easy.network.android.image.AlphaShowAnimationListener;
-import me.xiaopan.easy.network.android.image.OptimalBitmapHandler;
+import me.xiaopan.easy.network.android.image.PixelsBitmapHandler;
 import me.xiaopan.easy.network.android.image.Options;
 import android.content.Context;
 
@@ -24,7 +24,7 @@ public class ImageLoadOptionsFactory {
 			defaultImageLoadOptions.setLoadingDrawableResId(R.drawable.images_loading);	//设置加载中显示的图片
 			defaultImageLoadOptions.setLoadFailureDrawableResId(R.drawable.images_load_failure);	//设置当加载失败时显示的图片
 			defaultImageLoadOptions.setShowAnimationListener(new AlphaShowAnimationListener());	//设置一个透明度由50%渐变到100%的显示动画
-			defaultImageLoadOptions.setBitmapHandler(new OptimalBitmapHandler(context));	//设置一个图片处理器，保证读取到大小合适的Bitmap，避免内存溢出
+			defaultImageLoadOptions.setBitmapHandler(new PixelsBitmapHandler(context));	//设置一个图片处理器，保证读取到大小合适的Bitmap，避免内存溢出
 		}
 		return listImageLoadOptions;
 	}
@@ -41,7 +41,7 @@ public class ImageLoadOptionsFactory {
 			listImageLoadOptions.setLoadingDrawableResId(R.drawable.images_loading);	//设置加载中显示的图片
 			listImageLoadOptions.setLoadFailureDrawableResId(R.drawable.images_load_failure);	//设置当加载失败时显示的图片
 			listImageLoadOptions.setShowAnimationListener(new AlphaShowAnimationListener());	//设置一个透明度由50%渐变到100%的显示动画
-			listImageLoadOptions.setBitmapHandler(new OptimalBitmapHandler(context));	//设置一个图片处理器，保证读取到大小合适的Bitmap，避免内存溢出
+			listImageLoadOptions.setBitmapHandler(new PixelsBitmapHandler(context));	//设置一个图片处理器，保证读取到大小合适的Bitmap，避免内存溢出
 		}
 		return listImageLoadOptions;
 	}

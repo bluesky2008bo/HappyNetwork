@@ -78,8 +78,8 @@ public class ImageLoader{
 	public final void init(Context context, Options defaultOptions){
 		this.context = context;
 		configuration.setDefaultOptions(defaultOptions);
-		if(context != null && configuration.getDefaultBitmapLoadHandler() == null){
-			configuration.setDefaultBitmapLoadHandler(new OptimalBitmapHandler(context));
+		if(context != null && configuration.getDefaultBitmapHandler() == null){
+			configuration.setDefaultBitmapHandler(new PixelsBitmapHandler(context));
 		}
 	}
 	
