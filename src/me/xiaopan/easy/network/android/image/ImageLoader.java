@@ -53,7 +53,7 @@ public class ImageLoader{
 	private Configuration configuration;
 	private Set<ImageView> loadingImageViewSet;	//图片视图集合，这个集合里的每个尚未加载完成的视图身上都会携带有他要显示的图片的地址，当每一个图片加载完成之后都会在这个列表中遍历找到所有携带有这个这个图片的地址的视图，并把图片显示到这个视图上
 	private DefaultHttpClient httpClient;	//Http客户端
-	private ImageLoadHandler imageLoadHandler;	//加载处理器
+	private LoadTaskHandler imageLoadHandler;	//加载处理器
 	private WaitCircle<LoadRequest> waitingRequestCircle;	//等待处理的加载请求
 	
 	/**
@@ -63,7 +63,7 @@ public class ImageLoader{
 	public ImageLoader(){
 		configuration = new Configuration();
 		bitmapCacher = new BitmapLruCacher();
-		imageLoadHandler = new ImageLoadHandler(this);
+		imageLoadHandler = new LoadTaskHandler(this);
 		loadingImageViewSet = new HashSet<ImageView>();//初始化图片视图集合
 		loadingRequestSet = new HashSet<String>();//初始化加载中URL集合
 		waitingRequestCircle = new WaitCircle<LoadRequest>(configuration.getMaxWaitingNumber());//初始化等待处理的加载请求集合
@@ -78,7 +78,7 @@ public class ImageLoader{
 		this.context = context;
 		configuration.setDefaultOptions(defaultOptions);
 		if(context != null && configuration.getDefaultBitmapLoadHandler() == null){
-			configuration.setDefaultBitmapLoadHandler(new DefaultBitmapLoadHandler(context));
+			configuration.setDefaultBitmapLoadHandler(new OptimalBitmapHandler(context));
 		}
 	}
 	
@@ -288,7 +288,7 @@ public class ImageLoader{
 	 * 获取加载处理器
 	 * @return 加载处理器
 	 */
-	public final ImageLoadHandler getImageLoadHandler() {
+	public final LoadTaskHandler getImageLoadHandler() {
 		return imageLoadHandler;
 	}
 
@@ -296,7 +296,7 @@ public class ImageLoader{
 	 * 设置加载处理器
 	 * @param loadHandler 加载处理器
 	 */
-	public final void setImageLoadHandler(ImageLoadHandler loadHandler) {
+	public final void setImageLoadHandler(LoadTaskHandler loadHandler) {
 		this.imageLoadHandler = loadHandler;
 	}
 	

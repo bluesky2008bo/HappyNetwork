@@ -13,16 +13,16 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 /**
- * 默认的图片加载处理器，默认会限制图片的宽高不超过当前设备屏幕宽高的两倍，此举会在一定程度上防止内存溢出。
+ * 最优的位图处理器，默认会限制图片的宽高不超过当前设备屏幕宽高的两倍，此举会在一定程度上防止内存溢出。
  * <br>如果通过ImageView.getLayoutParams().width获取到的宽度大于0的话则会根据ImageView的大小来读取宽高合适的Bitmap，另外由于缩放比例值是整型的所以会有误差，但可以保证不会超过ImageView的两倍
  */
-public class DefaultBitmapLoadHandler implements BitmapLoadHandler{
+public class OptimalBitmapHandler implements BitmapHandler{
 	private int displayWidth;
 	private int displayHeight;
 	
 	@SuppressWarnings("deprecation")
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-	public DefaultBitmapLoadHandler(Context conetxt){
+	public OptimalBitmapHandler(Context conetxt){
 		WindowManager windowManager = (WindowManager) conetxt.getSystemService(Context.WINDOW_SERVICE);
 		Display display = windowManager.getDefaultDisplay();
 		if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR2){

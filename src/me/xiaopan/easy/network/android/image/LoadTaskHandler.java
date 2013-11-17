@@ -23,13 +23,13 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 
 /**
- * 加载处理器
+ * 加载任务处理器，任务完成后通过此处理器在主线程中显示图片
  */
-public class ImageLoadHandler extends Handler {
+public class LoadTaskHandler extends Handler {
 	public static final int WHAT_LOAD_FINISH = 12313;
 	private ImageLoader imageLoader;
 	
-	public ImageLoadHandler(ImageLoader imageLoader){
+	public LoadTaskHandler(ImageLoader imageLoader){
 		this.imageLoader = imageLoader;
 	}
 	
@@ -49,10 +49,7 @@ public class ImageLoadHandler extends Handler {
 		
 		/* 尝试缓存到内存中 */
 		if(loadRequest.getResultBitmap() != null && loadRequest.getOptions() != null && loadRequest.getOptions().isCachedInMemory()){
-			CacheDetermineListener determineCache = loadRequest.getOptions().getCacheDetermineListener();
-			if(determineCache == null || determineCache.isCache(loadRequest.getResultBitmap())){
-				imageLoader.getBitmapCacher().put(loadRequest.getId(), loadRequest.getResultBitmap());
-			}
+			imageLoader.getBitmapCacher().put(loadRequest.getId(), loadRequest.getResultBitmap());
 		}
 			
 		/* 遍历显示视图集合，找到其绑定的地址同当前下载的地址一样的图片视图，并将结果显示到图片视图上 */

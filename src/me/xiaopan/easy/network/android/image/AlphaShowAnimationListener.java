@@ -3,11 +3,13 @@ package me.xiaopan.easy.network.android.image;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
-public class DefaultAlphaAnimationListener implements ShowAnimationListener {
+/**
+ * 透明度渐变显示动画监听器，可使图片在500毫秒内透明度从0.5到1.0变化
+ */
+public class AlphaShowAnimationListener implements ShowAnimationListener {
 
 	@Override
 	public Animation onGetShowAnimation() {
-		/* 创建一个从0.5到1.0透明度渐变动画 */
 		AlphaAnimation alphaAnimation = new AlphaAnimation(0.5f, 1.0f);
 		alphaAnimation.setDuration(400);
 		return alphaAnimation;

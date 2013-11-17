@@ -15,16 +15,28 @@
  */
 package me.xiaopan.easy.network.android.image;
 
+import java.io.File;
+
 import android.graphics.Bitmap;
+import android.widget.ImageView;
 
 /**
- * 判定是否需要缓存
+ * 位图加载处理器
  */
-public interface CacheDetermineListener {
+public interface BitmapHandler{
 	/**
-	 * 是否缓存
-	 * @param bitmap
+	 * 从本地文件加载
+	 * @param localFile 本地文件
+	 * @param showImageView 图片视图
 	 * @return
 	 */
-	public boolean isCache(Bitmap bitmap);
+	public Bitmap onFromLocalFileLoad(File localFile, ImageView showImageView);
+	
+	/**
+	 * 从字节数组中加载
+	 * @param byteArray
+	 * @param showImageView 图片视图
+	 * @return
+	 */
+	public Bitmap onFromByteArrayLoad(byte[] byteArray, ImageView showImageView);
 }

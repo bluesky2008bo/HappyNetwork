@@ -33,6 +33,9 @@ import org.apache.http.util.EntityUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+/**
+ * 加载任务
+ */
 public class LoadTask implements Runnable {
 	private ImageLoader imageLoader;	//图片加载器
 	private LoadRequest loadRequest;	//加载请求
@@ -56,7 +59,7 @@ public class LoadTask implements Runnable {
 		}else{
 			loadRequest.setResultBitmap(null);
 		}
-		imageLoader.getImageLoadHandler().obtainMessage(ImageLoadHandler.WHAT_LOAD_FINISH, loadRequest).sendToTarget();
+		imageLoader.getImageLoadHandler().obtainMessage(LoadTaskHandler.WHAT_LOAD_FINISH, loadRequest).sendToTarget();
 	}
 	
 	/**
@@ -66,8 +69,8 @@ public class LoadTask implements Runnable {
 	 */
 	private Bitmap fromLocalFileLoadBitmap(File localFile){
 		imageLoader.log("从本地加载图片："+localFile.getPath());
-		if(loadRequest.getOptions() != null && loadRequest.getOptions().getBitmapLoadHandler() != null){
-			return loadRequest.getOptions().getBitmapLoadHandler().onFromLocalFileLoad(localFile, loadRequest.getShowImageView());
+		if(loadRequest.getOptions() != null && loadRequest.getOptions().getBitmapHandler() != null){
+			return loadRequest.getOptions().getBitmapHandler().onFromLocalFileLoad(localFile, loadRequest.getShowImageView());
 		}else{
 			return BitmapFactory.decodeFile(localFile.getPath());
 		}
@@ -79,8 +82,8 @@ public class LoadTask implements Runnable {
 	 * @return
 	 */
 	private Bitmap fromByteArrayLoadBitmap(byte[] byteArray){
-		if(loadRequest.getOptions() != null && loadRequest.getOptions().getBitmapLoadHandler() != null){
-			return loadRequest.getOptions().getBitmapLoadHandler().onFromByteArrayLoad(byteArray, loadRequest.getShowImageView());
+		if(loadRequest.getOptions() != null && loadRequest.getOptions().getBitmapHandler() != null){
+			return loadRequest.getOptions().getBitmapHandler().onFromByteArrayLoad(byteArray, loadRequest.getShowImageView());
 		}else{
 			return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 		}

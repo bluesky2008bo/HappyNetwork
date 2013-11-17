@@ -26,8 +26,7 @@ public class Options {
 	private boolean isCacheInLocal;	//是否需要将图片缓存到本地
 	private String cacheDir;	//默认缓存目录
 	private ShowAnimationListener showAnimationListener;	//显示动画
-	private BitmapLoadHandler bitmapLoadHandler;	//位图加载处理器
-	private CacheDetermineListener cacheDetermineListener;	//缓存判定监听器，判定是否需要将位图缓存到内存中
+	private BitmapHandler bitmapHandler;	//位图加载处理器
 	
 	/**
 	 * 获取正在加载时显示的图片的资源ID
@@ -145,31 +144,15 @@ public class Options {
 	 * 获取位图加载处理器
 	 * @return 位图加载处理器
 	 */
-	public BitmapLoadHandler getBitmapLoadHandler() {
-		return bitmapLoadHandler;
+	public BitmapHandler getBitmapHandler() {
+		return bitmapHandler;
 	}
 
 	/**
 	 * 设置位图加载处理器
-	 * @param bitmapLoadHandler 位图加载处理器
+	 * @param bitmapHandler 位图加载处理器
 	 */
-	public void setBitmapLoadHandler(BitmapLoadHandler bitmapLoadHandler) {
-		this.bitmapLoadHandler = bitmapLoadHandler;
-	}
-
-	/**
-	 * 获取缓存判定监听器
-	 * @return 缓存判定监听器
-	 */
-	public CacheDetermineListener getCacheDetermineListener() {
-		return cacheDetermineListener;
-	}
-
-	/**
-	 * 设置缓存判定监听器
-	 * @param cacheDetermineListener 缓存判定监听器
-	 */
-	public void setCacheDetermineListener(CacheDetermineListener cacheDetermineListener) {
-		this.cacheDetermineListener = cacheDetermineListener;
+	public void setBitmapHandler(BitmapHandler bitmapHandler) {
+		this.bitmapHandler = bitmapHandler;
 	}
 }
