@@ -33,16 +33,8 @@ public class Configuration {
 		return maxThreadNumber;
 	}
 	
-	public void setMaxThreadNumber(int maxThreadNumber) {
-		this.maxThreadNumber = maxThreadNumber;
-	}
-	
 	public int getMaxWaitingNumber() {
 		return maxWaitingNumber;
-	}
-	
-	public void setMaxWaitingNumber(int maxWaitingNumber) {
-		this.maxWaitingNumber = maxWaitingNumber;
 	}
 	
 	public boolean isEnableOutputLogToConsole() {

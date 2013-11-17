@@ -2,8 +2,8 @@ package me.xiaopan.easy.network.android.examples.util;
 
 import me.xiaopan.easy.network.android.R;
 import me.xiaopan.easy.network.android.image.AlphaShowAnimationListener;
-import me.xiaopan.easy.network.android.image.PixelsBitmapHandler;
 import me.xiaopan.easy.network.android.image.Options;
+import me.xiaopan.easy.network.android.image.PixelsBitmapHandler;
 import android.content.Context;
 
 /**

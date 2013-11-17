@@ -22,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
+import me.xiaopan.easy.java.util.StringUtils;
+
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -54,7 +56,7 @@ public class LoadRunable implements Runnable {
 	public void run() {
 		if(loadRequest.getLocalCacheFile() !=null && loadRequest.getLocalCacheFile().exists()){
 			loadRequest.setResultBitmap(fromLocalFileLoadBitmap(loadRequest.getLocalCacheFile()));
-		}else if(ImageLoaderUtils.isNotNullAndEmpty(loadRequest.getImageUrl())){
+		}else if(StringUtils.isNotEmpty(loadRequest.getImageUrl())){
 			loadRequest.setResultBitmap(fromNetworkDownload(loadRequest.getLocalCacheFile()));
 		}else{
 			loadRequest.setResultBitmap(null);

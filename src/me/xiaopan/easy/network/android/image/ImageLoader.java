@@ -21,6 +21,9 @@ import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Set;
 
+import me.xiaopan.easy.android.util.FileUtils;
+import me.xiaopan.easy.java.util.CircleList;
+import me.xiaopan.easy.java.util.StringUtils;
 import me.xiaopan.easy.network.android.EasyNetwork;
 
 import org.apache.http.HttpVersion;
@@ -47,6 +50,7 @@ import android.widget.ImageView;
  * 图片加载器，可以从网络或者本地加载图片，并且支持自动清除缓存
  */
 public class ImageLoader{
+	public static final String CHARSET_NAME_UTF8 = "UTF-8";
 	private Bitmap tempCacheBitmap;	//临时存储缓存的图片
 	private Handler handler;
 	private Context context;	//上下文
@@ -55,7 +59,7 @@ public class ImageLoader{
 	private Configuration configuration;
 	private Set<ImageView> loadingImageViewSet;	//图片视图集合，这个集合里的每个尚未加载完成的视图身上都会携带有他要显示的图片的地址，当每一个图片加载完成之后都会在这个列表中遍历找到所有携带有这个这个图片的地址的视图，并把图片显示到这个视图上
 	private DefaultHttpClient httpClient;	//Http客户端
-	private WaitCircle<LoadRequest> waitingRequestCircle;	//等待处理的加载请求
+	private CircleList<LoadRequest> waitingRequestCircle;	//等待处理的加载请求
 	
 	/**
 	 * 创建图片加载器
@@ -67,7 +71,7 @@ public class ImageLoader{
 		handler = new Handler();
 		loadingImageViewSet = new HashSet<ImageView>();//初始化图片视图集合
 		loadingRequestSet = new HashSet<String>();//初始化加载中URL集合
-		waitingRequestCircle = new WaitCircle<LoadRequest>(configuration.getMaxWaitingNumber());//初始化等待处理的加载请求集合
+		waitingRequestCircle = new CircleList<LoadRequest>(configuration.getMaxWaitingNumber());//初始化等待处理的加载请求集合
 	}
 	
 	/**
@@ -105,11 +109,11 @@ public class ImageLoader{
 	 * @param options 加载选项
 	 */
 	public final void load(String url, ImageView showImageView, Options options){
-		if(ImageLoaderUtils.isNotNullAndEmpty(url) && showImageView != null){
+		if(StringUtils.isNotEmpty(url) && showImageView != null){
 			try {
-				String id = URLEncoder.encode(url, ImageLoaderUtils.CHARSET_NAME_UTF8);
+				String id = URLEncoder.encode(url, CHARSET_NAME_UTF8);
 				if(!tryShowImage(url, id, showImageView, options)){	//尝试显示图片，如果显示失败了就尝试加载
-					tryLoad(id, url, ImageLoaderUtils.getCacheFile(this, context, options, id), showImageView, options, null);
+					tryLoad(id, url, getCacheFile(this, context, options, id), showImageView, options, null);
 				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
@@ -143,9 +147,9 @@ public class ImageLoader{
 	 * @param options 加载选项
 	 */
 	public final void load(File localFile, ImageView showImageView, String url, Options options){
-		if((localFile != null || ImageLoaderUtils.isNotNullAndEmpty(url)) && showImageView != null){
+		if((localFile != null || StringUtils.isNotEmpty(url)) && showImageView != null){
 			try{
-				String id = URLEncoder.encode(localFile.getPath(), ImageLoaderUtils.CHARSET_NAME_UTF8);
+				String id = URLEncoder.encode(localFile.getPath(), CHARSET_NAME_UTF8);
 				if(!tryShowImage(localFile.getPath(), id, showImageView, options)){	//尝试显示图片，如果显示失败了就尝试加载
 					tryLoad(id, url, localFile, showImageView, options, null);
 				}
@@ -281,7 +285,7 @@ public class ImageLoader{
 	 * 获取等待请求集合
 	 * @return 等待请求集合
 	 */
-	public final WaitCircle<LoadRequest> getWaitingRequestCircle() {
+	public final CircleList<LoadRequest> getWaitingRequestCircle() {
 		return waitingRequestCircle;
 	}
 
@@ -378,5 +382,15 @@ public class ImageLoader{
 
 	public void setBitmapCacher(BitmapCacher bitmapCacher) {
 		this.bitmapCacher = bitmapCacher;
+	}
+	
+	private static File getCacheFile(ImageLoader imageLoader, Context context, Options options, String fileName){
+		if(options != null && StringUtils.isNotEmpty(options.getCacheDir())){
+			return new File(options.getCacheDir() + File.separator + fileName);
+		}else if(context != null){
+			return new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + imageLoader.getConfiguration().getCacheDirName() + File.separator + fileName);
+		}else{
+			return null;
+		}
 	}
 } 
