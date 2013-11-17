@@ -59,6 +59,12 @@ public class LoadRunable implements Runnable {
 		}else{
 			loadRequest.setResultBitmap(null);
 		}
+
+		/* 尝试缓存到内存中 */
+		if(loadRequest.getResultBitmap() != null && loadRequest.getOptions() != null && loadRequest.getOptions().isCachedInMemory()){
+			imageLoader.getBitmapCacher().put(loadRequest.getId(), loadRequest.getResultBitmap());
+		}
+		
 		imageLoader.getHandler().post(new ResultHandleRunnable(imageLoader, loadRequest));
 	}
 	

@@ -32,11 +32,6 @@ public class ResultHandleRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		/* 尝试缓存到内存中 */
-		if(loadRequest.getResultBitmap() != null && loadRequest.getOptions() != null && loadRequest.getOptions().isCachedInMemory()){
-			imageLoader.getBitmapCacher().put(loadRequest.getId(), loadRequest.getResultBitmap());
-		}
-			
 		/* 遍历显示视图集合，找到其绑定的地址同当前下载的地址一样的图片视图，并将结果显示到图片视图上 */
 		Iterator<ImageView> iterator = imageLoader.getLoadingImageViewSet().iterator();
 		ImageView imageView;
