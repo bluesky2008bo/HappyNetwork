@@ -20,6 +20,7 @@ import java.util.List;
 
 import me.xiaopan.easy.network.android.R;
 import me.xiaopan.easy.network.android.examples.adapter.TitleFragmentPagerAdapter;
+import me.xiaopan.easy.network.android.examples.fragment.ImageFragment;
 import me.xiaopan.easy.network.android.examples.fragment.ImageGalleryFragment;
 import me.xiaopan.easy.network.android.examples.fragment.ImageGridFragment;
 import me.xiaopan.easy.network.android.examples.fragment.ImageListFragment;
@@ -40,6 +41,7 @@ public class ImageLoaderActivity extends FragmentActivity {
 		List<TitleFragment> fragments = new ArrayList<TitleFragment>();
 		fragments.add(new ImageListFragment());
 		fragments.add(new ImageGridFragment());
+		fragments.add(new ImageFragment());
 		fragments.add(new ImageGalleryFragment());
 		
 		viewPager.setAdapter(new TitleFragmentPagerAdapter(getSupportFragmentManager(), fragments));

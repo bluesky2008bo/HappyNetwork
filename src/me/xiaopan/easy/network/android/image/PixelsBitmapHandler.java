@@ -29,12 +29,18 @@ public class PixelsBitmapHandler implements BitmapHandler{
 	
 	@Override
 	public Bitmap onFromByteArrayLoad(byte[] byteArray, ImageView showImageView) {
-		int currentNumOfPixels = showImageView.getLayoutParams().width * showImageView.getLayoutParams().height;
 		if(defaultMaxNumOfPixels == 0){
 			int[] screenSize = DeviceUtils.getScreenSize(showImageView.getContext());
 			defaultMaxNumOfPixels = screenSize[0] * screenSize[1];
 		}
-		if(currentNumOfPixels > defaultMaxNumOfPixels){
+		showImageView.getMeasuredWidth();
+		int currentNumOfPixels;
+		if(showImageView.getLayoutParams().width > 0 && showImageView.getLayoutParams().height > 0){
+			currentNumOfPixels = showImageView.getLayoutParams().width * showImageView.getLayoutParams().height;
+			if(currentNumOfPixels > defaultMaxNumOfPixels){
+				currentNumOfPixels = defaultMaxNumOfPixels;
+			}
+		}else{
 			currentNumOfPixels = defaultMaxNumOfPixels;
 		}
 		return new BitmapDecoder(currentNumOfPixels).decodeByteArray(byteArray);
@@ -42,12 +48,17 @@ public class PixelsBitmapHandler implements BitmapHandler{
 	
 	@Override
 	public Bitmap onFromLocalFileLoad(File localFile, ImageView showImageView) {
-		int currentNumOfPixels = showImageView.getLayoutParams().width * showImageView.getLayoutParams().height;
 		if(defaultMaxNumOfPixels == 0){
 			int[] screenSize = DeviceUtils.getScreenSize(showImageView.getContext());
 			defaultMaxNumOfPixels = screenSize[0] * screenSize[1];
 		}
-		if(currentNumOfPixels > defaultMaxNumOfPixels){
+		int currentNumOfPixels;
+		if(showImageView.getLayoutParams().width > 0 && showImageView.getLayoutParams().height > 0){
+			currentNumOfPixels = showImageView.getLayoutParams().width * showImageView.getLayoutParams().height;
+			if(currentNumOfPixels > defaultMaxNumOfPixels){
+				currentNumOfPixels = defaultMaxNumOfPixels;
+			}
+		}else{
 			currentNumOfPixels = defaultMaxNumOfPixels;
 		}
 		return new BitmapDecoder(currentNumOfPixels).decodeFile(localFile.getPath());
