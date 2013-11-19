@@ -21,7 +21,6 @@ import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Set;
 
-import me.xiaopan.easy.android.util.FileUtils;
 import me.xiaopan.easy.java.util.CircleList;
 import me.xiaopan.easy.java.util.StringUtils;
 import me.xiaopan.easy.network.android.EasyNetwork;
@@ -40,10 +39,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Handler;
-import android.util.Log;
 import android.widget.ImageView;
 
 /**
@@ -51,11 +47,8 @@ import android.widget.ImageView;
  */
 public class ImageLoader{
 	private Bitmap tempCacheBitmap;	//临时存储缓存的图片
-	private Handler handler;
-	private Context context;	//上下文
 	private Set<String> loadingRequestSet;	//正在加载的Url列表，用来防止同一个URL被重复加载
-	private BitmapCacher bitmapCacher;
-	private Configuration configuration;
+	private Configuration configuration;	//配置
 	private Set<ImageView> loadingImageViewSet;	//图片视图集合，这个集合里的每个尚未加载完成的视图身上都会携带有他要显示的图片的地址，当每一个图片加载完成之后都会在这个列表中遍历找到所有携带有这个这个图片的地址的视图，并把图片显示到这个视图上
 	private DefaultHttpClient httpClient;	//Http客户端
 	private CircleList<LoadRequest> waitingRequestCircle;	//等待处理的加载请求
@@ -66,24 +59,9 @@ public class ImageLoader{
 	 */
 	public ImageLoader(){
 		configuration = new Configuration();
-		bitmapCacher = new BitmapLruCacher();
-		handler = new Handler();
 		loadingImageViewSet = new HashSet<ImageView>();//初始化图片视图集合
 		loadingRequestSet = new HashSet<String>();//初始化加载中URL集合
 		waitingRequestCircle = new CircleList<LoadRequest>(configuration.getMaxWaitingNumber());//初始化等待处理的加载请求集合
-	}
-	
-	/**
-	 * 初始化
-	 * @param context 上下文
-	 * @param defaultOptions 默认加载选项
-	 */
-	public final void init(Context context, Options defaultOptions){
-		this.context = context;
-		configuration.setDefaultOptions(defaultOptions);
-		if(context != null && configuration.getDefaultBitmapHandler() == null){
-			configuration.setDefaultBitmapHandler(new PixelsBitmapHandler(context));
-		}
 	}
 	
 	/**
@@ -112,7 +90,7 @@ public class ImageLoader{
 			try {
 				String id = URLEncoder.encode(url, EasyNetwork.CHARSET_NAME_UTF8);
 				if(!tryShowImage(url, id, showImageView, options)){	//尝试显示图片，如果显示失败了就尝试加载
-					tryLoad(id, url, getCacheFile(this, context, options, id), showImageView, options, null);
+					tryLoad(id, url, configuration.getCacheFile(showImageView.getContext(), options, id), showImageView, options, null);
 				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
@@ -120,8 +98,8 @@ public class ImageLoader{
 		}else{
 			if(showImageView != null){
 				showImageView.setTag(null);
-				if(options != null && options.getLoadingDrawableResId() > 0){
-					showImageView.setImageResource(options.getLoadingDrawableResId());
+				if(options != null && options.getLoadingImageResource() > 0){
+					showImageView.setImageResource(options.getLoadingImageResource());
 				}else{
 					showImageView.setImageDrawable(null);
 				}
@@ -158,8 +136,8 @@ public class ImageLoader{
 		}else{
 			if(showImageView != null){
 				showImageView.setTag(null);
-				if(options != null && options.getLoadingDrawableResId() > 0){
-					showImageView.setImageResource(options.getLoadingDrawableResId());
+				if(options != null && options.getLoadingImageResource() > 0){
+					showImageView.setImageResource(options.getLoadingImageResource());
 				}else{
 					showImageView.setImageDrawable(null);
 				}
@@ -205,9 +183,9 @@ public class ImageLoader{
 	 */
 	private final boolean tryShowImage(String url, String id, ImageView showImageView, Options options){
 		//如果需要从缓存中读取，就根据地址从缓存中获取图片，如果缓存中存在相对的图片就显示，否则显示默认图片或者显示空
-		if(options != null && options.isCachedInMemory() && (tempCacheBitmap = bitmapCacher.get(id)) != null){
+		if(options != null && options.isCachedInMemory() && (tempCacheBitmap = configuration.getBitmapCacher().get(id)) != null){
 			showImageView.setTag(null);	//清空绑定关系
-			log("从缓存加载图片："+url);
+			configuration.log("从缓存加载图片："+url);
 			loadingImageViewSet.remove(showImageView);
 			showImageView.clearAnimation();
 			showImageView.setImageBitmap(tempCacheBitmap);
@@ -215,8 +193,8 @@ public class ImageLoader{
 			return true;
 		}else{
 			showImageView.setTag(id);	//将ImageView和当前图片绑定，以便在下载完成后通过此ID来找到此ImageView
-			if(options != null && options.getLoadingDrawableResId() > 0){
-				showImageView.setImageResource(options.getLoadingDrawableResId());
+			if(options != null && options.getLoadingImageResource() > 0){
+				showImageView.setImageResource(options.getLoadingImageResource());
 			}else{
 				showImageView.setImageDrawable(null);
 			}
@@ -288,16 +266,8 @@ public class ImageLoader{
 		return waitingRequestCircle;
 	}
 
-	/**
-	 * 获取Handler
-	 * @return Handler
-	 */
-	final Handler getHandler() {
-		return handler;
-	}
-
     /**
-     * 设置请求超时时间，默认是10秒
+     * 设置请求超时时间，默认是20秒
      * @param timeout 请求超时时间，单位毫秒
      */
     public final void setTimeout(int timeout){
@@ -315,7 +285,7 @@ public class ImageLoader{
 		if(httpClient == null){
 			BasicHttpParams httpParams = new BasicHttpParams();
 			
-			int defaultMaxConnections = 10;		//最大连接数
+			int defaultMaxConnections = 20;		//最大连接数
 		    int defaultSocketTimeout = 10 * 1000;		//连接超时时间
 		    int defaultSocketBufferSize = 8192;		//Socket缓存大小
 			
@@ -346,50 +316,18 @@ public class ImageLoader{
 	}
 
 	/**
-	 * 输出LOG
-	 * @param logContent LOG内容
+	 * 获取配置
+	 * @return
 	 */
-	public void log(String logContent, boolean error){
-		if(configuration.isEnableOutputLogToConsole()){
-			if(error){
-				Log.e(configuration.getLogTag(), logContent);
-			}else{
-				Log.d(configuration.getLogTag(), logContent);
-			}
-		}
-	}
-	
-	/**
-	 * 输出LOG
-	 * @param logContent LOG内容
-	 */
-	public void log(String logContent){
-		log(logContent, false);
-	}
-
 	public Configuration getConfiguration() {
 		return configuration;
 	}
 
+	/**
+	 * 获取配置
+	 * @param configuration
+	 */
 	public void setConfiguration(Configuration configuration) {
 		this.configuration = configuration;
-	}
-
-	public BitmapCacher getBitmapCacher() {
-		return bitmapCacher;
-	}
-
-	public void setBitmapCacher(BitmapCacher bitmapCacher) {
-		this.bitmapCacher = bitmapCacher;
-	}
-	
-	private static File getCacheFile(ImageLoader imageLoader, Context context, Options options, String fileName){
-		if(options != null && StringUtils.isNotEmpty(options.getCacheDir())){
-			return new File(options.getCacheDir() + File.separator + fileName);
-		}else if(context != null){
-			return new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + imageLoader.getConfiguration().getCacheDirName() + File.separator + fileName);
-		}else{
-			return null;
-		}
 	}
 } 

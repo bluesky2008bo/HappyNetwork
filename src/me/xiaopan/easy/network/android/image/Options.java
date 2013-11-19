@@ -19,8 +19,8 @@ package me.xiaopan.easy.network.android.image;
  * 加载选项
  */
 public class Options {
-	private int loadingDrawableResId = -1;	//正在加载时显示的图片的资源ID
-	private int loadFailureDrawableResId = -1;	//加载失败时显示的图片的资源ID
+	private int loadingImageResource = -1;	//正在加载时显示的图片的资源ID
+	private int loadFailureImageResource = -1;	//加载失败时显示的图片的资源ID
 	private int maxRetryCount = -1;	//最大重试次数
 	private boolean isCachedInMemory;	//是否每次加载图片的时候先从内存中去找，并且加载完成后将图片缓存在内存中
 	private boolean isCacheInLocal;	//是否需要将图片缓存到本地
@@ -32,32 +32,34 @@ public class Options {
 	 * 获取正在加载时显示的图片的资源ID
 	 * @return 正在加载时显示的图片的资源ID
 	 */
-	public int getLoadingDrawableResId() {
-		return loadingDrawableResId;
+	public int getLoadingImageResource() {
+		return loadingImageResource;
 	}
 	
 	/**
 	 * 设置正在加载时显示的图片的资源ID
-	 * @param loadingDrawableResId 正在加载时显示的图片的资源ID
+	 * @param loadingImageResource 正在加载时显示的图片的资源ID
 	 */
-	public void setLoadingDrawableResId(int loadingDrawableResId) {
-		this.loadingDrawableResId = loadingDrawableResId;
+	public Options setLoadingImageResource(int loadingImageResource) {
+		this.loadingImageResource = loadingImageResource;
+		return this;
 	}
 	
 	/**
 	 * 获取加载失败时显示的图片的资源ID
 	 * @return 加载失败时显示的图片的资源ID
 	 */
-	public int getLoadFailureDrawableResId() {
-		return loadFailureDrawableResId;
+	public int getLoadFailureImageResource() {
+		return loadFailureImageResource;
 	}
 
 	/**
 	 * 设置加载失败时显示的图片的资源ID
-	 * @param loadFailureDrawableResId 加载失败时显示的图片的资源ID
+	 * @param loadFailureImageResource 加载失败时显示的图片的资源ID
 	 */
-	public void setLoadFailureDrawableResId(int loadFailureDrawableResId) {
-		this.loadFailureDrawableResId = loadFailureDrawableResId;
+	public Options setLoadFailureImageResource(int loadFailureImageResource) {
+		this.loadFailureImageResource = loadFailureImageResource;
+		return this;
 	}
 
 	/**
@@ -72,8 +74,9 @@ public class Options {
 	 * 设置是否每次加载图片的时候先从内存中去找，并且加载完成后将图片缓存在内存中
 	 * @param isCachedInMemory 是否每次加载图片的时候先从内存中去找，并且加载完成后将图片缓存在内存中
 	 */
-	public void setCachedInMemory(boolean isCachedInMemory) {
+	public Options setCachedInMemory(boolean isCachedInMemory) {
 		this.isCachedInMemory = isCachedInMemory;
+		return this;
 	}
 
 	/**
@@ -88,8 +91,9 @@ public class Options {
 	 * 设置是否缓存到本地
 	 * @param isCacheInLocal 是否缓存到本地
 	 */
-	public void setCacheInLocal(boolean isCacheInLocal) {
+	public Options setCacheInLocal(boolean isCacheInLocal) {
 		this.isCacheInLocal = isCacheInLocal;
+		return this;
 	}
 	
 	/**
@@ -104,8 +108,9 @@ public class Options {
 	 * 设置最大重试次数
 	 * @param maxRetryCount 最大重试次数
 	 */
-	public void setMaxRetryCount(int maxRetryCount) {
+	public Options setMaxRetryCount(int maxRetryCount) {
 		this.maxRetryCount = maxRetryCount;
+		return this;
 	}
 
 	/**
@@ -120,8 +125,9 @@ public class Options {
 	 * 设置显示动画监听器
 	 * @param showAnimationListener 显示动画监听器
 	 */
-	public void setShowAnimationListener(ShowAnimationListener showAnimationListener) {
+	public Options setShowAnimationListener(ShowAnimationListener showAnimationListener) {
 		this.showAnimationListener = showAnimationListener;
+		return this;
 	}
 
 	/**
@@ -136,8 +142,9 @@ public class Options {
 	 * 设置缓存目录
 	 * @param cacheDir 缓存目录
 	 */
-	public void setCacheDir(String cacheDir) {
+	public Options setCacheDir(String cacheDir) {
 		this.cacheDir = cacheDir;
+		return this;
 	}
 
 	/**
@@ -152,7 +159,8 @@ public class Options {
 	 * 设置位图加载处理器
 	 * @param bitmapHandler 位图加载处理器
 	 */
-	public void setBitmapHandler(BitmapHandler bitmapHandler) {
+	public Options setBitmapHandler(BitmapHandler bitmapHandler) {
 		this.bitmapHandler = bitmapHandler;
+		return this;
 	}
 }

@@ -15,14 +15,16 @@
  */
 package me.xiaopan.easy.network.android.examples;
 
-import me.xiaopan.easy.network.android.examples.util.ImageLoadOptionsFactory;
+import me.xiaopan.easy.network.android.R;
 import me.xiaopan.easy.network.android.image.ImageLoader;
+import me.xiaopan.easy.network.android.image.OptionsFactory;
 import android.app.Application;
 
 public class MyApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		ImageLoader.getInstance().init(getBaseContext(), ImageLoadOptionsFactory.getDefaultImageLoadOptions(getBaseContext()));	//初始化图片加载器
+		ImageLoader.getInstance().getConfiguration().getDefaultOptions().setLoadingImageResource(R.drawable.images_loading).setLoadFailureImageResource(R.drawable.images_load_failure);
+		OptionsFactory.getListOptions().setLoadingImageResource(R.drawable.images_loading).setLoadFailureImageResource(R.drawable.images_load_failure);
 	}
 }

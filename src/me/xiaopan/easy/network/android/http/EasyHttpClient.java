@@ -65,7 +65,7 @@ import android.util.Log;
 public class EasyHttpClient {
 	public static String logTag = "EasyHttpClient";	//Log Tag
 	public static int DEFAULT_MAX_CONNECTIONS = 10;	//最大连接数
-	public static int DEFAULT_SOCKET_TIMEOUT = 15 * 1000;	//连接超时时间
+	public static int DEFAULT_SOCKET_TIMEOUT = 20 * 1000;	//连接超时时间
 	public static int DEFAULT_MAX_RETRIES = 5;	//最大重试次数
 	public static int DEFAULT_SOCKET_BUFFER_SIZE = 8192;	//Socket缓存大小
 	public static boolean enableOutputLogToConsole = true;
@@ -123,7 +123,7 @@ public class EasyHttpClient {
     }
     
     /**
-     * 设置请求超时时间，默认是15秒
+     * 设置请求超时时间，默认是20秒
      * @param timeout 请求超时时间，单位毫秒
      */
     public void setTimeout(int timeout){

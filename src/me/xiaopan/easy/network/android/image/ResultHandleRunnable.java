@@ -54,9 +54,9 @@ public class ResultHandleRunnable implements Runnable {
 							imageView.setImageBitmap(loadRequest.getResultBitmap());
 						}else{
 							if(loadRequest.getOptions() != null){
-								if(loadRequest.getOptions().getLoadFailureDrawableResId() > 0){
-									imageView.setImageResource(loadRequest.getOptions().getLoadFailureDrawableResId());
-								}else if(loadRequest.getOptions().getLoadingDrawableResId() > 0){
+								if(loadRequest.getOptions().getLoadFailureImageResource() > 0){
+									imageView.setImageResource(loadRequest.getOptions().getLoadFailureImageResource());
+								}else if(loadRequest.getOptions().getLoadingImageResource() > 0){
 									
 								}else{
 									imageView.setImageBitmap(null);

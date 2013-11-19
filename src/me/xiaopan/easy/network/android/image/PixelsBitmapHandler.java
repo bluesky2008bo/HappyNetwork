@@ -4,10 +4,7 @@ import java.io.File;
 
 import me.xiaopan.easy.android.util.BitmapDecoder;
 import me.xiaopan.easy.android.util.DeviceUtils;
-import android.annotation.TargetApi;
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.widget.ImageView;
 
 /**
@@ -27,24 +24,33 @@ public class PixelsBitmapHandler implements BitmapHandler{
 	
 	/**
 	 * 创建位图处理器，默认的最大像素数是当前屏幕的宽乘以高
-	 * @param conetxt
 	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-	public PixelsBitmapHandler(Context conetxt){
-		int[] screenSize = DeviceUtils.getScreenSize(conetxt);
-		defaultMaxNumOfPixels = screenSize[0] * screenSize[1];
-	}
+	public PixelsBitmapHandler(){}
 	
 	@Override
 	public Bitmap onFromByteArrayLoad(byte[] byteArray, ImageView showImageView) {
 		int currentNumOfPixels = showImageView.getLayoutParams().width * showImageView.getLayoutParams().height;
-		return new BitmapDecoder(currentNumOfPixels<defaultMaxNumOfPixels?currentNumOfPixels:defaultMaxNumOfPixels).decodeByteArray(byteArray);
+		if(defaultMaxNumOfPixels == 0){
+			int[] screenSize = DeviceUtils.getScreenSize(showImageView.getContext());
+			defaultMaxNumOfPixels = screenSize[0] * screenSize[1];
+		}
+		if(currentNumOfPixels > defaultMaxNumOfPixels){
+			currentNumOfPixels = defaultMaxNumOfPixels;
+		}
+		return new BitmapDecoder(currentNumOfPixels).decodeByteArray(byteArray);
 	}
 	
 	@Override
 	public Bitmap onFromLocalFileLoad(File localFile, ImageView showImageView) {
 		int currentNumOfPixels = showImageView.getLayoutParams().width * showImageView.getLayoutParams().height;
-		return new BitmapDecoder(currentNumOfPixels<defaultMaxNumOfPixels?currentNumOfPixels:defaultMaxNumOfPixels).decodeFile(localFile.getPath());
+		if(defaultMaxNumOfPixels == 0){
+			int[] screenSize = DeviceUtils.getScreenSize(showImageView.getContext());
+			defaultMaxNumOfPixels = screenSize[0] * screenSize[1];
+		}
+		if(currentNumOfPixels > defaultMaxNumOfPixels){
+			currentNumOfPixels = defaultMaxNumOfPixels;
+		}
+		return new BitmapDecoder(currentNumOfPixels).decodeFile(localFile.getPath());
 	}
 
 	/**

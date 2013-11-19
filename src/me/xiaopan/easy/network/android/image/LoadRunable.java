@@ -33,7 +33,6 @@ import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.util.EntityUtils;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 /**
  * 加载任务
@@ -64,10 +63,10 @@ public class LoadRunable implements Runnable {
 
 		/* 尝试缓存到内存中 */
 		if(loadRequest.getResultBitmap() != null && loadRequest.getOptions() != null && loadRequest.getOptions().isCachedInMemory()){
-			imageLoader.getBitmapCacher().put(loadRequest.getId(), loadRequest.getResultBitmap());
+			imageLoader.getConfiguration().getBitmapCacher().put(loadRequest.getId(), loadRequest.getResultBitmap());
 		}
 		
-		imageLoader.getHandler().post(new ResultHandleRunnable(imageLoader, loadRequest));
+		imageLoader.getConfiguration().getHandler().post(new ResultHandleRunnable(imageLoader, loadRequest));
 	}
 	
 	/**
@@ -76,11 +75,11 @@ public class LoadRunable implements Runnable {
 	 * @return
 	 */
 	private Bitmap fromLocalFileLoadBitmap(File localFile){
-		imageLoader.log("从本地加载图片："+localFile.getPath());
+		imageLoader.getConfiguration().log("从本地加载图片："+localFile.getPath());
 		if(loadRequest.getOptions() != null && loadRequest.getOptions().getBitmapHandler() != null){
 			return loadRequest.getOptions().getBitmapHandler().onFromLocalFileLoad(localFile, loadRequest.getShowImageView());
 		}else{
-			return BitmapFactory.decodeFile(localFile.getPath());
+			return new PixelsBitmapHandler().onFromLocalFileLoad(localFile, loadRequest.getShowImageView());
 		}
 	}
 	
@@ -93,7 +92,7 @@ public class LoadRunable implements Runnable {
 		if(loadRequest.getOptions() != null && loadRequest.getOptions().getBitmapHandler() != null){
 			return loadRequest.getOptions().getBitmapHandler().onFromByteArrayLoad(byteArray, loadRequest.getShowImageView());
 		}else{
-			return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+			return new PixelsBitmapHandler().onFromByteArrayLoad(byteArray, loadRequest.getShowImageView());
 		}
 	}
 	
@@ -103,7 +102,7 @@ public class LoadRunable implements Runnable {
 	 * @return
 	 */
 	private Bitmap fromNetworkDownload(File localCacheFile){
-		imageLoader.log("从网络加载图片："+loadRequest.getImageUrl());
+		imageLoader.getConfiguration().log("从网络加载图片："+loadRequest.getImageUrl());
 		boolean running = true;
 		boolean createNewDir = false;	//true：父目录之前不存在是现在才创建的，当发生异常时需要删除
 		boolean createNewFile = false;	//true：保存图片的文件之前不存在是现在才创建的，当发生异常时需要删除
@@ -161,7 +160,7 @@ public class LoadRunable implements Runnable {
 				}
 				running = false;
 			} catch (Throwable e2) {
-				imageLoader.log(loadRequest.getImageUrl()+"加载失败，异常信息："+e2.getClass().getName()+":"+e2.getMessage(), true);
+				imageLoader.getConfiguration().log(loadRequest.getImageUrl()+"加载失败，异常信息："+e2.getClass().getName()+":"+e2.getMessage(), true);
 				
 				if(httpGet != null){
 					httpGet.abort();
