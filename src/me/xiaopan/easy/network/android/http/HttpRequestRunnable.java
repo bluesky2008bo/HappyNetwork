@@ -21,12 +21,14 @@ import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.protocol.HttpContext;
 
 public class HttpRequestRunnable implements Runnable {
+	private final EasyHttpClient easyHttpClient;
     private final AbstractHttpClient httpClient;
     private final HttpContext httpContext;
     private final HttpUriRequest httpUriRequest;
     private final HttpResponseHandler httpResponseHandler;
 
-    public HttpRequestRunnable(AbstractHttpClient client, HttpContext context, HttpUriRequest request, HttpResponseHandler httpResponseHandler) {
+    public HttpRequestRunnable(EasyHttpClient easyHttpClient, AbstractHttpClient client, HttpContext context, HttpUriRequest request, HttpResponseHandler httpResponseHandler) {
+    	this.easyHttpClient = easyHttpClient;
         this.httpClient = client;
         this.httpContext = context;
         this.httpUriRequest = request;
@@ -42,7 +44,7 @@ public class HttpRequestRunnable implements Runnable {
     		
     		try {
     			if(!Thread.currentThread().isInterrupted()) {
-    				EasyHttpClient.log("请求地址："+httpUriRequest.getURI().toString());
+    				easyHttpClient.log("请求地址："+httpUriRequest.getURI().toString());
 					HttpResponse httpResponse = httpClient.execute(httpUriRequest, httpContext);
 					if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null) {
 						httpResponseHandler.handleResponse(httpResponse);

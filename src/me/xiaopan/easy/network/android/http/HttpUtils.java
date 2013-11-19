@@ -198,8 +198,8 @@ public class HttpUtils {
         return url;
     }
     
-	public static final HttpEntity paramsToEntity(RequestParams params) {
-		EasyHttpClient.log("请求参数："+params.getParamString());
+	public static final HttpEntity paramsToEntity(EasyHttpClient easyHttpClient, RequestParams params) {
+		easyHttpClient.log("请求参数："+params.getParamString());
 		return params != null?params.getEntity():null;
     }
 

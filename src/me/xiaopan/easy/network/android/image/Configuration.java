@@ -41,7 +41,6 @@ public class Configuration {
 		maxThreadNumber = 20;
 		maxWaitingNumber = 10;
 		logTag = "ImageLoader";
-		debugMode = true;
 		defaultOptions = new Options();
 		defaultOptions.setCacheInLocal(true);	//将图片缓存到本地
 		defaultOptions.setShowAnimationListener(new AlphaShowAnimationListener());	//设置一个透明度由50%渐变到100%的显示动画
