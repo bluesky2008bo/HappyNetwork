@@ -39,7 +39,7 @@ public class StringActivity extends Activity {
 		setContentView(R.layout.activity_web);
 		webViewManager = new WebViewManager((WebView) findViewById(R.id.web1));
 		
-		EasyHttpClient.getInstance().get("http://www.miui.com/forum.php", new StringHttpResponseHandler(){
+		EasyHttpClient.getInstance().get(getBaseContext(), "http://www.miui.com/forum.php", new StringHttpResponseHandler(){
 			@Override
 			public void onStart() {
 				findViewById(R.id.loading).setVisibility(View.VISIBLE);

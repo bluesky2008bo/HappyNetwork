@@ -16,6 +16,7 @@
 package me.xiaopan.easy.network.android.examples;
 
 import me.xiaopan.easy.network.android.R;
+import me.xiaopan.easy.network.android.http.EasyHttpClient;
 import me.xiaopan.easy.network.android.image.ImageLoader;
 import me.xiaopan.easy.network.android.image.OptionsFactory;
 import android.app.Application;
@@ -26,5 +27,6 @@ public class MyApplication extends Application {
 		super.onCreate();
 		ImageLoader.getInstance().getConfiguration().getDefaultOptions().setLoadingImageResource(R.drawable.images_loading).setLoadFailureImageResource(R.drawable.images_load_failure);
 		OptionsFactory.getListOptions().setLoadingImageResource(R.drawable.images_loading).setLoadFailureImageResource(R.drawable.images_load_failure);
+		EasyHttpClient.getInstance().getConfiguration().setDebugMode(true);
 	}
 }
