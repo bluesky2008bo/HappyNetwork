@@ -71,18 +71,14 @@ public class RequestObjectActivity extends Activity {
 			@Override
 			public void onSuccess(String responseContent) {
 				webViewManager.getWebView().loadData(responseContent, "text/html;charset=utf-8", null);
+				searchButton.setEnabled(true);
+				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 			
 			@Override
 			public void onFailure(Throwable throwable) {
 				Toast.makeText(getBaseContext(), "失败了，信息："+throwable.getMessage(), Toast.LENGTH_LONG).show();
 				finish();
-			}
-
-			@Override
-			public void onEnd() {
-				searchButton.setEnabled(true);
-				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 		});
 	}

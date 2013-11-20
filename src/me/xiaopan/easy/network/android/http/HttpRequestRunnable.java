@@ -21,11 +21,12 @@ import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.protocol.HttpContext;
 
 public class HttpRequestRunnable implements Runnable {
-	private final EasyHttpClient easyHttpClient;
-    private final AbstractHttpClient httpClient;
-    private final HttpContext httpContext;
-    private final HttpUriRequest httpUriRequest;
-    private final HttpResponseHandler httpResponseHandler;
+	private EasyHttpClient easyHttpClient;
+    private AbstractHttpClient httpClient;
+    private HttpContext httpContext;
+    private HttpUriRequest httpUriRequest;
+    private  HttpResponseHandler httpResponseHandler;
+    private boolean isCache;
 
     public HttpRequestRunnable(EasyHttpClient easyHttpClient, AbstractHttpClient client, HttpContext context, HttpUriRequest request, HttpResponseHandler httpResponseHandler) {
     	this.easyHttpClient = easyHttpClient;
@@ -57,10 +58,6 @@ public class HttpRequestRunnable implements Runnable {
     			if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null) {
     				httpResponseHandler.exception(e);
     			}
-    		}
-    		
-    		if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null){
-    			httpResponseHandler.end();
     		}
     	}
     }

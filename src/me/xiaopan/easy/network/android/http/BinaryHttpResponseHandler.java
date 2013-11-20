@@ -30,7 +30,6 @@ public abstract class BinaryHttpResponseHandler extends Handler implements HttpR
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;
-	private static final int MESSAGE_END = 3;
 	
 	@Override
 	public void start() {
@@ -53,17 +52,11 @@ public abstract class BinaryHttpResponseHandler extends Handler implements HttpR
 	}
 
 	@Override
-	public void end() {
-		sendEmptyMessage(MESSAGE_END);
-	}
-	
-	@Override
 	public void handleMessage(Message msg) {
 		switch(msg.what) {
 			case MESSAGE_START: onStart(); break;
 			case MESSAGE_SUCCESS: onSuccess((byte[]) msg.obj); break;
 			case MESSAGE_FAILURE: onFailure((Throwable) msg.obj); break;
-			case MESSAGE_END: onEnd(); break;
 		}
 	}
 	

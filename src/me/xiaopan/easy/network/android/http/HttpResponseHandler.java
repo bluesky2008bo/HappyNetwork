@@ -38,9 +38,4 @@ public interface HttpResponseHandler{
      * @param e
      */
     public  void exception(Throwable e);
-    
-    /**
-     * 结束
-     */
-    public  void end();
 }

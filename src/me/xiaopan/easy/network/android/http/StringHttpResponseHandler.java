@@ -33,7 +33,6 @@ public abstract class StringHttpResponseHandler extends Handler implements HttpR
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;
-	private static final int MESSAGE_END = 3;
 	
 	@Override
 	public void start() {
@@ -59,11 +58,6 @@ public abstract class StringHttpResponseHandler extends Handler implements HttpR
 	public void exception(Throwable e) {
 		sendMessage(obtainMessage(MESSAGE_FAILURE, e));
 	}
-
-	@Override
-	public void end() {
-		sendEmptyMessage(MESSAGE_END);
-	}
 	
 	@Override
 	public void handleMessage(Message msg) {
@@ -71,12 +65,10 @@ public abstract class StringHttpResponseHandler extends Handler implements HttpR
 			case MESSAGE_START: onStart(); break;
 			case MESSAGE_SUCCESS: onSuccess((String) msg.obj); break;
 			case MESSAGE_FAILURE: onFailure((Throwable) msg.obj); break;
-			case MESSAGE_END: onEnd(); break;
 		}
 	}
 
 	public abstract void onStart();
 	public abstract void onSuccess(String responseContent);
 	public abstract void onFailure(Throwable throwable);
-	public abstract void onEnd();
 }

@@ -64,15 +64,12 @@ public class JsonActivity extends Activity {
 						+"<br>晾晒指数："+responseObject.getIndex_ls()
 						+"<br>过敏指数："+responseObject.getIndex_ag()+"</p>"
 					));
+				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 
 			@Override
 			public void onFailure(Throwable throwable) {
 				text.setText(throwable.getMessage());
-			}
-
-			@Override
-			public void onEnd() {
 				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 		});
