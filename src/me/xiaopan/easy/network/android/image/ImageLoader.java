@@ -26,8 +26,6 @@ import me.xiaopan.easy.java.util.StringUtils;
 import me.xiaopan.easy.network.android.EasyNetwork;
 
 import org.apache.http.HttpVersion;
-import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -36,10 +34,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
 /**
@@ -58,10 +56,21 @@ public class ImageLoader{
 	 * @param defaultDrawableResId 默认显示的图片
 	 */
 	public ImageLoader(){
-		configuration = new Configuration();
+		configuration = new Configuration(this);
 		loadingImageViewSet = new HashSet<ImageView>();//初始化图片视图集合
 		loadingRequestSet = new HashSet<String>();//初始化加载中URL集合
 		waitingRequestCircle = new CircleList<LoadRequest>(configuration.getMaxWaitingNumber());//初始化等待处理的加载请求集合
+	
+		BasicHttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setTcpNoDelay(httpParams, true);
+        HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);
+		SchemeRegistry schemeRegistry = new SchemeRegistry();
+		schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+		schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+		httpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams, schemeRegistry), httpParams); 
+		configuration.setConnectionTimeout(10000);
+		configuration.setMaxConnections(1);
+		configuration.setSocketBufferSize(8192);
 	}
 	
 	/**
@@ -185,7 +194,7 @@ public class ImageLoader{
 		//如果需要从缓存中读取，就根据地址从缓存中获取图片，如果缓存中存在相对的图片就显示，否则显示默认图片或者显示空
 		if(options != null && options.isCachedInMemory() && (tempCacheBitmap = configuration.getBitmapCacher().get(id)) != null){
 			showImageView.setTag(null);	//清空绑定关系
-			configuration.log("从缓存加载图片："+url);
+			log("从缓存加载图片："+url);
 			loadingImageViewSet.remove(showImageView);
 			showImageView.clearAnimation();
 			showImageView.setImageBitmap(tempCacheBitmap);
@@ -246,7 +255,7 @@ public class ImageLoader{
 	 * 获取加载中显示视图集合
 	 * @return
 	 */
-	public final Set<ImageView> getLoadingImageViewSet() {
+	final Set<ImageView> getLoadingImageViewSet() {
 		return loadingImageViewSet;
 	}
 
@@ -254,7 +263,7 @@ public class ImageLoader{
 	 * 获取加载中请求ID集合
 	 * @return
 	 */
-	public final Set<String> getLoadingRequestSet() {
+	final Set<String> getLoadingRequestSet() {
 		return loadingRequestSet;
 	}
 
@@ -262,57 +271,16 @@ public class ImageLoader{
 	 * 获取等待请求集合
 	 * @return 等待请求集合
 	 */
-	public final CircleList<LoadRequest> getWaitingRequestCircle() {
+	final CircleList<LoadRequest> getWaitingRequestCircle() {
 		return waitingRequestCircle;
 	}
 
-    /**
-     * 设置请求超时时间，默认是20秒
-     * @param timeout 请求超时时间，单位毫秒
-     */
-    public final void setTimeout(int timeout){
-        final HttpParams httpParams = getHttpClient().getParams();
-        ConnManagerParams.setTimeout(httpParams, timeout);
-        HttpConnectionParams.setSoTimeout(httpParams, timeout);
-        HttpConnectionParams.setConnectionTimeout(httpParams, timeout);
-    }
-
 	/**
-	 * 获取Http客户端用来发送请求
+	 * 获取Http客户端
 	 * @return
 	 */
 	public final DefaultHttpClient getHttpClient() {
-		if(httpClient == null){
-			BasicHttpParams httpParams = new BasicHttpParams();
-			
-			int defaultMaxConnections = 20;		//最大连接数
-		    int defaultSocketTimeout = 10 * 1000;		//连接超时时间
-		    int defaultSocketBufferSize = 8192;		//Socket缓存大小
-			
-	        ConnManagerParams.setTimeout(httpParams, defaultSocketTimeout);
-	        ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(defaultMaxConnections));
-	        ConnManagerParams.setMaxTotalConnections(httpParams, defaultMaxConnections);
-
-	        HttpConnectionParams.setSoTimeout(httpParams, defaultSocketTimeout);
-	        HttpConnectionParams.setConnectionTimeout(httpParams, defaultSocketTimeout);
-	        HttpConnectionParams.setTcpNoDelay(httpParams, true);
-	        HttpConnectionParams.setSocketBufferSize(httpParams, defaultSocketBufferSize);
-
-	        HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);
-			SchemeRegistry schemeRegistry = new SchemeRegistry();
-			schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-			schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
-			httpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams, schemeRegistry), httpParams); 
-		}
 		return httpClient;
-	}
-
-	/**
-	 * 设置Http客户端
-	 * @param httpClient Http客户端
-	 */
-	public final void setHttpClient(DefaultHttpClient httpClient) {
-		this.httpClient = httpClient;
 	}
 
 	/**
@@ -324,10 +292,24 @@ public class ImageLoader{
 	}
 
 	/**
-	 * 获取配置
-	 * @param configuration
+	 * 输出LOG
+	 * @param logContent LOG内容
 	 */
-	public void setConfiguration(Configuration configuration) {
-		this.configuration = configuration;
+	public void log(String logContent, boolean error){
+		if(configuration.isDebugMode()){
+			if(error){
+				Log.e(configuration.getLogTag(), logContent);
+			}else{
+				Log.d(configuration.getLogTag(), logContent);
+			}
+		}
+	}
+	
+	/**
+	 * 输出LOG
+	 * @param logContent LOG内容
+	 */
+	public void log(String logContent){
+		log(logContent, false);
 	}
 } 

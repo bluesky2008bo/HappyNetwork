@@ -16,7 +16,6 @@
 package me.xiaopan.easy.network.android.http;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,17 +31,11 @@ import me.xiaopan.easy.network.android.http.interceptor.GzipProcessResponseInter
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpVersion;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -51,7 +44,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -64,32 +56,31 @@ import android.util.Log;
  * Http客户端，所有的Http操作都将由此类来异步完成，同时此类提供一个单例模式来方便直接使用
  */
 public class EasyHttpClient {
-	public static String logTag = "EasyHttpClient";	//Log Tag
-	public static int DEFAULT_MAX_CONNECTIONS = 10;	//最大连接数
-	public static int DEFAULT_SOCKET_TIMEOUT = 20 * 1000;	//连接超时时间
-	public static int DEFAULT_MAX_RETRIES = 5;	//最大重试次数
-	public static int DEFAULT_SOCKET_BUFFER_SIZE = 8192;	//Socket缓存大小
-	public boolean debugMode;
-    private DefaultHttpClient httpClient;	//Http客户端
+	private Configuration configuration;	//配置
 	private HttpContext httpContext;	//Http上下文
+	private DefaultHttpClient httpClient;	//Http客户端
     private Map<Context, List<WeakReference<Future<?>>>> requestMap;	//请求Map
-    private Map<String, String> clientHeaderMap;	//请求头Map
 	
 	public EasyHttpClient(){
+		configuration = new Configuration(this);
 		httpContext = new SyncBasicHttpContext(new BasicHttpContext());
 		requestMap = new WeakHashMap<Context, List<WeakReference<Future<?>>>>();
-        clientHeaderMap = new HashMap<String, String>();
 		
 		/* 初始化HttpClient */
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
         schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
-		HttpParams httpParams = getDefaultHttpParams();
+        BasicHttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setTcpNoDelay(httpParams, true);
+        HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);
         httpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams, schemeRegistry), httpParams);
         httpClient.addRequestInterceptor(new GzipProcessRequestInterceptor());
-        httpClient.addRequestInterceptor(new AddRequestHeaderRequestInterceptor(clientHeaderMap));
+        httpClient.addRequestInterceptor(new AddRequestHeaderRequestInterceptor(configuration.getHeaderMap()));
         httpClient.addResponseInterceptor(new GzipProcessResponseInterceptor());
-        httpClient.setHttpRequestRetryHandler(new RetryHandler(DEFAULT_MAX_RETRIES));
+        configuration.setConnectionTimeout(20000);
+        configuration.setMaxConnections(10);
+        configuration.setSocketBufferSize(8192);
+        configuration.setMaxRetries(5);
 	}
 	
 	/**
@@ -107,70 +98,6 @@ public class EasyHttpClient {
 		return EasyHttpClientInstanceHolder.instance;
 	}
 	
-	/**
-     * 设置Cookie仓库，将在发送请求时使用此Cookie仓库
-     * @param cookieStore 另请参见 {@link PersistentCookieStore}
-     */
-    public void setCookieStore(CookieStore cookieStore) {
-        httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-    }
-    
-    /**
-     * 设置代理，在之后的每一次请求都将使用此代理
-     * @param userAgent 用户代理的信息将会添加在“User-Agent”请求头中
-     */
-    public void setUserAgent(String userAgent) {
-        HttpProtocolParams.setUserAgent(this.httpClient.getParams(), userAgent);
-    }
-    
-    /**
-     * 设置请求超时时间，默认是20秒
-     * @param timeout 请求超时时间，单位毫秒
-     */
-    public void setTimeout(int timeout){
-        final HttpParams httpParams = this.httpClient.getParams();
-        ConnManagerParams.setTimeout(httpParams, timeout);
-        HttpConnectionParams.setSoTimeout(httpParams, timeout);
-        HttpConnectionParams.setConnectionTimeout(httpParams, timeout);
-    }
-    
-    /**
-     * Sets the SSLSocketFactory to user when making requests. By default,
-     * a new, default SSLSocketFactory is used.
-     * @param sslSocketFactory the socket factory to use for https requests.
-     */
-    public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
-        this.httpClient.getConnectionManager().getSchemeRegistry().register(new Scheme("https", sslSocketFactory, 443));
-    }
-    
-    /**
-     * 添加一个请求头参数，这些参数都会在发送请求之前添加到请求体中
-     * @param header 参数名
-     * @param value 参数值
-     */
-    public void addHeader(String header, String value) {
-    	clientHeaderMap.put(header, value);
-    }
-
-    /**
-     * 设置Http Auth认证
-     * @param username 用户名
-     * @param password 密码
-     */
-    public void setBasicAuth(String user, String pass){
-        setBasicAuth(user, pass, AuthScope.ANY);
-    }
-    
-   /**
-     * 设置Http Auth认证
-     * @param username 用户名
-     * @param password 密码
-     * @param scope 
-     */
-    public void setBasicAuth( String user, String pass, AuthScope scope){
-        this.httpClient.getCredentialsProvider().setCredentials(scope, new UsernamePasswordCredentials(user,pass));
-    }
-
     
     
     /** **************************************************************************************** HTTP GET 请求 **************************************************************************************** */
@@ -1037,51 +964,38 @@ public class EasyHttpClient {
         }
         requestMap.remove(context);
     }
+    
+    /**
+     * 获取Http客户端
+     * @return
+     */
+    public DefaultHttpClient getHttpClient() {
+		return httpClient;
+	}
 	
 	/**
-	 * 获取默认的Http参数
+	 * 获取Http上下文
 	 * @return
 	 */
-	private HttpParams getDefaultHttpParams(){
-		BasicHttpParams httpParams = new BasicHttpParams();
-
-        ConnManagerParams.setTimeout(httpParams, DEFAULT_SOCKET_TIMEOUT);
-        ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(DEFAULT_MAX_CONNECTIONS));
-        ConnManagerParams.setMaxTotalConnections(httpParams, DEFAULT_MAX_CONNECTIONS);
-
-        HttpConnectionParams.setSoTimeout(httpParams, DEFAULT_SOCKET_TIMEOUT);
-        HttpConnectionParams.setConnectionTimeout(httpParams, DEFAULT_SOCKET_TIMEOUT);
-        HttpConnectionParams.setTcpNoDelay(httpParams, true);
-        HttpConnectionParams.setSocketBufferSize(httpParams, DEFAULT_SOCKET_BUFFER_SIZE);
-
-        HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);
-        
-        return httpParams;
+	public HttpContext getHttpContext() {
+		return httpContext;
 	}
 
-	/**
-	 * 判断是否开启调试模式
-	 * @return 
-	 */
-	public boolean isDebugMode() {
-		return debugMode;
-	}
-
-	/**
-	 * 设置是否开启调试模式，开启调试模式后会在控制台输出LOG
-	 * @param debugMode 
-	 */
-	public void setDebugMode(boolean debugMode) {
-		this.debugMode = debugMode;
-	}
-	
 	/**
 	 * 输出LOG
 	 * @param logContent LOG内容
 	 */
 	public void log(String logContent){
-		if(isDebugMode()){
-			Log.d(logTag, logContent);
+		if(configuration.isDebugMode()){
+			Log.d(configuration.getLogTag(), logContent);
 		}
+	}
+
+	/**
+	 * 获取配置
+	 * @return
+	 */
+	public Configuration getConfiguration() {
+		return configuration;
 	}
 }

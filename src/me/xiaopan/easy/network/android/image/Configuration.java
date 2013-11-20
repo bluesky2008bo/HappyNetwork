@@ -20,31 +20,38 @@ import java.io.File;
 
 import me.xiaopan.easy.android.util.FileUtils;
 import me.xiaopan.easy.java.util.StringUtils;
+
+import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.params.ConnPerRouteBean;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 
 /**
  * 配置
  */
 public class Configuration {
-	public static String logTag = "ImageLoader";	//LogTag
 	private int maxThreadNumber;	//最大线程数
 	private int maxWaitingNumber;	//最大等待数
+	private int connectionTimeout;	//连接超时时间
+	private int maxConnections;	//最大连接数
+	private int socketBufferSize;	//Socket缓存池大小
 	private boolean debugMode;	//调试模式，在控制台输出日志
+	private String logTag;	//LogTag
 	private String defaultCacheDirectory;	//默认的缓存目录
 	private Options defaultOptions;	//默认加载选项
 	private Handler handler;	//任务结果处理器
+	private ImageLoader imageLoader;
 	private BitmapCacher bitmapCacher;	//位图缓存器
 	
-	public Configuration(){
+	public Configuration(ImageLoader imageLoader){
+		this.imageLoader = imageLoader;
 		maxThreadNumber = 20;
 		maxWaitingNumber = 10;
 		logTag = "ImageLoader";
-		defaultOptions = new Options();
-		defaultOptions.setCacheInLocal(true);	//将图片缓存到本地
-		defaultOptions.setShowAnimationListener(new AlphaShowAnimationListener());	//设置一个透明度由50%渐变到100%的显示动画
-		defaultOptions.setBitmapHandler(new PixelsBitmapHandler());	//设置一个图片处理器，保证读取到大小合适的Bitmap，避免内存溢出
+		defaultOptions = new Options().setCacheInLocal(true).setShowAnimationListener(new AlphaShowAnimationListener()).setBitmapHandler(new PixelsBitmapHandler());
 		bitmapCacher = new BitmapLruCacher();
 		handler = new Handler();
 	}
@@ -56,6 +63,16 @@ public class Configuration {
 	public int getMaxThreadNumber() {
 		return maxThreadNumber;
 	}
+
+	/**
+	 * 设置最大线程数
+	 * @param maxThreadNumber
+	 */
+	public void setMaxThreadNumber(int maxThreadNumber) {
+		if(maxThreadNumber > 0){
+			this.maxThreadNumber = maxThreadNumber;
+		}
+	}
 	
 	/**
 	 * 获取最大等待数，即等待区的最大容量
@@ -63,6 +80,17 @@ public class Configuration {
 	 */
 	public int getMaxWaitingNumber() {
 		return maxWaitingNumber;
+	}
+
+	/**
+	 * 设置最大等待数
+	 * @param maxWaitingNumber
+	 */
+	public void setMaxWaitingNumber(int maxWaitingNumber) {
+		if(maxWaitingNumber > 0){
+			this.maxWaitingNumber = maxWaitingNumber;
+			imageLoader.getWaitingRequestCircle().setMaxSize(maxWaitingNumber);
+		}
 	}
 	
 	/**
@@ -94,7 +122,9 @@ public class Configuration {
 	 * @param defaultOptions
 	 */
 	public void setDefaultOptions(Options defaultOptions) {
-		this.defaultOptions = defaultOptions;
+		if(defaultOptions != null){
+			this.defaultOptions = defaultOptions;
+		}
 	}
 	
 	/**
@@ -110,7 +140,9 @@ public class Configuration {
 	 * @param bitmapCacher
 	 */
 	public void setBitmapCacher(BitmapCacher bitmapCacher) {
-		this.bitmapCacher = bitmapCacher;
+		if(bitmapCacher != null){
+			this.bitmapCacher = bitmapCacher;
+		}
 	}
 
 	/**
@@ -126,7 +158,9 @@ public class Configuration {
 	 * @param defaultCacheDirectory
 	 */
 	public void setDefaultCacheDirectory(String defaultCacheDirectory) {
-		this.defaultCacheDirectory = defaultCacheDirectory;
+		if(StringUtils.isNotEmpty(defaultCacheDirectory)){
+			this.defaultCacheDirectory = defaultCacheDirectory;
+		}
 	}
 	
 	/**
@@ -142,7 +176,9 @@ public class Configuration {
 	 * @param handler
 	 */
 	public void setHandler(Handler handler) {
-		this.handler = handler;
+		if(handler != null){
+			this.handler = handler;
+		}
 	}
 
 	/**
@@ -163,26 +199,83 @@ public class Configuration {
 			return null;
 		}
 	}
-
-	/**
-	 * 输出LOG
-	 * @param logContent LOG内容
-	 */
-	public void log(String logContent, boolean error){
-		if(isDebugMode()){
-			if(error){
-				Log.e(logTag, logContent);
-			}else{
-				Log.d(logTag, logContent);
-			}
-		}
-	}
 	
 	/**
-	 * 输出LOG
-	 * @param logContent LOG内容
+	 * 获取Log Tag
+	 * @return
 	 */
-	public void log(String logContent){
-		log(logContent, false);
+	public String getLogTag() {
+		return logTag;
+	}
+
+	/**
+	 * 设置Log Tag
+	 * @param logTag
+	 */
+	public void setLogTag(String logTag) {
+		this.logTag = logTag;
+	}
+
+	/**
+	 * 获取连接超时时间，单位毫秒
+	 * @return
+	 */
+	public int getConnectionTimeout() {
+		return connectionTimeout;
+	}
+
+	/**
+	 * 设置连接超时间，单位毫秒
+	 * @param connectionTimeout
+	 */
+	public void setConnectionTimeout(int connectionTimeout) {
+		if(connectionTimeout > 0){
+			this.connectionTimeout = connectionTimeout;
+			HttpParams httpParams = imageLoader.getHttpClient().getParams();
+			ConnManagerParams.setTimeout(httpParams, connectionTimeout);
+			HttpConnectionParams.setSoTimeout(httpParams, connectionTimeout);
+			HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
+		}
+	}
+
+	/**
+	 * 获取最大连接数
+	 * @return
+	 */
+	public int getMaxConnections() {
+		return maxConnections;
+	}
+
+	/**
+	 * 设置最大连接数
+	 * @param maxConnections
+	 */
+	public void setMaxConnections(int maxConnections) {
+		if(maxConnections > 0){
+			this.maxConnections = maxConnections;
+			HttpParams httpParams = imageLoader.getHttpClient().getParams();
+			ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(maxConnections));
+			ConnManagerParams.setMaxTotalConnections(httpParams, maxConnections);
+		}
+	}
+
+	/**
+	 * 获取Socket缓存池大小
+	 * @return
+	 */
+	public int getSocketBufferSize() {
+		return socketBufferSize;
+	}
+
+	/**
+	 * 设置Socket缓存池大小
+	 * @param socketBufferSize
+	 */
+	public void setSocketBufferSize(int socketBufferSize) {
+		if(socketBufferSize > 0){
+			this.socketBufferSize = socketBufferSize;
+			HttpParams httpParams = imageLoader.getHttpClient().getParams();
+			HttpConnectionParams.setSocketBufferSize(httpParams, socketBufferSize);
+		}
 	}
 }

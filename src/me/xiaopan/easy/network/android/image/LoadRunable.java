@@ -75,7 +75,7 @@ public class LoadRunable implements Runnable {
 	 * @return
 	 */
 	private Bitmap fromLocalFileLoadBitmap(File localFile){
-		imageLoader.getConfiguration().log("从本地加载图片："+localFile.getPath());
+		imageLoader.log("从本地加载图片："+localFile.getPath());
 		if(loadRequest.getOptions() != null && loadRequest.getOptions().getBitmapHandler() != null){
 			return loadRequest.getOptions().getBitmapHandler().onFromLocalFileLoad(localFile, loadRequest.getShowImageView());
 		}else{
@@ -102,7 +102,7 @@ public class LoadRunable implements Runnable {
 	 * @return
 	 */
 	private Bitmap fromNetworkDownload(File localCacheFile){
-		imageLoader.getConfiguration().log("从网络加载图片："+loadRequest.getImageUrl());
+		imageLoader.log("从网络加载图片："+loadRequest.getImageUrl());
 		boolean running = true;
 		boolean createNewDir = false;	//true：父目录之前不存在是现在才创建的，当发生异常时需要删除
 		boolean createNewFile = false;	//true：保存图片的文件之前不存在是现在才创建的，当发生异常时需要删除
@@ -160,7 +160,7 @@ public class LoadRunable implements Runnable {
 				}
 				running = false;
 			} catch (Throwable e2) {
-				imageLoader.getConfiguration().log(loadRequest.getImageUrl()+"加载失败，异常信息："+e2.getClass().getName()+":"+e2.getMessage(), true);
+				imageLoader.log(loadRequest.getImageUrl()+"加载失败，异常信息："+e2.getClass().getName()+":"+e2.getMessage(), true);
 				
 				if(httpGet != null){
 					httpGet.abort();
