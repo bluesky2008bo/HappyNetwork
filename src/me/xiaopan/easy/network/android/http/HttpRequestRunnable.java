@@ -60,33 +60,33 @@ public class HttpRequestRunnable implements Runnable {
     				
     				/* 判断是否从本地加载 */
     				boolean fromlocalLoad = false;
-    				File cacheFile = null;
+    				File cacheEntityFile = null;
     				if(isCache){
     					String id = StringUtils.MD5(uri);
-    					cacheFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "EasyHttpClient" + File.separator +id);
-    					fromlocalLoad = cacheFile.exists();
+    					cacheEntityFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "EasyHttpClient" + File.separator  + id + ".enrity");
+    					fromlocalLoad = cacheEntityFile.exists();
     				}
     				
     				HttpResponse httpResponse = null;
     				if(fromlocalLoad){
     					easyHttpClient.log("（本地）请求地址："+uri);
     					httpResponse = new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "success"));
-    					httpResponse.setEntity(new InputStreamEntity(new FileInputStream(cacheFile), cacheFile.length()));
+    					httpResponse.setEntity(new InputStreamEntity(new FileInputStream(cacheEntityFile), cacheEntityFile.length()));
     				}else{
     					easyHttpClient.log("（网络）请求地址："+uri);
     					httpResponse = easyHttpClient.getHttpClient().execute(httpUriRequest, easyHttpClient.getHttpContext());
     					if(isCache){
-    						if(me.xiaopan.easy.java.util.FileUtils.createFile(cacheFile) != null){
+    						if(me.xiaopan.easy.java.util.FileUtils.createFile(cacheEntityFile) != null){
     							InputStream inputStream = null;
     							FileOutputStream fileOutputStream = null;
     							try{
     								inputStream = httpResponse.getEntity().getContent();
-    								fileOutputStream = new FileOutputStream(cacheFile);
+    								fileOutputStream = new FileOutputStream(cacheEntityFile);
     								me.xiaopan.easy.java.util.IOUtils.outputFromInput(inputStream, fileOutputStream);
     								inputStream.close();
     								fileOutputStream.flush();
     								fileOutputStream.close();
-    								httpResponse.setEntity(new InputStreamEntity(new FileInputStream(cacheFile), cacheFile.length()));
+    								httpResponse.setEntity(new InputStreamEntity(new FileInputStream(cacheEntityFile), cacheEntityFile.length()));
     							}catch(IOException exception){
     								exception.printStackTrace();
     								if(inputStream != null){
@@ -107,7 +107,7 @@ public class HttpRequestRunnable implements Runnable {
     								throw exception;
     							}
     						}else{
-    							easyHttpClient.log("创建文件 "+cacheFile.getPath()+" 失败");
+    							easyHttpClient.log("创建文件 "+cacheEntityFile.getPath()+" 失败");
     						}
     					}
     				}
