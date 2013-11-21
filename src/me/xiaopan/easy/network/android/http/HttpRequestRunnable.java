@@ -24,14 +24,21 @@ import java.io.InputStream;
 import me.xiaopan.easy.android.util.FileUtils;
 import me.xiaopan.easy.java.util.StringUtils;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
+import org.apache.http.message.BufferedHeader;
+import org.apache.http.util.CharArrayBuffer;
 
 import android.content.Context;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class HttpRequestRunnable implements Runnable {
 	private Context context;
@@ -58,60 +65,19 @@ public class HttpRequestRunnable implements Runnable {
     			if(!Thread.currentThread().isInterrupted()) {
     				String uri = httpUriRequest.getURI().toString();
     				
-    				/* 判断是否从本地加载 */
+    				/* 判断是否需要从本地加载 */
     				boolean fromlocalLoad = false;
-    				File cacheEntityFile = null;
+    				File cacheEntityFile = null, cacheHeadersFile = null;	//缓存相应实体的文件,缓存响应头的文件
     				if(isCache){
     					String id = StringUtils.MD5(uri);
-    					cacheEntityFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "EasyHttpClient" + File.separator  + id + ".entity");
-    					fromlocalLoad = cacheEntityFile.exists();
+    					cacheEntityFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".entity");
+    					cacheHeadersFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".headers");
+    					fromlocalLoad = cacheEntityFile.exists() && cacheHeadersFile.exists();
     				}
     				
-    				HttpResponse httpResponse = null;
-    				if(fromlocalLoad){
-    					easyHttpClient.log("（本地）请求地址："+uri);
-    					httpResponse = new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "success"));
-    					httpResponse.setEntity(new InputStreamEntity(new FileInputStream(cacheEntityFile), cacheEntityFile.length()));
-    				}else{
-    					easyHttpClient.log("（网络）请求地址："+uri);
-    					httpResponse = easyHttpClient.getHttpClient().execute(httpUriRequest, easyHttpClient.getHttpContext());
-    					if(isCache){
-    						if(me.xiaopan.easy.java.util.FileUtils.createFile(cacheEntityFile) != null){
-    							InputStream inputStream = null;
-    							FileOutputStream fileOutputStream = null;
-    							try{
-    								inputStream = httpResponse.getEntity().getContent();
-    								fileOutputStream = new FileOutputStream(cacheEntityFile);
-    								me.xiaopan.easy.java.util.IOUtils.outputFromInput(inputStream, fileOutputStream);
-    								inputStream.close();
-    								fileOutputStream.flush();
-    								fileOutputStream.close();
-    								httpResponse.setEntity(new InputStreamEntity(new FileInputStream(cacheEntityFile), cacheEntityFile.length()));
-    							}catch(IOException exception){
-    								exception.printStackTrace();
-    								if(inputStream != null){
-    									try{
-    										inputStream.close();
-    									}catch (Exception exception2){
-    										exception2.printStackTrace();
-    									}
-    								}
-    								if(fileOutputStream != null){
-    									try{
-    										fileOutputStream.flush();
-    										fileOutputStream.close();
-    									}catch (Exception exception2){
-    										exception2.printStackTrace();
-    									}
-    								}
-    								throw exception;
-    							}
-    						}else{
-    							easyHttpClient.log("创建文件 "+cacheEntityFile.getPath()+" 失败");
-    						}
-    					}
-    				}
-    				if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null) {
+    				/* 根据需要从本地或者网络加载数据 */
+    				HttpResponse httpResponse = fromlocalLoad?fromLocalLoad(uri, cacheEntityFile, cacheHeadersFile):fromNetworkLoad(uri, cacheEntityFile, cacheHeadersFile);
+    				if(!Thread.currentThread().isInterrupted() && httpResponse != null && httpResponseHandler != null) {
     					httpResponseHandler.handleResponse(httpResponse);
     				}
     			}
@@ -126,6 +92,97 @@ public class HttpRequestRunnable implements Runnable {
     		}
     	}
     }
+    
+    /**
+     * 从本地加载
+     * @param uri
+     * @param cacheEntityFile
+     * @param cacheHeadersFile
+     * @return
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
+    private HttpResponse fromLocalLoad(String uri, File cacheEntityFile, File cacheHeadersFile) throws ClientProtocolException, IOException{
+    	easyHttpClient.log("（本地）请求地址："+uri);
+		try{
+			/* 读取响应头 */
+			Header[] headers = null;
+			String[] headerStrings = new Gson().fromJson(me.xiaopan.easy.java.util.FileUtils.readString(cacheHeadersFile), new TypeToken<String[]>(){}.getType());
+			if(headerStrings != null && headerStrings.length > 0){
+				headers = new Header[headerStrings.length];
+				int w = 0;
+				for(String string : headerStrings){
+					CharArrayBuffer charArrayBuffer = new CharArrayBuffer(string.length());
+					charArrayBuffer.append(string);
+					headers[w++] = new BufferedHeader(charArrayBuffer);
+				}
+			}
+			
+			/* 设置响应头和响应体 */
+			HttpResponse httpResponse = new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "success"));
+			if(headers != null && headers.length > 0){
+				httpResponse.setHeaders(headers);
+			}
+			httpResponse.setEntity(new InputStreamEntity(new FileInputStream(cacheEntityFile), cacheEntityFile.length()));
+			return httpResponse;
+		}catch(Throwable throwable){
+			throwable.printStackTrace();
+			return fromNetworkLoad(uri, cacheEntityFile, cacheHeadersFile);
+		}
+    }
+    
+    /**
+     * 从网络加载
+     * @param uri
+     * @param httpResponse
+     * @param cacheEntityFile
+     * @param cacheHeadersFile
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
+    private HttpResponse fromNetworkLoad(String uri, File cacheEntityFile, File cacheHeadersFile) throws ClientProtocolException, IOException{
+    	easyHttpClient.log("（网络）请求地址："+uri);
+    	HttpResponse httpResponse = easyHttpClient.getHttpClient().execute(httpUriRequest, easyHttpClient.getHttpContext());
+		if(isCache && httpResponseHandler.isCanCache(httpResponse)){	//如果需要缓存
+			if(me.xiaopan.easy.java.util.FileUtils.createFile(cacheHeadersFile) != null && me.xiaopan.easy.java.util.FileUtils.createFile(cacheEntityFile) != null){
+				InputStream inputStream = null;
+				FileOutputStream fileOutputStream = null;
+				try{
+					/* 保存响应头 */
+					Header[] headers = httpResponse.getAllHeaders();
+					String[] heaerStrings = new String[headers.length];
+					for(int w = 0; w < headers.length; w++){
+						Header header = headers[w];
+						if(header instanceof BufferedHeader){
+							heaerStrings[w] = header.toString();
+						}else{
+							headers[w] = null;
+						}
+					}
+					me.xiaopan.easy.java.util.FileUtils.writeString(cacheHeadersFile, new Gson().toJson(heaerStrings), false);
+					
+					/* 保存响应体 */
+					inputStream = httpResponse.getEntity().getContent();
+					fileOutputStream = new FileOutputStream(cacheEntityFile);
+					me.xiaopan.easy.java.util.IOUtils.outputFromInput(inputStream, fileOutputStream);
+					inputStream.close();
+					fileOutputStream.flush();
+					fileOutputStream.close();
+					
+					//将响应提替换为本地文件
+					httpResponse.setEntity(new InputStreamEntity(new FileInputStream(cacheEntityFile), cacheEntityFile.length()));
+				}catch(IOException exception){
+					exception.printStackTrace();
+					if(inputStream != null){ try{inputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
+					if(fileOutputStream != null){try{fileOutputStream.flush();fileOutputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
+					throw exception;
+				}
+			}else{
+				easyHttpClient.log("创建文件 "+cacheHeadersFile.getPath() + " 或 " + cacheEntityFile.getPath()+" 失败");
+			}
+		}
+		return httpResponse;
+    }
 
 //    private void makeRequest() throws IOException {
 //        if(!Thread.currentThread().isInterrupted()) {
@@ -136,7 +193,6 @@ public class HttpRequestRunnable implements Runnable {
 //        				httpResponseHandler.sendResponseMessage(response);
 //        			}
 //        		} else{
-//        			//TODO: should raise InterruptedException? this block is reached whenever the request is cancelled before its response is received
 //        		}
 //        	} catch (IOException e) {
 //        		if(!Thread.currentThread().isInterrupted()) {

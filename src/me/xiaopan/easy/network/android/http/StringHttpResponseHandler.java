@@ -23,20 +23,36 @@ import org.apache.http.HttpResponse;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.util.EntityUtils;
 
+import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
 
 /**
  * 默认的字符串Http响应处理器
  */
-public abstract class StringHttpResponseHandler extends Handler implements HttpResponseHandler {
+public abstract class StringHttpResponseHandler extends HttpResponseHandler {
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;
+	private Handler handler;
+	
+	@SuppressLint("HandlerLeak")
+	public StringHttpResponseHandler(){
+		handler = new Handler(){
+			@Override
+			public void handleMessage(Message msg) {
+				switch(msg.what) {
+					case MESSAGE_START: onStart(); break;
+					case MESSAGE_SUCCESS: onSuccess((String) msg.obj); break;
+					case MESSAGE_FAILURE: onFailure((Throwable) msg.obj); break;
+				}
+			}
+		};
+	}
 	
 	@Override
 	public void start() {
-		sendEmptyMessage(MESSAGE_START);
+		handler.sendEmptyMessage(MESSAGE_START);
 	}
 
 	@Override
@@ -45,27 +61,18 @@ public abstract class StringHttpResponseHandler extends Handler implements HttpR
 			/* 读取内容并转换成字符串 */
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
-				sendMessage(obtainMessage(MESSAGE_SUCCESS, EntityUtils.toString(new BufferedHttpEntity(httpEntity), EasyNetwork.CHARSET_NAME_UTF8)));
+				handler.sendMessage(handler.obtainMessage(MESSAGE_SUCCESS, EntityUtils.toString(new BufferedHttpEntity(httpEntity), EasyNetwork.CHARSET_NAME_UTF8)));
 			}else{
-				sendMessage(obtainMessage(MESSAGE_SUCCESS));
+				handler.sendMessage(handler.obtainMessage(MESSAGE_SUCCESS));
 			}
 		}else{
-			sendMessage(obtainMessage(MESSAGE_FAILURE, new HttpStatusCodeException(httpResponse.getStatusLine().getStatusCode())));
+			handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, new HttpStatusCodeException(httpResponse.getStatusLine().getStatusCode())));
 		}
 	}
 
 	@Override
 	public void exception(Throwable e) {
-		sendMessage(obtainMessage(MESSAGE_FAILURE, e));
-	}
-	
-	@Override
-	public void handleMessage(Message msg) {
-		switch(msg.what) {
-			case MESSAGE_START: onStart(); break;
-			case MESSAGE_SUCCESS: onSuccess((String) msg.obj); break;
-			case MESSAGE_FAILURE: onFailure((Throwable) msg.obj); break;
-		}
+		handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, e));
 	}
 
 	public abstract void onStart();

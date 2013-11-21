@@ -20,22 +20,31 @@ import org.apache.http.HttpResponse;
 /**
  * 响应处理器
  */
-public interface HttpResponseHandler{
+public abstract class HttpResponseHandler{
 	/**
      * 开始
      */
-    public  void start();
+    public abstract void start();
+    
+    /**
+     * 判断是否可以缓存，当需要缓存HttpResponse的时候会先调用此方法判断是否可以缓存，例如：实现者可以再次方法里过滤掉状态码不是200的响应。默认为主要是状态码大于等于200并且 小于300就返回true
+     * @param httpResponse
+     * @return
+     */
+    public boolean isCanCache(HttpResponse httpResponse){
+    	return httpResponse.getStatusLine().getStatusCode() >= 200 && httpResponse.getStatusLine().getStatusCode() < 300;
+    }
 
     /**
      * 处理响应
      * @param httpResponse Http响应
      * @throws Throwable 当发生异常时会进入exception()方法
      */
-    public  void handleResponse(HttpResponse httpResponse) throws Throwable;
+    public abstract void handleResponse(HttpResponse httpResponse) throws Throwable;
     
     /**
      * 异常
      * @param e
      */
-    public  void exception(Throwable e);
+    public abstract void exception(Throwable e);
 }

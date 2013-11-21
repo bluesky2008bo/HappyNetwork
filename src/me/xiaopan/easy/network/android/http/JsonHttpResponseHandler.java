@@ -23,6 +23,7 @@ import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
 
@@ -31,24 +32,49 @@ import com.google.gson.GsonBuilder;
 /**
  * 默认的JsonHttp响应处理器
  */
-public abstract class JsonHttpResponseHandler<T> extends Handler implements HttpResponseHandler {
+public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	private static final int MESSAGE_START = 0;
 	private static final int MESSAGE_SUCCESS = 1;
 	private static final int MESSAGE_FAILURE = 2;
 	private Class<?> responseClass;
 	private Type responseType;
+	private Handler handler;
 	
+	@SuppressLint("HandlerLeak")
 	public JsonHttpResponseHandler(Class<?> responseClass){
 		this.responseClass = responseClass;
+		handler = new Handler(){
+			@SuppressWarnings("unchecked")
+			@Override
+			public void handleMessage(Message msg) {
+				switch(msg.what) {
+					case MESSAGE_START: onStart(); break;
+					case MESSAGE_SUCCESS: onSuccess((T) msg.obj); break;
+					case MESSAGE_FAILURE: onFailure((Throwable) msg.obj); break;
+				}
+			}
+		};
 	}
 	
+	@SuppressLint("HandlerLeak")
 	public JsonHttpResponseHandler(Type responseType){
 		this.responseType = responseType;
+		handler = new Handler(){
+			@SuppressWarnings("unchecked")
+			@Override
+			public void handleMessage(Message msg) {
+				switch(msg.what) {
+					case MESSAGE_START: onStart(); break;
+					case MESSAGE_SUCCESS: onSuccess((T) msg.obj); break;
+					case MESSAGE_FAILURE: onFailure((Throwable) msg.obj); break;
+				}
+			}
+		};
 	}
 	
 	@Override
 	public void start() {
-		sendEmptyMessage(MESSAGE_START);
+		handler.sendEmptyMessage(MESSAGE_START);
 	}
 
 	@Override
@@ -62,39 +88,29 @@ public abstract class JsonHttpResponseHandler<T> extends Handler implements Http
 					if(responseClass != null){	//如果是要转换成一个对象
 						ResponseBodyKey responseBodyKey = responseClass.getAnnotation(ResponseBodyKey.class);
 						if(responseBodyKey != null && responseBodyKey.value() != null && !"".equals(responseBodyKey.value())){
-							sendMessage(obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey.value()), responseClass)));
+							handler.sendMessage(handler.obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey.value()), responseClass)));
 						}else{
-							sendMessage(obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseClass)));
+							handler.sendMessage(handler.obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseClass)));
 						}
 					}else if(responseType != null){	//如果是要转换成一个集合
-						sendMessage(obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseType)));
+						handler.sendMessage(handler.obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseType)));
 					}else{
-						sendMessage(obtainMessage(MESSAGE_FAILURE, new Exception("responseClass和responseType至少有一个不能为null")));
+						handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, new Exception("responseClass和responseType至少有一个不能为null")));
 					}
 				}else{
-					sendMessage(obtainMessage(MESSAGE_FAILURE, new Exception("响应内容为空")));
+					handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, new Exception("响应内容为空")));
 				}
 			}else{
-				sendMessage(obtainMessage(MESSAGE_FAILURE, new Exception("没有响应实体")));
+				handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, new Exception("没有响应实体")));
 			}
 		}else{
-			sendMessage(obtainMessage(MESSAGE_FAILURE, new HttpStatusCodeException(httpResponse.getStatusLine().getStatusCode())));
+			handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, new HttpStatusCodeException(httpResponse.getStatusLine().getStatusCode())));
 		}
 	}
 	
 	@Override
 	public void exception(Throwable e) {
-		sendMessage(obtainMessage(MESSAGE_FAILURE, e));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void handleMessage(Message msg) {
-		switch(msg.what) {
-			case MESSAGE_START: onStart(); break;
-			case MESSAGE_SUCCESS: onSuccess((T) msg.obj); break;
-			case MESSAGE_FAILURE: onFailure((Throwable) msg.obj); break;
-		}
+		handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, e));
 	}
 	
 	public abstract void onStart();
