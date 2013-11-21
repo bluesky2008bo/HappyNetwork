@@ -63,7 +63,7 @@ public class HttpRequestRunnable implements Runnable {
     				File cacheEntityFile = null;
     				if(isCache){
     					String id = StringUtils.MD5(uri);
-    					cacheEntityFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "EasyHttpClient" + File.separator  + id + ".enrity");
+    					cacheEntityFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "EasyHttpClient" + File.separator  + id + ".entity");
     					fromlocalLoad = cacheEntityFile.exists();
     				}
     				
