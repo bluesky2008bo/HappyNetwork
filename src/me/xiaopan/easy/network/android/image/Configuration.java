@@ -38,7 +38,6 @@ public class Configuration {
 	private int connectionTimeout;	//连接超时时间
 	private int maxConnections;	//最大连接数
 	private int socketBufferSize;	//Socket缓存池大小
-	private boolean debugMode;	//调试模式，在控制台输出日志
 	private String logTag;	//LogTag
 	private String defaultCacheDirectory;	//默认的缓存目录
 	private Options defaultOptions;	//默认加载选项
@@ -91,22 +90,6 @@ public class Configuration {
 			this.maxWaitingNumber = maxWaitingNumber;
 			imageLoader.getWaitingRequestCircle().setMaxSize(maxWaitingNumber);
 		}
-	}
-	
-	/**
-	 * 判断是否开启调试模式
-	 * @return
-	 */
-	public boolean isDebugMode() {
-		return debugMode;
-	}
-	
-	/**
-	 * 设置是否开启调试模式，开启调试模式后会在控制台输出LOG
-	 * @param debugMode
-	 */
-	public void setDebugMode(boolean debugMode) {
-		this.debugMode = debugMode;
 	}
 	
 	/**

@@ -56,6 +56,7 @@ import android.util.Log;
  * Http客户端，所有的Http操作都将由此类来异步完成，同时此类提供一个单例模式来方便直接使用
  */
 public class EasyHttpClient {
+	private boolean debugMode;
 	private Configuration configuration;	//配置
 	private HttpContext httpContext;	//Http上下文
 	private DefaultHttpClient httpClient;	//Http客户端
@@ -579,7 +580,7 @@ public class EasyHttpClient {
 	 * @param logContent LOG内容
 	 */
 	public void log(String logContent){
-		if(configuration.isDebugMode()){
+		if(debugMode){
 			Log.d(configuration.getLogTag(), logContent);
 		}
 	}
@@ -590,5 +591,21 @@ public class EasyHttpClient {
 	 */
 	public Configuration getConfiguration() {
 		return configuration;
+	}
+
+	/**
+	 * 判断是否开启调试模式
+	 * @return 
+	 */
+	public boolean isDebugMode() {
+		return debugMode;
+	}
+
+	/**
+	 * 设置是否开启调试模式，开启调试模式后会在控制台输出LOG
+	 * @param debugMode 
+	 */
+	public void setDebugMode(boolean debugMode) {
+		this.debugMode = debugMode;
 	}
 }

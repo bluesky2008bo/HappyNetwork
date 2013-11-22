@@ -40,7 +40,6 @@ public class Configuration {
 	private int maxConnections;	//最大连接数
 	private int socketBufferSize;	//Socket缓存池大小
 	private String logTag;	//Log Tag
-	private boolean debugMode;
 	private EasyHttpClient easyHhttpClient;
     private Map<String, String> headerMap;	//请求头Map
 	
@@ -73,22 +72,6 @@ public class Configuration {
 	 */
 	public void setHeaderMap(Map<String, String> headerMap) {
 		this.headerMap = headerMap;
-	}
-
-	/**
-	 * 判断是否开启调试模式
-	 * @return 
-	 */
-	public boolean isDebugMode() {
-		return debugMode;
-	}
-
-	/**
-	 * 设置是否开启调试模式，开启调试模式后会在控制台输出LOG
-	 * @param debugMode 
-	 */
-	public void setDebugMode(boolean debugMode) {
-		this.debugMode = debugMode;
 	}
 	
 	/**

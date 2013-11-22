@@ -44,6 +44,7 @@ import android.widget.ImageView;
  * 图片加载器，可以从网络或者本地加载图片，并且支持自动清除缓存
  */
 public class ImageLoader{
+	private boolean debugMode;	//调试模式，在控制台输出日志
 	private Bitmap tempCacheBitmap;	//临时存储缓存的图片
 	private Set<String> loadingRequestSet;	//正在加载的Url列表，用来防止同一个URL被重复加载
 	private Configuration configuration;	//配置
@@ -296,7 +297,7 @@ public class ImageLoader{
 	 * @param logContent LOG内容
 	 */
 	public void log(String logContent, boolean error){
-		if(configuration.isDebugMode()){
+		if(debugMode){
 			if(error){
 				Log.e(configuration.getLogTag(), logContent);
 			}else{
@@ -311,5 +312,21 @@ public class ImageLoader{
 	 */
 	public void log(String logContent){
 		log(logContent, false);
+	}
+	
+	/**
+	 * 判断是否开启调试模式
+	 * @return
+	 */
+	public boolean isDebugMode() {
+		return debugMode;
+	}
+	
+	/**
+	 * 设置是否开启调试模式，开启调试模式后会在控制台输出LOG
+	 * @param debugMode
+	 */
+	public void setDebugMode(boolean debugMode) {
+		this.debugMode = debugMode;
 	}
 } 
