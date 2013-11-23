@@ -54,7 +54,6 @@ public class ImageLoader{
 	
 	/**
 	 * 创建图片加载器
-	 * @param defaultDrawableResId 默认显示的图片
 	 */
 	public ImageLoader(){
 		configuration = new Configuration(this);
@@ -77,21 +76,21 @@ public class ImageLoader{
 	/**
 	 * 实例持有器
 	 */
-	private static class ImageLoaderInstanceHolder{
+	private static final class ImageLoaderInstanceHolder{
 		private static ImageLoader instance = new ImageLoader();
 	}
 	
 	/**
-	 * 获取图片加载器的实例，每执行一次此方法就会清除一次历史记录
+	 * 获取图片加载器的实例
 	 * @return 图片加载器的实例
 	 */
-	public static final ImageLoader getInstance(){
+	public static ImageLoader getInstance(){
 		return ImageLoaderInstanceHolder.instance;
 	}
 	
 	/**
 	 * 加载图片
-	 * @param imageUrl 图片下载地址，如果本地缓存文件不存在将从网络获取
+	 * @param url 图片下载地址，如果本地缓存文件不存在将从网络获取
 	 * @param showImageView 显示图片的视图
 	 * @param options 加载选项
 	 */
@@ -119,7 +118,7 @@ public class ImageLoader{
 	
 	/**
 	 * 加载图片
-	 * @param imageUrl 图片下载地址
+	 * @param url 图片下载地址
 	 * @param showImageView 显示图片的视图
 	 */
 	public final void load(String url, ImageView showImageView){
@@ -130,7 +129,7 @@ public class ImageLoader{
 	 * 加载图片
 	 * @param localFile 本地图片文件，如果本地文件不存在会尝试从imageUrl下载图片并创建localFile
 	 * @param showImageView 显示图片的视图
-	 * @param imageUrl 图片下载地址，如果本地图片文件不存在将从网络获取
+	 * @param url 图片下载地址，如果本地图片文件不存在将从网络获取
 	 * @param options 加载选项
 	 */
 	public final void load(File localFile, ImageView showImageView, String url, Options options){
@@ -159,7 +158,7 @@ public class ImageLoader{
 	 * 加载图片
 	 * @param localFile 本地图片文件，如果本地文件不存在会尝试从imageUrl下载图片并创建localFile
 	 * @param showImageView 显示图片的视图
-	 * @param imageUrl 图片下载地址，如果本地图片文件不存在将从网络获取
+	 * @param url 图片下载地址，如果本地图片文件不存在将从网络获取
 	 */
 	public final void load(File localFile, ImageView showImageView, String url){
 		load(localFile, showImageView, url, configuration.getDefaultOptions());
@@ -191,7 +190,7 @@ public class ImageLoader{
 	 * @param options 加载选项
 	 * @return true：图片缓存中有图片并且已经显示了；false：缓存中没有对应的图片，需要开启新线程从网络或本地加载
 	 */
-	private final boolean tryShowImage(String url, String id, ImageView showImageView, Options options){
+	private boolean tryShowImage(String url, String id, ImageView showImageView, Options options){
 		//如果需要从缓存中读取，就根据地址从缓存中获取图片，如果缓存中存在相对的图片就显示，否则显示默认图片或者显示空
 		if(options != null && options.isCachedInMemory() && (tempCacheBitmap = configuration.getBitmapCacher().get(id)) != null){
 			showImageView.setTag(null);	//清空绑定关系
@@ -220,7 +219,7 @@ public class ImageLoader{
 	 * @param showImageView
 	 * @param options
 	 */
-	final void tryLoad(String id, String url, File localCacheFile, ImageView showImageView, Options options, LoadRequest loadRequest){
+	void tryLoad(String id, String url, File localCacheFile, ImageView showImageView, Options options, LoadRequest loadRequest){
 		loadingImageViewSet.add(showImageView);	//先将当前ImageView存起来
 		if(!loadingRequestSet.contains(id)){		//如果当前图片没有正在加载
 			if(loadRequest == null){
