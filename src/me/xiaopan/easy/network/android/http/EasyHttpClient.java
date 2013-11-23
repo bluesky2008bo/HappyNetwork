@@ -380,7 +380,6 @@ public class EasyHttpClient {
      * 执行一个HTTP PUT请求
      * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param url the 请求地址
-     * @param entity 请求实体
      * @param httpResponseHandler Http响应处理器
      */
     public void put(Context context, String url, HttpResponseHandler httpResponseHandler) {
