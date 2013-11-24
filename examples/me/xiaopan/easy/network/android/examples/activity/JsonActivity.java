@@ -41,37 +41,37 @@ public class JsonActivity extends Activity {
 		setContentView(R.layout.activity_text);
 		text = (TextView) findViewById(R.id.text1);
 		
-		EasyHttpClient.getInstance().sendRequest(getBaseContext(), new BeijingWeatherRequest(), new JsonHttpResponseHandler<Weather>(Weather.class) {
-			@Override
-			public void onStart() {
-				findViewById(R.id.loading).setVisibility(View.VISIBLE);
-			}
+		EasyHttpClient.getInstance().execute(getBaseContext(), new BeijingWeatherRequest(), new JsonHttpResponseHandler<Weather>(Weather.class) {
+            @Override
+            public void onStart() {
+                findViewById(R.id.loading).setVisibility(View.VISIBLE);
+            }
 
-			@Override
-			public void onSuccess(Weather responseObject) {
-				text.setText(Html.fromHtml("<h2>"+responseObject.getCity()+"</h2>"
-						+"<br>"+responseObject.getDate_y() + " " + responseObject.getWeek()
-						+"<br>"+responseObject.getTemp1()+" "+responseObject.getWeather1() 
-						+"<p><br>风力："+responseObject.getWind1()
-						+"<br>紫外线："+responseObject.getIndex_uv()
-						+"<br>紫外线（48小时）："+responseObject.getIndex48_uv()
-						+"<br>穿衣指数："+responseObject.getIndex()+"，"+responseObject.getIndex_d()
-						+"<br>穿衣指数（48小时）："+responseObject.getIndex48()+"，"+responseObject.getIndex48_d()
-						+"<br>舒适指数："+responseObject.getIndex_co()
-						+"<br>洗车指数："+responseObject.getIndex_xc()
-						+"<br>旅游指数："+responseObject.getIndex_tr()
-						+"<br>晨练指数："+responseObject.getIndex_cl()
-						+"<br>晾晒指数："+responseObject.getIndex_ls()
-						+"<br>过敏指数："+responseObject.getIndex_ag()+"</p>"
-					));
-				findViewById(R.id.loading).setVisibility(View.GONE);
-			}
+            @Override
+            public void onSuccess(Weather responseObject) {
+                text.setText(Html.fromHtml("<h2>" + responseObject.getCity() + "</h2>"
+                        + "<br>" + responseObject.getDate_y() + " " + responseObject.getWeek()
+                        + "<br>" + responseObject.getTemp1() + " " + responseObject.getWeather1()
+                        + "<p><br>风力：" + responseObject.getWind1()
+                        + "<br>紫外线：" + responseObject.getIndex_uv()
+                        + "<br>紫外线（48小时）：" + responseObject.getIndex48_uv()
+                        + "<br>穿衣指数：" + responseObject.getIndex() + "，" + responseObject.getIndex_d()
+                        + "<br>穿衣指数（48小时）：" + responseObject.getIndex48() + "，" + responseObject.getIndex48_d()
+                        + "<br>舒适指数：" + responseObject.getIndex_co()
+                        + "<br>洗车指数：" + responseObject.getIndex_xc()
+                        + "<br>旅游指数：" + responseObject.getIndex_tr()
+                        + "<br>晨练指数：" + responseObject.getIndex_cl()
+                        + "<br>晾晒指数：" + responseObject.getIndex_ls()
+                        + "<br>过敏指数：" + responseObject.getIndex_ag() + "</p>"
+                ));
+                findViewById(R.id.loading).setVisibility(View.GONE);
+            }
 
-			@Override
-			public void onFailure(Throwable throwable) {
-				text.setText(throwable.getMessage());
-				findViewById(R.id.loading).setVisibility(View.GONE);
-			}
-		});
+            @Override
+            public void onFailure(Throwable throwable) {
+                text.setText(throwable.getMessage());
+                findViewById(R.id.loading).setVisibility(View.GONE);
+            }
+        });
 	}
 }

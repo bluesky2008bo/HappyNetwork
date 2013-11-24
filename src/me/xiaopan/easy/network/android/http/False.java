@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 当为false是的参数值
+ * 当为false时的参数值
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

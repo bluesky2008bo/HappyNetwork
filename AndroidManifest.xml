@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.xiaopan.easy.network.android"
-    android:versionCode="125"
-    android:versionName="1.2.5" >
+    android:versionCode="200"
+    android:versionName="2.0.0" >
 
     <!-- 声明兼容的系统版本 -->
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="19" />

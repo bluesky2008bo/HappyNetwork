@@ -17,36 +17,37 @@
 package me.xiaopan.easy.network.android.examples.net.request;
 
 import me.xiaopan.easy.network.android.examples.net.BaseRequest;
+import me.xiaopan.easy.network.android.http.Key;
+import me.xiaopan.easy.network.android.http.Param;
 import me.xiaopan.easy.network.android.http.Url;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * 百度搜索请求
  */
 @Url("http://www.baidu.com/s")
 public class BaiduSearchRequest extends BaseRequest {
-	@Expose
+	@Param
 	public String rsv_spt = "1";
-	@Expose
+	@Param
 	public String issp = "1";
 	@Expose
 	public String rsv_bp = "0";
-	@Expose
+	@Param
 	public String ie = "utf-8";
-	@Expose
+	@Param
 	public String tn = "98012088_3_dg";
-	@Expose
+	@Param
 	public String rsv_sug3 = "4";
-	@Expose
+	@Param
 	public String rsv_sug = "0";
-	@Expose
+	@Param
 	public String rsv_sug1 = "3";
-	@Expose
+	@Param
 	public String rsv_sug4 = "481";
-	@Expose
-	@SerializedName("wd")
+	@Param
+	@Key("wd")
 	public String keyword;
 	
 	/**

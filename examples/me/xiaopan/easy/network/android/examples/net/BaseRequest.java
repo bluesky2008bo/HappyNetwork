@@ -16,11 +16,14 @@
 
 package me.xiaopan.easy.network.android.examples.net;
 
+import me.xiaopan.easy.network.android.http.Method;
+import me.xiaopan.easy.network.android.http.MethodType;
 import me.xiaopan.easy.network.android.http.Request;
 
 /**
  * 基本请求，可以将一些每个请求都必须有的参数定义在此
  */
+@Method(MethodType.GET)
 public class BaseRequest implements Request {
 
 }

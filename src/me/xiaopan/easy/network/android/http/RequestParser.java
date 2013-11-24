@@ -1,0 +1,159 @@
+package me.xiaopan.easy.network.android.http;
+
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Map;
+
+import me.xiaopan.easy.java.util.AnnotationUtils;
+import me.xiaopan.easy.java.util.ClassUtils;
+import me.xiaopan.easy.java.util.StringUtils;
+
+import com.google.gson.annotations.SerializedName;
+
+/**
+ * 请求解析器，用于解析继承与Request的请求对象
+ * Created by XIAOPAN on 13-11-24.
+ */
+public class RequestParser {
+    private  Request request;
+
+    public RequestParser(Request request) {
+        this.request = request;
+    }
+
+    /**
+     * 获取URL
+     * @return
+     */
+    public String getUrl(){
+        return getUrl(request.getClass());
+    }
+
+    /**
+     * 获取参数集
+     * @param requestParams 请求参数集，如果为null，请自动创建
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+	public RequestParams getParams(RequestParams requestParams){
+        if(request != null){
+            if(requestParams == null) requestParams = new RequestParams();
+            String paramValue;
+            Object paramValueObject;
+            for(Field field : ClassUtils.getFields(request.getClass(), true, true, true)){
+                if(field.getAnnotation(Param.class) != null){	//如果当前字段被标记为需要序列化
+                    try {
+                        field.setAccessible(true);
+                        if((paramValueObject = field.get(request)) != null){
+                            if(paramValueObject instanceof Map){	//如果当前字段是一个MAP，就取出其中的每一项添加到请求参数集中
+                                Map<Object, Object> map = (Map<Object, Object>)paramValueObject;
+                                for(java.util.Map.Entry<Object, Object> entry : map.entrySet()){
+                                    if(entry.getKey() != null && entry.getValue() != null && StringUtils.isNotEmpty(entry.getKey().toString(), entry.getValue().toString())){
+                                        requestParams.put(entry.getKey().toString(), entry.getValue().toString());
+                                    }
+                                }
+                            }else if(paramValueObject instanceof File){	//如果当前字段是一个文件，就将其作为一个文件添加到请求参水集中
+                                requestParams.put(getParamKey(field), (File) paramValueObject);
+                            }else if(paramValueObject instanceof ArrayList){	//如果当前字段是ArrayList，就将其作为一个ArrayList添加到请求参水集中
+                                requestParams.put(getParamKey(field), (ArrayList<String>) paramValueObject);
+                            }else if(paramValueObject instanceof Boolean){	//如果当前字段是boolean
+                                if((Boolean) paramValueObject){
+                                    True true1 = field.getAnnotation(True.class);
+                                    if(true1 != null && StringUtils.isNotEmpty(true1.value())){
+                                        requestParams.put(getParamKey(field), true1.value());
+                                    }else{
+                                        requestParams.put(getParamKey(field), paramValueObject.toString());
+                                    }
+                                }else{
+                                    False false1 = field.getAnnotation(False.class);
+                                    if(false1 != null && StringUtils.isNotEmpty(false1.value())){
+                                        requestParams.put(getParamKey(field), false1.value());
+                                    }else{
+                                        requestParams.put(getParamKey(field), paramValueObject.toString());
+                                    }
+                                }
+                            }else if(paramValueObject instanceof Enum){	//如果当前字段是枚举
+                                Enum<?> enumObject = (Enum<?>) paramValueObject;
+                                SerializedName serializedName = AnnotationUtils.getAnnotationFromEnum(enumObject, SerializedName.class);
+                                if(serializedName != null && StringUtils.isNotEmpty(serializedName.value())){
+                                    requestParams.put(getParamKey(field), serializedName.value());
+                                }else{
+                                    requestParams.put(getParamKey(field), enumObject.name());
+                                }
+                            }else{	//如果以上几种情况都不是就直接转为字符串添加到请求参数集中
+                                paramValue = paramValueObject.toString();
+                                if(StringUtils.isNotEmpty(paramValue)){
+                                    requestParams.put(getParamKey(field), paramValue);
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }else if(field.getAnnotation(Headers.class) != null){
+
+                }
+            }
+        }
+
+        return requestParams;
+    }
+
+    /**
+     * 获取参数集
+     * @return
+     */
+    public RequestParams getParams(){
+        return getParams(null);
+    }
+
+    /**
+     * 获取参数名
+     * @param field
+     * @return
+     */
+    public static final String getParamKey(Field field){
+        Key key = field.getAnnotation(Key.class);
+        if(key != null && StringUtils.isNotEmpty(key.value())){
+            return key.value();
+        }else{
+            return field.getName();
+        }
+    }
+
+    /**
+     * 通过解析一个请求对象来获取请求地址
+     * @param requestClass 请求对象
+     * @return 请求地址
+     * @throws Exception 请求对象上既没有Url注解（或者值为空）也没有Host注解（或者值为空）
+     */
+    public static final String getUrl(Class<?> requestClass) throws IllegalArgumentException{
+        if(requestClass != null){
+            /* 优先使用Url注解的值作为请求地址，如果没有Url注解再去用Host和Path注解来组合请求地址 */
+            Url url = requestClass.getAnnotation(Url.class);
+            String urlValue = url != null ? url.value().trim() : null;
+            if(StringUtils.isNotEmpty(urlValue)){
+                return urlValue;
+            }else{
+                /* 如果有Host注解就继续，否则抛异常 */
+                Host host = requestClass.getAnnotation(Host.class);
+                String hostValue = host != null ? host.value().trim() : null;
+                if(StringUtils.isNotEmpty(hostValue)){
+                    /* 如果有Path注解就用Host注解的值拼接上Path注解的值作为请求地址，否则就只使用Host注解的值来作为请求地址 */
+                    Path path = requestClass.getAnnotation(Path.class);
+                    String pathValue = path != null ? path.value().trim() : null;
+                    if(StringUtils.isNotEmpty(pathValue)){
+                        return hostValue + "/" + pathValue;
+                    }else{
+                        return hostValue;
+                    }
+                }else{
+                    return null;
+                }
+            }
+        }else{
+            return null;
+        }
+    }
+}

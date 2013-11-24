@@ -20,6 +20,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import me.xiaopan.easy.android.util.FileUtils;
 import me.xiaopan.easy.java.util.StringUtils;
@@ -43,14 +45,15 @@ import com.google.gson.reflect.TypeToken;
 public class HttpRequestRunnable implements Runnable {
 	private Context context;
 	private EasyHttpClient easyHttpClient;
-    private HttpUriRequest httpUriRequest;
-    private HttpResponseHandler httpResponseHandler;
-    private boolean isCache = true;
+    private HttpUriRequest httpUriRequest;  //HttpUri请求
+    private HttpResponseHandler httpResponseHandler;    //Http响应处理器
+    private ResponseCache responseCache;    //响应缓存配置
 
-    public HttpRequestRunnable(Context context, EasyHttpClient easyHttpClient, HttpUriRequest request, HttpResponseHandler httpResponseHandler) {
+    public HttpRequestRunnable(Context context, EasyHttpClient easyHttpClient, HttpUriRequest request, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
     	this.context = context;
     	this.easyHttpClient = easyHttpClient;
         this.httpUriRequest = request;
+        this.responseCache = responseCache;
         this.httpResponseHandler = httpResponseHandler;
     }
 
@@ -68,18 +71,23 @@ public class HttpRequestRunnable implements Runnable {
     				/* 判断是否需要从本地加载 */
     				boolean fromlocalLoad = false;
     				File cacheEntityFile = null, cacheHeadersFile = null;	//缓存相应实体的文件,缓存响应头的文件
-    				if(isCache){
+    				if(responseCache != null && responseCache.isCacheResponse()){
     					String id = StringUtils.MD5(uri);
     					cacheEntityFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".entity");
     					cacheHeadersFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".headers");
     					fromlocalLoad = cacheEntityFile.exists() && cacheHeadersFile.exists();
+    					if(fromlocalLoad && responseCache.getCachePeriodOfValidity() > 0){
+                            Calendar calendar = new GregorianCalendar();
+                            calendar.add(Calendar.MILLISECOND, -responseCache.getCachePeriodOfValidity());
+                            fromlocalLoad = calendar.getTimeInMillis() < cacheEntityFile.lastModified();
+                        }
     				}
-    				
+
     				/* 根据需要从本地或者网络加载数据 */
-    				HttpResponse httpResponse = fromlocalLoad?fromLocalLoad(uri, cacheEntityFile, cacheHeadersFile):fromNetworkLoad(uri, cacheEntityFile, cacheHeadersFile);
-    				if(!Thread.currentThread().isInterrupted() && httpResponse != null && httpResponseHandler != null) {
-    					httpResponseHandler.handleResponse(httpResponse);
-    				}
+                    HttpResponse httpResponse = fromlocalLoad?fromLocalLoad(uri, cacheEntityFile, cacheHeadersFile):fromNetworkLoad(uri, cacheEntityFile, cacheHeadersFile);
+                    if(!Thread.currentThread().isInterrupted() && httpResponseHandler != null) {
+                        httpResponseHandler.handleResponse(httpResponse);
+                    }
     			}
     		} catch (Throwable e) {
     			e.printStackTrace();
@@ -134,7 +142,6 @@ public class HttpRequestRunnable implements Runnable {
     /**
      * 从网络加载
      * @param uri
-     * @param httpResponse
      * @param cacheEntityFile
      * @param cacheHeadersFile
      * @throws ClientProtocolException
@@ -143,7 +150,7 @@ public class HttpRequestRunnable implements Runnable {
     private HttpResponse fromNetworkLoad(String uri, File cacheEntityFile, File cacheHeadersFile) throws ClientProtocolException, IOException{
     	easyHttpClient.log("（网络）请求地址："+uri);
     	HttpResponse httpResponse = easyHttpClient.getHttpClient().execute(httpUriRequest, easyHttpClient.getHttpContext());
-		if(isCache && httpResponseHandler.isCanCache(httpResponse)){	//如果需要缓存
+		if(responseCache != null && responseCache.isCacheResponse() && httpResponseHandler.isCanCache(httpResponse)){	//如果需要缓存
 			if(me.xiaopan.easy.java.util.FileUtils.createFile(cacheHeadersFile) != null && me.xiaopan.easy.java.util.FileUtils.createFile(cacheEntityFile) != null){
 				InputStream inputStream = null;
 				FileOutputStream fileOutputStream = null;
@@ -175,7 +182,9 @@ public class HttpRequestRunnable implements Runnable {
 					exception.printStackTrace();
 					if(inputStream != null){ try{inputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
 					if(fileOutputStream != null){try{fileOutputStream.flush();fileOutputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
-					throw exception;
+                    cacheEntityFile.delete();
+                    cacheHeadersFile.delete();
+                    throw exception;
 				}
 			}else{
 				easyHttpClient.log("创建文件 "+cacheHeadersFile.getPath() + " 或 " + cacheEntityFile.getPath()+" 失败");
