@@ -152,7 +152,7 @@ public class EasyHttpClient {
             }else if(methodType == MethodType.PUT){
                 put(context, new HttpPutRequest.Builder(request).create(), httpResponseHandler);
             }else if(methodType == MethodType.DELETE){
-                delete(context, new HttpDeleteRequest.Builder(request.getClass()).create(), httpResponseHandler);
+                delete(context, new HttpDeleteRequest.Builder(request).create(), httpResponseHandler);
             }
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("request 不能为null");

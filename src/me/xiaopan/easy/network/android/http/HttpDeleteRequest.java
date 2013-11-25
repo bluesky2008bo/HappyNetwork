@@ -91,11 +91,11 @@ public class HttpDeleteRequest {
 
         /**
          * 创建一个Http Delete请求构建器，你必须指定继承于Request的class
-         * @param requestClass
+         * @param request
          */
-        public Builder(Class<? extends Request> requestClass) {
+        public Builder(Request request) {
             httpRequest = new HttpDeleteRequest();
-            setRequestClass(requestClass);
+            setRequest(request);
         }
 
         public Builder setName(String name) {
@@ -128,12 +128,14 @@ public class HttpDeleteRequest {
             return this;
         }
 
-        public Builder setRequestClass(Class<?> requestClass) {
-        	String url = RequestParser.getUrl(requestClass);
+        public Builder setRequest(Request request){
+        	RequestParser requestParser = new RequestParser(request);
+        	String url = requestParser.getUrl();
             if(StringUtils.isEmpty(url)){
                 throw new IllegalArgumentException("你必须在Request上使有Url注解或者Host加Path注解指定请求地址");
             }
             httpRequest.setUrl(url);
+            httpRequest.addHeaders(requestParser.getHeaders());
             return this;
         }
 

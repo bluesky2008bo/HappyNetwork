@@ -251,6 +251,7 @@ public class HttpPostRequest {
             }
             httpRequest.setUrl(url);
             httpRequest.setParams(requestParser.getParams(httpRequest.getParams()));
+            httpRequest.addHeaders(requestParser.getHeaders());
             return this;
         }
 

@@ -241,6 +241,7 @@ public class HttpGetRequest {
             }
             httpRequest.setUrl(url);
             httpRequest.setParams(requestParser.getParams(httpRequest.getParams()));
+            httpRequest.addHeaders(requestParser.getHeaders());
             return this;
         }
 

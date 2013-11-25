@@ -3,11 +3,16 @@ package me.xiaopan.easy.network.android.http;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import me.xiaopan.easy.java.util.AnnotationUtils;
-import me.xiaopan.easy.java.util.ClassUtils;
+import me.xiaopan.easy.java.util.ReflectUtils;
 import me.xiaopan.easy.java.util.StringUtils;
+
+import org.apache.http.Header;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -19,7 +24,10 @@ public class RequestParser {
     private  Request request;
 
     public RequestParser(Request request) {
-        this.request = request;
+        if(request == null){
+        	throw new NullPointerException("request 不能为null");
+        }
+    	this.request = request;
     }
 
     /**
@@ -37,62 +45,61 @@ public class RequestParser {
      */
     @SuppressWarnings("unchecked")
 	public RequestParams getParams(RequestParams requestParams){
-        if(request != null){
-            if(requestParams == null) requestParams = new RequestParams();
-            String paramValue;
-            Object paramValueObject;
-            for(Field field : ClassUtils.getFields(request.getClass(), true, true, true)){
-                if(field.getAnnotation(Param.class) != null){	//如果当前字段被标记为需要序列化
-                    try {
-                        field.setAccessible(true);
-                        if((paramValueObject = field.get(request)) != null){
-                            if(paramValueObject instanceof Map){	//如果当前字段是一个MAP，就取出其中的每一项添加到请求参数集中
-                                Map<Object, Object> map = (Map<Object, Object>)paramValueObject;
-                                for(java.util.Map.Entry<Object, Object> entry : map.entrySet()){
-                                    if(entry.getKey() != null && entry.getValue() != null && StringUtils.isNotEmpty(entry.getKey().toString(), entry.getValue().toString())){
-                                        requestParams.put(entry.getKey().toString(), entry.getValue().toString());
-                                    }
-                                }
-                            }else if(paramValueObject instanceof File){	//如果当前字段是一个文件，就将其作为一个文件添加到请求参水集中
-                                requestParams.put(getParamKey(field), (File) paramValueObject);
-                            }else if(paramValueObject instanceof ArrayList){	//如果当前字段是ArrayList，就将其作为一个ArrayList添加到请求参水集中
-                                requestParams.put(getParamKey(field), (ArrayList<String>) paramValueObject);
-                            }else if(paramValueObject instanceof Boolean){	//如果当前字段是boolean
-                                if((Boolean) paramValueObject){
-                                    True true1 = field.getAnnotation(True.class);
-                                    if(true1 != null && StringUtils.isNotEmpty(true1.value())){
-                                        requestParams.put(getParamKey(field), true1.value());
-                                    }else{
-                                        requestParams.put(getParamKey(field), paramValueObject.toString());
-                                    }
-                                }else{
-                                    False false1 = field.getAnnotation(False.class);
-                                    if(false1 != null && StringUtils.isNotEmpty(false1.value())){
-                                        requestParams.put(getParamKey(field), false1.value());
-                                    }else{
-                                        requestParams.put(getParamKey(field), paramValueObject.toString());
-                                    }
-                                }
-                            }else if(paramValueObject instanceof Enum){	//如果当前字段是枚举
-                                Enum<?> enumObject = (Enum<?>) paramValueObject;
-                                SerializedName serializedName = AnnotationUtils.getAnnotationFromEnum(enumObject, SerializedName.class);
-                                if(serializedName != null && StringUtils.isNotEmpty(serializedName.value())){
-                                    requestParams.put(getParamKey(field), serializedName.value());
-                                }else{
-                                    requestParams.put(getParamKey(field), enumObject.name());
-                                }
-                            }else{	//如果以上几种情况都不是就直接转为字符串添加到请求参数集中
-                                paramValue = paramValueObject.toString();
-                                if(StringUtils.isNotEmpty(paramValue)){
-                                    requestParams.put(getParamKey(field), paramValue);
+        if(requestParams == null){
+        	requestParams = new RequestParams();
+        }
+        
+        String paramValue;
+        Object paramValueObject;
+        for(Field field : ReflectUtils.getFields(request.getClass(), true, true, true)){
+            if(field.getAnnotation(Param.class) != null){	//如果当前字段被标记为需要序列化
+                try {
+                    field.setAccessible(true);
+                    if((paramValueObject = field.get(request)) != null){
+                        if(paramValueObject instanceof Map){	//如果当前字段是一个MAP，就取出其中的每一项添加到请求参数集中
+                            Map<Object, Object> map = (Map<Object, Object>)paramValueObject;
+                            for(java.util.Map.Entry<Object, Object> entry : map.entrySet()){
+                                if(entry.getKey() != null && entry.getValue() != null && StringUtils.isNotEmpty(entry.getKey().toString(), entry.getValue().toString())){
+                                    requestParams.put(entry.getKey().toString(), entry.getValue().toString());
                                 }
                             }
+                        }else if(paramValueObject instanceof File){	//如果当前字段是一个文件，就将其作为一个文件添加到请求参水集中
+                            requestParams.put(getParamKey(field), (File) paramValueObject);
+                        }else if(paramValueObject instanceof ArrayList){	//如果当前字段是ArrayList，就将其作为一个ArrayList添加到请求参水集中
+                            requestParams.put(getParamKey(field), (ArrayList<String>) paramValueObject);
+                        }else if(paramValueObject instanceof Boolean){	//如果当前字段是boolean
+                            if((Boolean) paramValueObject){
+                                True true1 = field.getAnnotation(True.class);
+                                if(true1 != null && StringUtils.isNotEmpty(true1.value())){
+                                    requestParams.put(getParamKey(field), true1.value());
+                                }else{
+                                    requestParams.put(getParamKey(field), paramValueObject.toString());
+                                }
+                            }else{
+                                False false1 = field.getAnnotation(False.class);
+                                if(false1 != null && StringUtils.isNotEmpty(false1.value())){
+                                    requestParams.put(getParamKey(field), false1.value());
+                                }else{
+                                    requestParams.put(getParamKey(field), paramValueObject.toString());
+                                }
+                            }
+                        }else if(paramValueObject instanceof Enum){	//如果当前字段是枚举
+                            Enum<?> enumObject = (Enum<?>) paramValueObject;
+                            SerializedName serializedName = AnnotationUtils.getAnnotationFromEnum(enumObject, SerializedName.class);
+                            if(serializedName != null && StringUtils.isNotEmpty(serializedName.value())){
+                                requestParams.put(getParamKey(field), serializedName.value());
+                            }else{
+                                requestParams.put(getParamKey(field), enumObject.name());
+                            }
+                        }else{	//如果以上几种情况都不是就直接转为字符串添加到请求参数集中
+                            paramValue = paramValueObject.toString();
+                            if(StringUtils.isNotEmpty(paramValue)){
+                                requestParams.put(getParamKey(field), paramValue);
+                            }
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                }else if(field.getAnnotation(Headers.class) != null){
-
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -107,6 +114,56 @@ public class RequestParser {
     public RequestParams getParams(){
         return getParams(null);
     }
+    
+    /**
+     * 获取请求头
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+	public Header[] getHeaders(){
+    	List<Header> finalHeaders = new LinkedList<Header>();
+    	for(Field field : ReflectUtils.getFields(request.getClass(), true, true, true)){
+    		field.setAccessible(true);
+    		if(field.getAnnotation(me.xiaopan.easy.network.android.http.Header.class) != null){	//如果当前字段被标记为需要序列化
+            	if(Header.class.isAssignableFrom(field.getType())){	//如果是单个
+            		try {
+						finalHeaders.add((Header) field.get(request));
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					}
+                }else if(ReflectUtils.isArrayByType(field, Header.class)){	//如果Header数组
+            	   try {
+						Header[] headers = (Header[]) field.get(request);
+						for(Header header : headers){
+							finalHeaders.add(header);
+						}
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					}
+               }else if(ReflectUtils.isCollectionByType(field, Collection.class, Header.class)){	//如果是Header集合
+            	   try {
+						finalHeaders.addAll((Collection<Header>) field.get(request));
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					}
+               }
+            }
+        }
+    	
+    	if(finalHeaders.size() > 0){
+    		Header[] heades = new Header[finalHeaders.size()];
+    		finalHeaders.toArray(heades);
+    		return heades;
+    	}else{
+    		return null;
+    	}
+    }
 
     /**
      * 获取参数名
@@ -114,7 +171,7 @@ public class RequestParser {
      * @return
      */
     public static final String getParamKey(Field field){
-        ParamName key = field.getAnnotation(ParamName.class);
+        Param key = field.getAnnotation(Param.class);
         if(key != null && StringUtils.isNotEmpty(key.value())){
             return key.value();
         }else{
