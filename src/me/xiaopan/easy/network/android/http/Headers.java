@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 被此注解修饰的字段将被解析成请求头，同时被修饰的字段也必须是Collection类型的集合（Collection）或者Header类型的数组才能解析成功
+ * 被此注解修饰的字段将被解析成请求头，同时被修饰的字段也必须是Header类型的集合（Collection）或者Header类型的数组才能解析成功
  * Created by XIAOPAN on 13-11-24.
  */
 @Target(ElementType.FIELD)
