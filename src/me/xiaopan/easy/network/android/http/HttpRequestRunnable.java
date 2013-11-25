@@ -31,6 +31,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
@@ -176,8 +177,8 @@ public class HttpRequestRunnable implements Runnable {
 					fileOutputStream.flush();
 					fileOutputStream.close();
 					
-					//将响应提替换为本地文件
-					httpResponse.setEntity(new InputStreamEntity(new FileInputStream(cacheEntityFile), cacheEntityFile.length()));
+					//将响应实体替换为本地文件
+					httpResponse.setEntity(new FileEntity(cacheEntityFile, "text/plan"));
 				}catch(IOException exception){
 					exception.printStackTrace();
 					if(inputStream != null){ try{inputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
