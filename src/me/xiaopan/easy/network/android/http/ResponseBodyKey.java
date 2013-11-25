@@ -21,6 +21,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * 在使用JsonHttpResponseHandler的时候，如果你在要转换的目标类上加了此注解，那么将在返回的json字符串中取出键为此注解的值的json字符串来转换为目标类
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Inherited

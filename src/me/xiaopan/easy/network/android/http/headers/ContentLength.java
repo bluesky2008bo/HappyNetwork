@@ -15,6 +15,9 @@
  */
 package me.xiaopan.easy.network.android.http.headers;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+
 public class ContentLength extends HttpHeader{
 	/**
 	 * 名字
@@ -61,5 +64,14 @@ public class ContentLength extends HttpHeader{
 
 	public void setLength(long length) {
 		this.length = length;
+	}
+	
+	public static ContentLength getContentLength(HttpResponse httpResponse){
+		Header[] contentTypeString = httpResponse.getHeaders(ContentLength.NAME);
+		if(contentTypeString.length > 0){
+			return new ContentLength(contentTypeString[0].getValue());
+		}else{
+			return null;
+		}
 	}
 }

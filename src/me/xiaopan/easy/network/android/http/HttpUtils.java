@@ -32,7 +32,7 @@ public class HttpUtils {
 	 * @return
 	 */
 	public static final String getResponseCharset(HttpResponse httpResponse){
-		ContentType contentType = HttpHeaderUtils.getContentType(httpResponse);
+		ContentType contentType = ContentType.getContentType(httpResponse);
 		if(contentType != null){
 			return contentType.getCharset(EasyNetwork.CHARSET_NAME_UTF8);
 		}else{

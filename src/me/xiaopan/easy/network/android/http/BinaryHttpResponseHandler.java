@@ -70,5 +70,4 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
 	public abstract void onStart();
 	public abstract void onSuccess(byte[] binaryData);
 	public abstract void onFailure(Throwable throwable);
-	public abstract void onEnd();
 }

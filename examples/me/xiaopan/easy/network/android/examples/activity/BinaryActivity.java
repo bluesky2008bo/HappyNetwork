@@ -45,17 +45,13 @@ public class BinaryActivity extends Activity {
 			@Override
 			public void onSuccess(byte[] binaryData) {
 				((ImageView) findViewById(R.id.image1)).setImageBitmap(BitmapFactory.decodeByteArray(binaryData, 0, binaryData.length));
+				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 			
 			@Override
 			public void onFailure(Throwable throwable) {
 				Toast.makeText(getBaseContext(), "失败了，信息："+throwable.getMessage(), Toast.LENGTH_LONG).show();
 				finish();
-			}
-			
-			@Override
-			public void onEnd() {
-				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 		});
 		

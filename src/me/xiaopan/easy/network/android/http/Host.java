@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 主机地址
+ * 用于配制请求地址的主机部分，例如："http://baidu.com/index.jsp"中的"http://baidu.com"
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

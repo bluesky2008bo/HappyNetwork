@@ -9,7 +9,7 @@ import me.xiaopan.easy.java.util.StringUtils;
 import org.apache.http.Header;
 
 /**
- * Http Get请求
+ * Http Delete请求
  * Created by XIAOPAN on 13-11-23.
  */
 public class HttpDeleteRequest {

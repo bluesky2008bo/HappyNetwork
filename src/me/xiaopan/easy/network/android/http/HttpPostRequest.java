@@ -14,6 +14,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 
 /**
+ * Http Post请求
  * Created by XIAOPAN on 13-11-24.
  */
 public class HttpPostRequest {

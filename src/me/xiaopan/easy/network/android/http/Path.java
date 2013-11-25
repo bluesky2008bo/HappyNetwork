@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 路径
+ * 用于配制请求地址的路径部分，例如："http://baidu.com/index.jsp"中的"index.jsp"
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

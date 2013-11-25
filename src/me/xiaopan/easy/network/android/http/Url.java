@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Url地址
+ * 请求地址，其相当于@{@link Host}+"/"+@{@link Path}，如果请求对象上有此注解并且值也不为过空，就直接使用此注解的值作为请求地址，而不会再去解析@{@link Host}和@{@link Path}了
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

@@ -17,8 +17,8 @@
 package me.xiaopan.easy.network.android.examples.net.request;
 
 import me.xiaopan.easy.network.android.examples.net.BaseRequest;
-import me.xiaopan.easy.network.android.http.Key;
 import me.xiaopan.easy.network.android.http.Param;
+import me.xiaopan.easy.network.android.http.ParamName;
 import me.xiaopan.easy.network.android.http.Url;
 
 import com.google.gson.annotations.Expose;
@@ -47,7 +47,7 @@ public class BaiduSearchRequest extends BaseRequest {
 	@Param
 	public String rsv_sug4 = "481";
 	@Param
-	@Key("wd")
+	@ParamName("wd")
 	public String keyword;
 	
 	/**

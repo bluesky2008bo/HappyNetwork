@@ -20,6 +20,9 @@ import java.util.Map;
 
 import me.xiaopan.easy.java.util.StringUtils;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+
 public class ContentType extends HttpHeader{
 	/**
 	 * 名字
@@ -115,6 +118,15 @@ public class ContentType extends HttpHeader{
 					setCharset(strs[1]);
 				}
 			}
+		}
+	}
+	
+	public static ContentType getContentType(HttpResponse httpResponse){
+		Header[] contentTypeString = httpResponse.getHeaders(ContentType.NAME);
+		if(contentTypeString.length > 0){
+			return new ContentType(contentTypeString[0].getValue());
+		}else{
+			return null;
 		}
 	}
 	

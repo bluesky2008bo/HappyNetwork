@@ -124,7 +124,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void execute(Context context, HttpUriRequest httpRequest, HttpResponseHandler httpResponseHandler) {
-        execute(context, httpRequest, httpResponseHandler);
+        execute(context, httpRequest, null, httpResponseHandler);
     }
 
     /**

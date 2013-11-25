@@ -12,7 +12,7 @@ import me.xiaopan.easy.java.util.StringUtils;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 请求解析器，用于解析继承与Request的请求对象
+ * 请求解析器，用于解析继承于Request的请求对象
  * Created by XIAOPAN on 13-11-24.
  */
 public class RequestParser {
@@ -114,7 +114,7 @@ public class RequestParser {
      * @return
      */
     public static final String getParamKey(Field field){
-        Key key = field.getAnnotation(Key.class);
+        ParamName key = field.getAnnotation(ParamName.class);
         if(key != null && StringUtils.isNotEmpty(key.value())){
             return key.value();
         }else{

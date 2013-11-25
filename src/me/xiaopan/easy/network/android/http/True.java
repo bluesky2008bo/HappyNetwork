@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 当为true时的参数值
+ * 当标有此注解的boolean类型的字段的值为true时，将会使用此注解的值作为请求参数的值
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
