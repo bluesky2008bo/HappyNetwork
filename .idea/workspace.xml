@@ -27,72 +27,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cf794b77-7bc3-4123-95a2-db149dc3597c" name="Default" comment="fasfsdafsadfsadf&#10;">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/adapter/ActivityAdapter.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/adapter/ActivityAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/AddRequestHeaderRequestInterceptor.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/AddRequestHeaderRequestInterceptor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/BaseRequest.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/BaseRequest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BeijingWeatherRequest.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BeijingWeatherRequest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/BinaryActivity.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/BinaryActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/BinaryHttpResponseHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/BinaryHttpResponseHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/BitmapHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/BitmapHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/BitmapSoftReferenceCacher.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/BitmapSoftReferenceCacher.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Configuration.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Configuration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/Configuration.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/Configuration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/headers/ContentType.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/headers/ContentType.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/DownloadImageAsyncTask.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/DownloadImageAsyncTask.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/EasyHttpClient.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/EasyHttpClient.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/GzipProcessRequestInterceptor.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/GzipProcessRequestInterceptor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/GzipProcessResponseInterceptor.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/GzipProcessResponseInterceptor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Headers.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Headers.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpDeleteRequest.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpDeleteRequest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpGetRequest.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpGetRequest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPostRequest.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPostRequest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPutRequest.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPutRequest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpRequestRunnable.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpRequestRunnable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpUtils.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/adapter/ImageAdapter.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/adapter/ImageAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageFragment.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageGalleryFragment.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageGalleryFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageGridFragment.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageGridFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageListFragment.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageListFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/ImageLoader.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/ImageLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/ImageLoaderActivity.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/ImageLoaderActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/InflatingEntity.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/InflatingEntity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/JsonActivity.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/JsonActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/JsonHttpResponseHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/JsonHttpResponseHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/LoadRequest.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/LoadRequest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/LoadRunable.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/LoadRunable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/MainActivity.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Method.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Method.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/MyApplication.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/MyApplication.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/PersistentCookieStore.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/PersistentCookieStore.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/PixelsBitmapHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/PixelsBitmapHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/QiuBaiRequest.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/QiuBaiRequest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/RequestObjectActivity.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/RequestObjectActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParams.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParams.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParser.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpResponseHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpResponseHandler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/ResultHandleRunnable.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/ResultHandleRunnable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RetryHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RetryHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/RoundedBitmapHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/RoundedBitmapHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/SerializableCookie.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/SerializableCookie.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/SimpleMultipartEntity.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/SimpleMultipartEntity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/StringActivity.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/StringActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/StringHttpResponseHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/StringHttpResponseHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/adapter/TitleFragmentPagerAdapter.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/adapter/TitleFragmentPagerAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/beans/Weather.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/beans/Weather.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/WeatherRequest.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/WeatherRequest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/activity_list.xml" afterPath="$PROJECT_DIR$/res/layout/activity_list.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/list.xml" afterPath="$PROJECT_DIR$/res/layout/list.xml" />
     </list>
-    <list id="01419a88-55e4-4bb3-af2a-11ae69a935f5" name="New changelist" comment="New changelist">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/source/buildConfig/debug/me/xiaopan/easy/network/android/BuildConfig.java" afterPath="$PROJECT_DIR$/build/source/buildConfig/debug/me/xiaopan/easy/network/android/BuildConfig.java" />
-    </list>
-    <list id="c49cd9fd-f573-4e88-9b2d-11264ce1436c" name="Failed commit: Default" comment="&#10;# Please enter the commit message for your changes. Lines starting&#10;# with '#' will be ignored, and an empty message aborts the commit.&#10;# On branch master&#10;# Changes to be committed:&#10;#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)&#10;#&#10;#&#9;modified:   AndroidManifest.xml&#10;#&#10;">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BaiduSearchRequest.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BaiduSearchRequest.java" />
-    </list>
+    <list id="01419a88-55e4-4bb3-af2a-11ae69a935f5" name="New changelist" comment="New changelist" />
+    <list id="c49cd9fd-f573-4e88-9b2d-11264ce1436c" name="Failed commit: Default" comment="&#10;# Please enter the commit message for your changes. Lines starting&#10;# with '#' will be ignored, and an empty message aborts the commit.&#10;# On branch master&#10;# Changes to be committed:&#10;#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)&#10;#&#10;#&#9;modified:   AndroidManifest.xml&#10;#&#10;" />
     <ignored path="EasyNetworkForAndroid.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BaiduSearchRequest.java" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -570,8 +512,6 @@
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/CacheResponse.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/ResponseCache.java" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpRequestRunnable.java" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java" />
         <option value="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/QiuBaiRequest.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/EasyHttpClient.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/RequestName.java" />
@@ -585,6 +525,9 @@
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/BinaryHttpResponseHandler.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/JsonHttpResponseHandler.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/StringHttpResponseHandler.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpResponseHandler.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpRequestRunnable.java" />
       </list>
     </option>
   </component>
@@ -660,7 +603,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -679,27 +621,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EasyNetworkForAndroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EasyNetworkForAndroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="build" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="source" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -767,19 +692,6 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method />
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -805,6 +717,19 @@
       <envs />
       <properties />
       <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -1179,21 +1104,6 @@
         <state line="247" column="53" selection-start="7026" selection-end="7026" vertical-scroll-proportion="0.0" vertical-offset="4230" max-vertical-offset="5104" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpRequestRunnable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="151" column="7" selection-start="5946" selection-end="5946" vertical-scroll-proportion="0.39855072" vertical-offset="2112" max-vertical-offset="4994" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="92" column="9" selection-start="2319" selection-end="2319" vertical-scroll-proportion="0.5552913" vertical-offset="1381" max-vertical-offset="2222" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpResponseHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="5" selection-start="1154" selection-end="1154" vertical-scroll-proportion="0.4842995" vertical-offset="61" max-vertical-offset="924" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParser.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="42" column="5" selection-start="1409" selection-end="1409" vertical-scroll-proportion="0.549346" vertical-offset="0" max-vertical-offset="4576">
@@ -1258,9 +1168,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/BinaryActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="49" column="13" selection-start="1886" selection-end="1886" vertical-scroll-proportion="0.7596685" vertical-offset="0" max-vertical-offset="1496">
-          <folding />
-        </state>
+        <state line="49" column="13" selection-start="1886" selection-end="1886" vertical-scroll-proportion="0.7596685" vertical-offset="0" max-vertical-offset="1496" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/BinaryHttpResponseHandler.java">
@@ -1276,6 +1184,38 @@
     <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/StringHttpResponseHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="69" column="200" selection-start="2470" selection-end="2470" vertical-scroll-proportion="0.42265195" vertical-offset="618" max-vertical-offset="1342" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="3" selection-start="135" selection-end="135" vertical-scroll-proportion="0.12263099" vertical-offset="0" max-vertical-offset="3036">
+          <folding>
+            <element signature="e#714#715#0" expanded="false" />
+            <element signature="e#753#754#0" expanded="false" />
+            <element signature="e#714#715#0" expanded="false" />
+            <element signature="e#753#754#0" expanded="false" />
+            <element signature="e#929#930#0" expanded="false" />
+            <element signature="e#985#986#0" expanded="false" />
+            <element signature="e#929#930#0" expanded="false" />
+            <element signature="e#985#986#0" expanded="false" />
+            <element signature="e#1664#1665#0" expanded="false" />
+            <element signature="e#1718#1719#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpRequestRunnable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="0" selection-start="1545" selection-end="1545" vertical-scroll-proportion="0.09954751" vertical-offset="0" max-vertical-offset="5104">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpResponseHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="22" selection-start="1232" selection-end="1232" vertical-scroll-proportion="0.5769231" vertical-offset="62" max-vertical-offset="968">
+          <folding />
+        </state>
       </provider>
     </entry>
   </component>

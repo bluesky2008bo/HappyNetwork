@@ -38,10 +38,12 @@ public abstract class HttpResponseHandler{
     /**
      * 处理响应
      * @param httpResponse Http响应
+     * @param isCache 是否是缓存数据
+     * @param isRefreshCacheAndCallback 是否还要刷新本地缓存并回调
      * @throws Throwable 当发生异常时会进入exception()方法
      */
-    public abstract void handleResponse(HttpResponse httpResponse) throws Throwable;
-    
+    public abstract void handleResponse(HttpResponse httpResponse, boolean isCache, boolean isRefreshCacheAndCallback) throws Throwable;
+
     /**
      * 异常
      * @param e

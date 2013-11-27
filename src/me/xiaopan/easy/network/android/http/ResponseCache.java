@@ -16,6 +16,11 @@ public class ResponseCache {
     private boolean refreshCache;
 
     /**
+     * 当刷新本地缓存完成的时候是否再次回调HttpResponseHandler.handleResponse()
+     */
+    private boolean refreshCallback;
+
+    /**
      * 这是一个私有的构造函数，主要是为了让你使用其Builder来创建ResponseCache
      */
     private ResponseCache(){}
@@ -50,6 +55,22 @@ public class ResponseCache {
      */
     public void setRefreshCache(boolean refreshCache) {
         this.refreshCache = refreshCache;
+    }
+
+    /**
+     * 当刷新本地缓存完成的时候是否再次回调HttpResponseHandler.handleResponse()
+     * @return
+     */
+    public boolean isRefreshCallback() {
+        return refreshCallback;
+    }
+
+    /**
+     * 设置当刷新本地缓存完成的时候是否再次回调HttpResponseHandler.handleResponse()
+     * @param refreshCallback
+     */
+    public void setRefreshCallback(boolean refreshCallback) {
+        this.refreshCallback = refreshCallback;
     }
 
     /**
@@ -89,6 +110,16 @@ public class ResponseCache {
          */
         public Builder setRefreshCache(boolean refreshCache) {
             responseCache.setRefreshCache(refreshCache);
+            return this;
+        }
+
+        /**
+         * 设置当刷新本地缓存完成的时候是否再次回调HttpResponseHandler.handleResponse()
+         * @param refreshCallback
+         * @return
+         */
+        public Builder setRefreshCallback(boolean refreshCallback) {
+            responseCache.setRefreshCallback(refreshCallback);
             return this;
         }
 
