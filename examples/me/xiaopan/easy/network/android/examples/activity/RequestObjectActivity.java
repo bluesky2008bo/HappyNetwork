@@ -18,6 +18,7 @@ package me.xiaopan.easy.network.android.examples.activity;
 
 import me.xiaopan.easy.network.android.R;
 import me.xiaopan.easy.network.android.examples.net.request.BaiduSearchRequest;
+import me.xiaopan.easy.network.android.examples.net.request.QiuBaiRequest;
 import me.xiaopan.easy.network.android.examples.util.Utils;
 import me.xiaopan.easy.network.android.examples.util.WebViewManager;
 import me.xiaopan.easy.network.android.http.EasyHttpClient;
@@ -61,7 +62,7 @@ public class RequestObjectActivity extends Activity {
 	
 	@SuppressLint("HandlerLeak")
 	private void search(String keyword){
-		EasyHttpClient.getInstance().execute(getBaseContext(), new BaiduSearchRequest(keyword), new StringHttpResponseHandler(){
+		EasyHttpClient.getInstance().execute(getBaseContext(), new QiuBaiRequest(), new StringHttpResponseHandler(){
 			@Override
 			public void onStart() {
 				searchButton.setEnabled(false);

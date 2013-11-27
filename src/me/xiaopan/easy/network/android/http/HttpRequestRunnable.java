@@ -68,8 +68,6 @@ public class HttpRequestRunnable implements Runnable {
     			httpResponseHandler.start();
     		}
 
-            easyHttpClient.log(httpUriRequest.getParams().toString());
-
             try {
     			if(!Thread.currentThread().isInterrupted()) {
     				String uri = httpUriRequest.getURI().toString();

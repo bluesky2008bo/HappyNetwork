@@ -218,6 +218,7 @@ public class EasyHttpClient {
 
             HttpEntity httpEntity = httpRequest.getHttpEntity();
             if(httpEntity == null && httpRequest.getParams() != null){
+                log(httpRequest.getName() + " 请求实体：" + httpRequest.getParams().toString());
                 httpEntity = httpRequest.getParams().getEntity();
             }
             if(httpEntity != null){
@@ -268,6 +269,7 @@ public class EasyHttpClient {
 
             HttpEntity httpEntity = httpRequest.getHttpEntity();
             if(httpEntity == null && httpRequest.getParams() != null){
+                log(httpRequest.getName() + " 请求实体：" + httpRequest.getParams().toString());
                 httpEntity = httpRequest.getParams().getEntity();
             }
             if(httpEntity != null){
