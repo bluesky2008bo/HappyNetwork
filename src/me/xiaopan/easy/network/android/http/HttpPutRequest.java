@@ -26,7 +26,7 @@ public class HttpPutRequest {
     private HttpEntity httpEntity;  //Http请求体
 
     private HttpPutRequest(){
-        setName(DateTimeUtils.getCurrentDateTimeByDefultFormat());
+        setName(DateTimeUtils.getCurrentDateTimeByDefultFormat() + " PUT ");
     }
 
     public String getName() {
@@ -245,6 +245,10 @@ public class HttpPutRequest {
 
         public Builder setRequest(Request request){
         	RequestParser requestParser = new RequestParser(request);
+            String requestName = requestParser.getName();
+            if(StringUtils.isNotEmpty(requestName)){
+                httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
+            }
         	String url = requestParser.getUrl();
             if(StringUtils.isEmpty(url)){
                 throw new IllegalArgumentException("你必须在Request上使有Url注解或者Host加Path注解指定请求地址");

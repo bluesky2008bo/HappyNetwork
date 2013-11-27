@@ -101,12 +101,13 @@ public class EasyHttpClient {
     /**
      * 执行请求
      * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param name 请求名称，在后台输出log的时候会输出此名称方便区分请求
      * @param httpRequest http请求对象
      * @param responseCache 响应缓存配置
      * @param httpResponseHandler Http响应处理器
      */
-    public void execute(Context context, HttpUriRequest httpRequest, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
-        Future<?> request = EasyNetwork.getThreadPool().submit(new HttpRequestRunnable(context, this, httpRequest, responseCache, httpResponseHandler));
+    public void execute(Context context, String name, HttpUriRequest httpRequest, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
+        Future<?> request = EasyNetwork.getThreadPool().submit(new HttpRequestRunnable(context, this, name, httpRequest, responseCache, httpResponseHandler));
         if(context != null) {
             List<WeakReference<Future<?>>> requestList = requestMap.get(context);
             if(requestList == null) {
@@ -124,7 +125,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void execute(Context context, HttpUriRequest httpRequest, HttpResponseHandler httpResponseHandler) {
-        execute(context, httpRequest, null, httpResponseHandler);
+        execute(context, null, httpRequest, null, httpResponseHandler);
     }
 
     /**
@@ -173,7 +174,7 @@ public class EasyHttpClient {
         if(StringUtils.isNotEmpty(httpRequest.getUrl())){
             HttpGet httGet = new HttpGet(HttpUtils.getUrlByParams(httpRequest.getUrl(), httpRequest.getParams()));
             HttpUtils.appendHeaders(httGet, httpRequest.getHeaders());
-            execute(context, httGet, httpRequest.getResponseCache(), httpResponseHandler);
+            execute(context, httpRequest.getName(), httGet, httpRequest.getResponseCache(), httpResponseHandler);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
@@ -223,7 +224,7 @@ public class EasyHttpClient {
                 httPost.setEntity(httpEntity);
             }
 
-            execute(context, httPost, httpRequest.getResponseCache(), httpResponseHandler);
+            execute(context, httpRequest.getName(), httPost, httpRequest.getResponseCache(), httpResponseHandler);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
@@ -262,18 +263,18 @@ public class EasyHttpClient {
      */
     public void put(Context context, HttpPutRequest httpRequest, HttpResponseHandler httpResponseHandler){
         if(StringUtils.isNotEmpty(httpRequest.getUrl())){
-            HttpPut httPost = new HttpPut(httpRequest.getUrl());
-            HttpUtils.appendHeaders(httPost, httpRequest.getHeaders());
+            HttpPut httPut = new HttpPut(httpRequest.getUrl());
+            HttpUtils.appendHeaders(httPut, httpRequest.getHeaders());
 
             HttpEntity httpEntity = httpRequest.getHttpEntity();
             if(httpEntity == null && httpRequest.getParams() != null){
                 httpEntity = httpRequest.getParams().getEntity();
             }
             if(httpEntity != null){
-                httPost.setEntity(httpEntity);
+                httPut.setEntity(httpEntity);
             }
 
-            execute(context, httPost, httpRequest.getResponseCache(), httpResponseHandler);
+            execute(context, httpRequest.getName(), httPut, httpRequest.getResponseCache(), httpResponseHandler);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
@@ -312,9 +313,9 @@ public class EasyHttpClient {
      */
     public void delete(Context context, HttpDeleteRequest httpRequest, HttpResponseHandler httpResponseHandler) {
         if(StringUtils.isNotEmpty(httpRequest.getUrl())){
-            HttpDelete httGet = new HttpDelete(httpRequest.getUrl());
-            HttpUtils.appendHeaders(httGet, httpRequest.getHeaders());
-            execute(context, httGet, httpRequest.getResponseCache(), httpResponseHandler);
+            HttpDelete httDelete = new HttpDelete(httpRequest.getUrl());
+            HttpUtils.appendHeaders(httDelete, httpRequest.getHeaders());
+            execute(context, httpRequest.getName(), httDelete, httpRequest.getResponseCache(), httpResponseHandler);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("你必须指定url。你有两种方式来指定url，一是使用HttpGetRequest.Builder.setUrl()，而是在Request上使有Url注解或者Host加Path注解");
             illegalArgumentException.printStackTrace();

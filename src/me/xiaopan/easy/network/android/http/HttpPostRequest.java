@@ -26,7 +26,7 @@ public class HttpPostRequest {
     private HttpEntity httpEntity;  //Http请求体
 
     private HttpPostRequest(){
-        setName(DateTimeUtils.getCurrentDateTimeByDefultFormat());
+        setName(DateTimeUtils.getCurrentDateTimeByDefultFormat() + " POST ");
     }
 
     public String getName() {
@@ -245,9 +245,13 @@ public class HttpPostRequest {
 
         public Builder setRequest(Request request){
         	RequestParser requestParser = new RequestParser(request);
+            String requestName = requestParser.getName();
+            if(StringUtils.isNotEmpty(requestName)){
+                httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
+            }
         	String url = requestParser.getUrl();
             if(StringUtils.isEmpty(url)){
-                throw new IllegalArgumentException("你必须在Request上使有Url注解或者Host加Path注解指定请求地址");
+                throw new IllegalArgumentException("你必须在Request上使用Url注解或者Host加Path注解指定请求地址");
             }
             httpRequest.setUrl(url);
             httpRequest.setParams(requestParser.getParams(httpRequest.getParams()));

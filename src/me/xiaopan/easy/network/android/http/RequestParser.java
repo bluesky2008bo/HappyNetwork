@@ -30,6 +30,11 @@ public class RequestParser {
     	this.request = request;
     }
 
+    public String getName(){
+        RequestName name = request.getClass().getAnnotation(RequestName.class);
+        return (name != null && StringUtils.isNotEmpty(name.value()))?name.value():null;
+    }
+
     /**
      * 获取URL
      * @return
@@ -171,9 +176,9 @@ public class RequestParser {
      * @return
      */
     public static final String getParamKey(Field field){
-        Param key = field.getAnnotation(Param.class);
-        if(key != null && StringUtils.isNotEmpty(key.value())){
-            return key.value();
+        Param param = field.getAnnotation(Param.class);
+        if(param != null && StringUtils.isNotEmpty(param.value())){
+            return param.value();
         }else{
             return field.getName();
         }
@@ -182,35 +187,30 @@ public class RequestParser {
     /**
      * 通过解析一个请求对象来获取请求地址
      * @param requestClass 请求对象
-     * @return 请求地址
-     * @throws Exception 请求对象上既没有Url注解（或者值为空）也没有Host注解（或者值为空）
+     * @return 请求地址，null：requestClass为null或请求对象上既没有Url注解（或者值为空）也没有Host注解（或者值为空）
      */
-    public static final String getUrl(Class<?> requestClass) throws IllegalArgumentException{
-        if(requestClass != null){
-            /* 优先使用Url注解的值作为请求地址，如果没有Url注解再去用Host和Path注解来组合请求地址 */
-            Url url = requestClass.getAnnotation(Url.class);
-            String urlValue = url != null ? url.value().trim() : null;
-            if(StringUtils.isNotEmpty(urlValue)){
-                return urlValue;
-            }else{
-                /* 如果有Host注解就继续，否则抛异常 */
-                Host host = requestClass.getAnnotation(Host.class);
-                String hostValue = host != null ? host.value().trim() : null;
-                if(StringUtils.isNotEmpty(hostValue)){
-                    /* 如果有Path注解就用Host注解的值拼接上Path注解的值作为请求地址，否则就只使用Host注解的值来作为请求地址 */
-                    Path path = requestClass.getAnnotation(Path.class);
-                    String pathValue = path != null ? path.value().trim() : null;
-                    if(StringUtils.isNotEmpty(pathValue)){
-                        return hostValue + "/" + pathValue;
-                    }else{
-                        return hostValue;
-                    }
-                }else{
-                    return null;
-                }
-            }
+    public static final String getUrl(Class<?> requestClass){
+        /* 优先使用Url注解的值作为请求地址，如果没有Url注解再去用Host和Path注解来组合请求地址 */
+        Url url = requestClass.getAnnotation(Url.class);
+        String urlValue = url != null ? url.value().trim() : null;
+        if(StringUtils.isNotEmpty(urlValue)){
+            return urlValue;
         }else{
-            return null;
+            /* 如果有Host注解就继续，否则抛异常 */
+            Host host = requestClass.getAnnotation(Host.class);
+            String hostValue = host != null ? host.value().trim() : null;
+            if(StringUtils.isNotEmpty(hostValue)){
+                /* 如果有Path注解就用Host注解的值拼接上Path注解的值作为请求地址，否则就只使用Host注解的值来作为请求地址 */
+                Path path = requestClass.getAnnotation(Path.class);
+                String pathValue = path != null ? path.value().trim() : null;
+                if(StringUtils.isNotEmpty(pathValue)){
+                    return hostValue + "/" + pathValue;
+                }else{
+                    return hostValue;
+                }
+            }else{
+                return null;
+            }
         }
     }
 }

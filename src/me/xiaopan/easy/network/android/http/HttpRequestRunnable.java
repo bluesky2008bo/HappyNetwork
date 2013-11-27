@@ -30,6 +30,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
@@ -48,14 +49,16 @@ public class HttpRequestRunnable implements Runnable {
 	private EasyHttpClient easyHttpClient;
     private HttpUriRequest httpUriRequest;  //HttpUri请求
     private HttpResponseHandler httpResponseHandler;    //Http响应处理器
+    private String name;
     private ResponseCache responseCache;    //响应缓存配置
 
-    public HttpRequestRunnable(Context context, EasyHttpClient easyHttpClient, HttpUriRequest request, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
+    public HttpRequestRunnable(Context context, EasyHttpClient easyHttpClient, String name, HttpUriRequest request, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
     	this.context = context;
     	this.easyHttpClient = easyHttpClient;
         this.httpUriRequest = request;
         this.responseCache = responseCache;
         this.httpResponseHandler = httpResponseHandler;
+        this.name = name;
     }
 
     @Override
@@ -64,8 +67,10 @@ public class HttpRequestRunnable implements Runnable {
     		if(httpResponseHandler != null){
     			httpResponseHandler.start();
     		}
-    		
-    		try {
+
+            easyHttpClient.log(httpUriRequest.getParams().toString());
+
+            try {
     			if(!Thread.currentThread().isInterrupted()) {
     				String uri = httpUriRequest.getURI().toString();
     				
@@ -112,7 +117,7 @@ public class HttpRequestRunnable implements Runnable {
      * @throws IOException
      */
     private HttpResponse fromLocalLoad(String uri, File cacheEntityFile, File cacheHeadersFile) throws ClientProtocolException, IOException{
-    	easyHttpClient.log("（本地）请求地址："+uri);
+    	easyHttpClient.log(name + "（本地）请求地址："+uri);
 		try{
 			/* 读取响应头 */
 			Header[] headers = null;
@@ -149,7 +154,7 @@ public class HttpRequestRunnable implements Runnable {
      * @throws IOException
      */
     private HttpResponse fromNetworkLoad(String uri, File cacheEntityFile, File cacheHeadersFile) throws ClientProtocolException, IOException{
-    	easyHttpClient.log("（网络）请求地址："+uri);
+    	easyHttpClient.log(name + "（网络）请求地址："+uri);
     	HttpResponse httpResponse = easyHttpClient.getHttpClient().execute(httpUriRequest, easyHttpClient.getHttpContext());
 		if(responseCache != null && responseCache.isCacheResponse() && httpResponseHandler.isCanCache(httpResponse)){	//如果需要缓存
 			if(me.xiaopan.easy.java.util.FileUtils.createFile(cacheHeadersFile) != null && me.xiaopan.easy.java.util.FileUtils.createFile(cacheEntityFile) != null){
@@ -176,7 +181,7 @@ public class HttpRequestRunnable implements Runnable {
 					inputStream.close();
 					fileOutputStream.flush();
 					fileOutputStream.close();
-					
+
 					//将响应实体替换为本地文件
 					httpResponse.setEntity(new FileEntity(cacheEntityFile, "text/plan"));
 				}catch(IOException exception){

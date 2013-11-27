@@ -25,4 +25,5 @@
         <activity android:name="me.xiaopan.easy.network.android.examples.activity.RequestObjectActivity" android:label="@string/activityTitle_requestObject"/>
         <activity android:name="me.xiaopan.easy.network.android.examples.activity.ImageLoaderActivity" android:label="@string/activityTitle_imageLoader"/>
     </application>
+	
 </manifest>
