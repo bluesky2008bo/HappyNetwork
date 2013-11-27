@@ -15,6 +15,23 @@
  */
 package me.xiaopan.easy.network.android.http;
 
+import android.content.Context;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.BasicStatusLine;
+import org.apache.http.message.BufferedHeader;
+import org.apache.http.util.CharArrayBuffer;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,24 +42,6 @@ import java.util.GregorianCalendar;
 
 import me.xiaopan.easy.android.util.FileUtils;
 import me.xiaopan.easy.java.util.StringUtils;
-
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.FileEntity;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicStatusLine;
-import org.apache.http.message.BufferedHeader;
-import org.apache.http.util.CharArrayBuffer;
-
-import android.content.Context;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 public class HttpRequestRunnable implements Runnable {
 	private Context context;
@@ -75,14 +74,14 @@ public class HttpRequestRunnable implements Runnable {
     				/* 判断是否需要从本地加载 */
     				boolean fromlocalLoad = false;
     				File cacheEntityFile = null, cacheHeadersFile = null;	//缓存相应实体的文件,缓存响应头的文件
-    				if(responseCache != null && responseCache.isCacheResponse()){
+    				if(responseCache != null){
     					String id = StringUtils.MD5(uri);
     					cacheEntityFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".entity");
     					cacheHeadersFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".headers");
     					fromlocalLoad = cacheEntityFile.exists() && cacheHeadersFile.exists();
-    					if(fromlocalLoad && responseCache.getCachePeriodOfValidity() > 0){
+    					if(fromlocalLoad && responseCache.getPeriodOfValidity() > 0){
                             Calendar calendar = new GregorianCalendar();
-                            calendar.add(Calendar.MILLISECOND, -responseCache.getCachePeriodOfValidity());
+                            calendar.add(Calendar.MILLISECOND, -responseCache.getPeriodOfValidity());
                             fromlocalLoad = calendar.getTimeInMillis() < cacheEntityFile.lastModified();
                         }
     				}
@@ -154,7 +153,7 @@ public class HttpRequestRunnable implements Runnable {
     private HttpResponse fromNetworkLoad(String uri, File cacheEntityFile, File cacheHeadersFile) throws ClientProtocolException, IOException{
     	easyHttpClient.log(name + "（网络）请求地址："+uri);
     	HttpResponse httpResponse = easyHttpClient.getHttpClient().execute(httpUriRequest, easyHttpClient.getHttpContext());
-		if(responseCache != null && responseCache.isCacheResponse() && httpResponseHandler.isCanCache(httpResponse)){	//如果需要缓存
+		if(responseCache != null && httpResponseHandler.isCanCache(httpResponse)){	//如果需要缓存
 			if(me.xiaopan.easy.java.util.FileUtils.createFile(cacheHeadersFile) != null && me.xiaopan.easy.java.util.FileUtils.createFile(cacheEntityFile) != null){
 				InputStream inputStream = null;
 				FileOutputStream fileOutputStream = null;

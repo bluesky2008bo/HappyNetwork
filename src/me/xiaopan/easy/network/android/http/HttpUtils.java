@@ -15,15 +15,15 @@
  */
 package me.xiaopan.easy.network.android.http;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpRequestBase;
+
 import java.util.List;
 
 import me.xiaopan.easy.java.util.StringUtils;
 import me.xiaopan.easy.network.android.EasyNetwork;
 import me.xiaopan.easy.network.android.http.headers.ContentType;
-
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpRequestBase;
 
 public class HttpUtils {
 	/**

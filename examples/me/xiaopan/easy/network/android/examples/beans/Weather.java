@@ -15,9 +15,9 @@
  */
 package me.xiaopan.easy.network.android.examples.beans;
 
-import me.xiaopan.easy.network.android.http.ResponseBodyKey;
-
 import com.google.gson.annotations.Expose;
+
+import me.xiaopan.easy.network.android.http.annotation.ResponseBodyKey;
 
 /**
  * 天气

@@ -15,18 +15,8 @@
  */
 package me.xiaopan.easy.network.android.http;
 
-import java.lang.ref.WeakReference;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.concurrent.Future;
-
-import me.xiaopan.easy.java.util.StringUtils;
-import me.xiaopan.easy.network.android.EasyNetwork;
-import me.xiaopan.easy.network.android.http.interceptor.AddRequestHeaderRequestInterceptor;
-import me.xiaopan.easy.network.android.http.interceptor.GzipProcessRequestInterceptor;
-import me.xiaopan.easy.network.android.http.interceptor.GzipProcessResponseInterceptor;
+import android.content.Context;
+import android.util.Log;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpVersion;
@@ -48,8 +38,20 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.SyncBasicHttpContext;
 
-import android.content.Context;
-import android.util.Log;
+import java.lang.ref.WeakReference;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.concurrent.Future;
+
+import me.xiaopan.easy.java.util.StringUtils;
+import me.xiaopan.easy.network.android.EasyNetwork;
+import me.xiaopan.easy.network.android.http.annotation.Method;
+import me.xiaopan.easy.network.android.http.enums.MethodType;
+import me.xiaopan.easy.network.android.http.interceptor.AddRequestHeaderRequestInterceptor;
+import me.xiaopan.easy.network.android.http.interceptor.GzipProcessRequestInterceptor;
+import me.xiaopan.easy.network.android.http.interceptor.GzipProcessResponseInterceptor;
 
 /**
  * Http客户端，所有的Http操作都将由此类来异步完成，同时此类提供一个单例模式来方便直接使用

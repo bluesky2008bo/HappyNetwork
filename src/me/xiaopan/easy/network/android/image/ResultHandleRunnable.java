@@ -16,10 +16,10 @@
 
 package me.xiaopan.easy.network.android.image;
 
-import java.util.Iterator;
-
 import android.view.animation.Animation;
 import android.widget.ImageView;
+
+import java.util.Iterator;
 
 public class ResultHandleRunnable implements Runnable {
 	private ImageLoader imageLoader;

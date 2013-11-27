@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AndroidConfiguredLogFilters">
+    <filters>
+      <filter>
+        <option name="logLevel" value="verbose" />
+        <option name="logMessagePattern" value="" />
+        <option name="logTagPattern" value="EasyHttpClient" />
+        <option name="name" value="EasyHttpClient" />
+        <option name="packageNamePattern" value="" />
+        <option name="pid" value="" />
+      </filter>
+    </filters>
+  </component>
   <component name="AndroidLayoutPreviewToolWindow">
     <option name="state">
       <GlobalState />
@@ -10,37 +22,77 @@
       <config />
     </shared>
   </component>
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="EasyHttpClient" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="cf794b77-7bc3-4123-95a2-db149dc3597c" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Headers.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpDeleteRequest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpGetRequest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPostRequest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPutRequest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Key.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Method.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/MethodType.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Param.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestName.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java" />
-      <change type="DELETED" beforePath="G:\Workspace\EasyNetworkForAndroid\src\me\xiaopan\easy\network\android\http\Get.java" afterPath="" />
-      <change type="DELETED" beforePath="G:\Workspace\EasyNetworkForAndroid\src\me\xiaopan\easy\network\android\http\Post.java" afterPath="" />
+    <list default="true" id="cf794b77-7bc3-4123-95a2-db149dc3597c" name="Default" comment="fasfsdafsadfsadf&#10;">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/adapter/ActivityAdapter.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/adapter/ActivityAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/AddRequestHeaderRequestInterceptor.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/AddRequestHeaderRequestInterceptor.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/BaseRequest.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/BaseRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BeijingWeatherRequest.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BeijingWeatherRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/BinaryActivity.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/BinaryActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/BinaryHttpResponseHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/BinaryHttpResponseHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/BitmapHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/BitmapHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/BitmapSoftReferenceCacher.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/BitmapSoftReferenceCacher.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Configuration.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Configuration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/Configuration.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/Configuration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/headers/ContentType.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/headers/ContentType.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/DownloadImageAsyncTask.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/DownloadImageAsyncTask.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/EasyHttpClient.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/EasyHttpClient.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/EasyNetwork.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/EasyNetwork.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/False.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/False.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/GzipProcessRequestInterceptor.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/GzipProcessRequestInterceptor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/GzipProcessResponseInterceptor.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/GzipProcessResponseInterceptor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Headers.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Headers.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpDeleteRequest.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpDeleteRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpGetRequest.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpGetRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPostRequest.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPostRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPutRequest.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPutRequest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpRequestRunnable.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpRequestRunnable.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpUtils.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/adapter/ImageAdapter.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/adapter/ImageAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageFragment.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageGalleryFragment.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageGalleryFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageGridFragment.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageGridFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageListFragment.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/fragment/ImageListFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/ImageLoader.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/ImageLoader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/ImageLoaderActivity.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/ImageLoaderActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/InflatingEntity.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/InflatingEntity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/JsonActivity.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/JsonActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/True.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/True.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/JsonHttpResponseHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/JsonHttpResponseHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/LoadRequest.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/LoadRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/LoadRunable.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/LoadRunable.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/MainActivity.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/MainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Method.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Method.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/MyApplication.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/MyApplication.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/PersistentCookieStore.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/PersistentCookieStore.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/PixelsBitmapHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/PixelsBitmapHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/QiuBaiRequest.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/QiuBaiRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/RequestObjectActivity.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/RequestObjectActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParams.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParams.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParser.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/ResultHandleRunnable.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/ResultHandleRunnable.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RetryHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RetryHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/RoundedBitmapHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/RoundedBitmapHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/SerializableCookie.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/SerializableCookie.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/SimpleMultipartEntity.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/SimpleMultipartEntity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/StringActivity.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/StringActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/StringHttpResponseHandler.java" afterPath="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/StringHttpResponseHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/adapter/TitleFragmentPagerAdapter.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/adapter/TitleFragmentPagerAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/beans/Weather.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/beans/Weather.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/WeatherRequest.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/WeatherRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/activity_list.xml" afterPath="$PROJECT_DIR$/res/layout/activity_list.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/list.xml" afterPath="$PROJECT_DIR$/res/layout/list.xml" />
     </list>
-    <list id="01419a88-55e4-4bb3-af2a-11ae69a935f5" name="New changelist" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/source/buildConfig/debug/me/xiaopan/easy/network/android/BuildConfig.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/source/r/debug/me/xiaopan/easy/network/android/R.java" />
+    <list id="01419a88-55e4-4bb3-af2a-11ae69a935f5" name="New changelist" comment="New changelist">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/source/buildConfig/debug/me/xiaopan/easy/network/android/BuildConfig.java" afterPath="$PROJECT_DIR$/build/source/buildConfig/debug/me/xiaopan/easy/network/android/BuildConfig.java" />
+    </list>
+    <list id="c49cd9fd-f573-4e88-9b2d-11264ce1436c" name="Failed commit: Default" comment="&#10;# Please enter the commit message for your changes. Lines starting&#10;# with '#' will be ignored, and an empty message aborts the commit.&#10;# On branch master&#10;# Changes to be committed:&#10;#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)&#10;#&#10;#&#9;modified:   AndroidManifest.xml&#10;#&#10;">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BaiduSearchRequest.java" afterPath="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BaiduSearchRequest.java" />
     </list>
     <ignored path="EasyNetworkForAndroid.iws" />
     <ignored path=".idea/workspace.xml" />
+    <file path="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BaiduSearchRequest.java" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,6 +149,23 @@
       </breakpoint>
     </breakpoint_any>
     <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint url="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParser.java" line="171" class="me.xiaopan.easy.network.android.http.RequestParser" package="me.xiaopan.easy.network.android.http">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </line_breakpoints>
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -461,7 +530,8 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="1385045139484" />
+        <entry key="$PROJECT_DIR$" value="1385534423502" />
+        <entry key="D:\Workspace\EasyNetworkForAndroid" value="1385534423502" />
         <entry key="G:\Workspace\EasyNetworkForAndroid" value="1385045139484" />
       </map>
     </option>
@@ -475,30 +545,46 @@
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/image/ImageLoader.java" />
         <option value="$PROJECT_DIR$/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/res/layout/activity_web.xml" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/EasyNetwork.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/HttpGetRequest.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/HttpPutRequest.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestMethod.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Method.java" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/MethodType.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Name.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Post.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/False.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/True.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Cache.java" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpGetRequest.java" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpDeleteRequest.java" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPutRequest.java" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPostRequest.java" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpRequestRunnable.java" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/EasyHttpClient.java" />
         <option value="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/BaseRequest.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Key.java" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Param.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Headers.java" />
-        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParser.java" />
         <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpUtils.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Param.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/MethodType.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParser.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPostRequest.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpGetRequest.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPutRequest.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpDeleteRequest.java" />
+        <option value="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/WeatherRequest.java" />
+        <option value="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" />
+        <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/CacheResponse.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/ResponseCache.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpRequestRunnable.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java" />
+        <option value="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/QiuBaiRequest.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/EasyHttpClient.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/RequestName.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Name.java" />
+        <option value="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BaiduSearchRequest.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Header.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Headers.java" />
+        <option value="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/StringActivity.java" />
+        <option value="$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/RequestObjectActivity.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/EasyNetwork.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/BinaryHttpResponseHandler.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/JsonHttpResponseHandler.java" />
+        <option value="$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/StringHttpResponseHandler.java" />
       </list>
     </option>
   </component>
@@ -506,10 +592,10 @@
     <treeState />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="10" />
-    <option name="y" value="1" />
-    <option name="width" value="1346" />
-    <option name="height" value="727" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -574,6 +660,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -602,40 +689,17 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
+              <option name="myItemId" value="build" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EasyNetworkForAndroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EasyNetworkForAndroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="http" />
+              <option name="myItemId" value="source" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -651,12 +715,14 @@
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
     <property name="recentsLimit" value="5" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="084750b7" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="2.2" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="014994B10101000A" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="AVD_for_4in_WVGA_Nexus_S" />
     <property name="FullScreen" value="false" />
     <property name="project.structure.last.edited" value="Android SDK" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.0" />
+    <property name="LayoutCode.rearrangeEntriesJava" value="false" />
+    <property name="LayoutCode.rearrangeEntries" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -664,6 +730,15 @@
     </key>
   </component>
   <component name="RunManager" selected="Android Application.EasyNetworkForAndroid">
+    <configuration default="true" type="GroovyScriptRunConfiguration" factoryName="Groovy">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
+      <setting name="debug" value="false" />
+      <method />
+    </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
       <module name="" />
       <option name="TESTING_TYPE" value="0" />
@@ -692,6 +767,19 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -717,19 +805,6 @@
       <envs />
       <properties />
       <listeners />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -850,7 +925,15 @@
       <created>1385209344468</created>
       <updated>1385209344468</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="asdfghj">
+      <created>1385522706703</created>
+      <updated>1385522706703</updated>
+    </task>
+    <task id="LOCAL-00004" summary="asdfghj&#10;">
+      <created>1385535179791</created>
+      <updated>1385535179791</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -874,41 +957,41 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="10" y="1" width="1346" height="727" extended-state="0" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924694" sideWeight="0.5" order="17" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32852387" sideWeight="0.5" order="16" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33975482" sideWeight="0.50155765" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26748252" sideWeight="0.5" order="16" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.04895105" sideWeight="0.5" order="18" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33975482" sideWeight="0.50155765" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39935064" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43507215" sideWeight="0.5" order="17" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2406542" sideWeight="0.1252115" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33975482" sideWeight="0.49844238" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33975482" sideWeight="0.49844238" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2538941" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33975482" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.0" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5814361" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33887044" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.512987" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.060606062" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32943925" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924694" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19859813" sideWeight="0.8747885" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32852387" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1984375" sideWeight="0.8747885" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.40031153" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32943925" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21806854" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32869565" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22447917" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32683983" sideWeight="0.5" order="18" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="消息" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="版本控制" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="消息" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="版本控制" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" x="733" y="105" width="330" height="589" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32839313" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="运行" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="调试" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17316018" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
+      <window_info id="运行" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="调试" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -925,457 +1008,274 @@
     </option>
     <MESSAGE value="asdfghjkl" />
     <MESSAGE value="asdfghjkl&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="asdfghjkl&#10;" />
+    <MESSAGE value="&#10;# Please enter the commit message for your changes. Lines starting&#10;# with '#' will be ignored, and an empty message aborts the commit.&#10;# On branch master&#10;# Changes to be committed:&#10;#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)&#10;#&#10;#&#9;modified:   AndroidManifest.xml&#10;#&#10;" />
+    <MESSAGE value="asdfghj" />
+    <MESSAGE value="asdfghj&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="asdfghj&#10;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/res/layout/include_spacing_vertical_large.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="551" />
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/activity_text.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="27" selection-start="417" selection-end="417" vertical-scroll-proportion="0.33587787" vertical-offset="0" max-vertical-offset="524" />
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/activity_web.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="14" selection-start="282" selection-end="282" vertical-scroll-proportion="0.20992367" vertical-offset="0" max-vertical-offset="524" />
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/activity_list.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="14" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="242" />
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/gallery.xml">
-      <provider editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="523" />
-      </provider>
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/include_loading.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="551" />
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/include_shadow_down.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="551" />
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bin/classes/me/xiaopan/easy/network/android/image/ImageLoader.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1320" />
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/sdk/sources/android-19/com/android/volley/Response.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="7" selection-start="2209" selection-end="2209" vertical-scroll-proportion="0.453211" vertical-offset="875" max-vertical-offset="1694" />
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/sdk/sources/android-19/com/android/volley/toolbox/ImageLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="131" column="47" selection-start="5368" selection-end="5368" vertical-scroll-proportion="0.325" vertical-offset="2405" max-vertical-offset="9900" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/EasyNetwork.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="9" selection-start="1044" selection-end="1044" vertical-scroll-proportion="0.50352114" vertical-offset="0" max-vertical-offset="568">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Configuration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="13" selection-start="1259" selection-end="1259" vertical-scroll-proportion="0.33333334" vertical-offset="13" max-vertical-offset="3960">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/GzipProcess.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="16" selection-start="803" selection-end="803" vertical-scroll-proportion="0.38664323" vertical-offset="0" max-vertical-offset="569" />
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/sdk/platforms/android-19/android.jar!/org/apache/http/Header.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="17" selection-start="162" selection-end="162" vertical-scroll-proportion="0.19332162" vertical-offset="0" max-vertical-offset="569" />
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/sdk/platforms/android-19/android.jar!/org/apache/http/client/methods/HttpGet.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="11" selection-start="420" selection-end="420" vertical-scroll-proportion="0.46478873" vertical-offset="0" max-vertical-offset="568" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Request.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="17" selection-start="673" selection-end="673" vertical-scroll-proportion="0.23239437" vertical-offset="0" max-vertical-offset="568">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/sdk/platforms/android-19/android.jar!/org/apache/http/client/methods/HttpPost.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="11" selection-start="428" selection-end="494" vertical-scroll-proportion="0.48618785" vertical-offset="0" max-vertical-offset="543" />
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/sdk/platforms/android-19/android.jar!/org/apache/http/message/AbstractHttpMessage.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="16" selection-start="1861" selection-end="1861" vertical-scroll-proportion="0.71639043" vertical-offset="557" max-vertical-offset="1100" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/libs/easy-android-2.9.0.jar!/me/xiaopan/easy/java/util/DateTimeUtils.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="44" selection-start="3280" selection-end="3413" vertical-scroll-proportion="0.5178197" vertical-offset="1315" max-vertical-offset="3696" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/headers/ContentType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="131" column="8" selection-start="2624" selection-end="2624" vertical-scroll-proportion="1.893617" vertical-offset="1309" max-vertical-offset="9878" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/MethodType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="13" selection-start="138" selection-end="138" vertical-scroll-proportion="0.29787233" vertical-offset="0" max-vertical-offset="517">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/BinaryActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="21" selection-start="1543" selection-end="1543" vertical-scroll-proportion="0.28968254" vertical-offset="206" max-vertical-offset="1584">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/activity_image.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="16" selection-start="288" selection-end="288" vertical-scroll-proportion="0.1380753" vertical-offset="0" max-vertical-offset="478" />
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/True.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="3" selection-start="865" selection-end="865" vertical-scroll-proportion="0.2911153" vertical-offset="0" max-vertical-offset="529">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/False.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="11" selection-start="858" selection-end="858" vertical-scroll-proportion="0.24952741" vertical-offset="0" max-vertical-offset="529">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/JsonHttpResponseHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="3" selection-start="1025" selection-end="1025" vertical-scroll-proportion="-0.7248062" vertical-offset="528" max-vertical-offset="1980">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseBodyKey.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="20" selection-start="936" selection-end="936" vertical-scroll-proportion="0.3327032" vertical-offset="0" max-vertical-offset="529">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="26" selection-start="113" selection-end="126" vertical-scroll-proportion="0.24220183" vertical-offset="0" max-vertical-offset="1232">
-          <folding>
-            <element signature="e#297#298#0" expanded="true" />
-            <element signature="e#335#336#0" expanded="true" />
-            <element signature="e#396#397#0" expanded="true" />
-            <element signature="e#450#451#0" expanded="true" />
-            <element signature="e#495#496#0" expanded="true" />
-            <element signature="e#539#540#0" expanded="true" />
-            <element signature="e#610#611#0" expanded="true" />
-            <element signature="e#676#677#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPostRequest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="165" column="11" selection-start="4343" selection-end="4343" vertical-scroll-proportion="0.36330274" vertical-offset="3432" max-vertical-offset="5940">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#848#849#0" expanded="true" />
-            <element signature="e#875#876#0" expanded="true" />
-            <element signature="e#915#916#0" expanded="true" />
-            <element signature="e#947#948#0" expanded="true" />
-            <element signature="e#977#978#0" expanded="true" />
-            <element signature="e#1003#1004#0" expanded="true" />
-            <element signature="e#1041#1042#0" expanded="true" />
-            <element signature="e#1071#1072#0" expanded="true" />
-            <element signature="e#1111#1112#0" expanded="true" />
-            <element signature="e#1141#1142#0" expanded="true" />
-            <element signature="e#1749#1750#0" expanded="true" />
-            <element signature="e#1787#1788#0" expanded="true" />
-            <element signature="e#1827#1828#0" expanded="true" />
-            <element signature="e#1856#1857#0" expanded="true" />
-            <element signature="e#3730#3731#0" expanded="true" />
-            <element signature="e#3766#3767#0" expanded="true" />
-            <element signature="e#3813#3814#0" expanded="true" />
-            <element signature="e#3849#3850#0" expanded="true" />
-            <element signature="e#3914#3915#0" expanded="true" />
-            <element signature="e#3964#3965#0" expanded="true" />
-            <element signature="e#4005#4006#0" expanded="true" />
-            <element signature="e#4038#4039#0" expanded="true" />
-            <element signature="e#4094#4095#0" expanded="true" />
-            <element signature="e#4138#4139#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPutRequest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="168" column="24" selection-start="4448" selection-end="4448" vertical-scroll-proportion="0.63669723" vertical-offset="3349" max-vertical-offset="5940">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#846#847#0" expanded="true" />
-            <element signature="e#873#874#0" expanded="true" />
-            <element signature="e#913#914#0" expanded="true" />
-            <element signature="e#945#946#0" expanded="true" />
-            <element signature="e#975#976#0" expanded="true" />
-            <element signature="e#1001#1002#0" expanded="true" />
-            <element signature="e#1039#1040#0" expanded="true" />
-            <element signature="e#1069#1070#0" expanded="true" />
-            <element signature="e#1109#1110#0" expanded="true" />
-            <element signature="e#1139#1140#0" expanded="true" />
-            <element signature="e#1747#1748#0" expanded="true" />
-            <element signature="e#1785#1786#0" expanded="true" />
-            <element signature="e#1825#1826#0" expanded="true" />
-            <element signature="e#1854#1855#0" expanded="true" />
-            <element signature="e#3728#3729#0" expanded="true" />
-            <element signature="e#3764#3765#0" expanded="true" />
-            <element signature="e#3811#3812#0" expanded="true" />
-            <element signature="e#3847#3848#0" expanded="true" />
-            <element signature="e#3912#3913#0" expanded="true" />
-            <element signature="e#3962#3963#0" expanded="true" />
-            <element signature="e#4003#4004#0" expanded="true" />
-            <element signature="e#4036#4037#0" expanded="true" />
-            <element signature="e#4092#4093#0" expanded="true" />
-            <element signature="e#4136#4137#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpDeleteRequest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="88" column="24" selection-start="2089" selection-end="2089" vertical-scroll-proportion="0.40366971" vertical-offset="1716" max-vertical-offset="3300">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#627#628#0" expanded="true" />
-            <element signature="e#654#655#0" expanded="true" />
-            <element signature="e#694#695#0" expanded="true" />
-            <element signature="e#726#727#0" expanded="true" />
-            <element signature="e#756#757#0" expanded="true" />
-            <element signature="e#782#783#0" expanded="true" />
-            <element signature="e#820#821#0" expanded="true" />
-            <element signature="e#850#851#0" expanded="true" />
-            <element signature="e#890#891#0" expanded="true" />
-            <element signature="e#920#921#0" expanded="true" />
-            <element signature="e#1528#1529#0" expanded="true" />
-            <element signature="e#1566#1567#0" expanded="true" />
-            <element signature="e#1613#1614#0" expanded="true" />
-            <element signature="e#1649#1650#0" expanded="true" />
-            <element signature="e#1714#1715#0" expanded="true" />
-            <element signature="e#1764#1765#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/EasyHttpClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="322" column="5" selection-start="12476" selection-end="12476" vertical-scroll-proportion="1.9924812" vertical-offset="4968" max-vertical-offset="6358">
-          <folding>
-            <element signature="e#4000#4001#0" expanded="true" />
-            <element signature="e#4051#4052#0" expanded="true" />
-            <element signature="e#11982#11983#0" expanded="true" />
-            <element signature="e#12006#12007#0" expanded="true" />
-            <element signature="e#12083#12084#0" expanded="true" />
-            <element signature="e#12108#12109#0" expanded="true" />
-            <element signature="e#12354#12355#0" expanded="true" />
-            <element signature="e#12381#12382#0" expanded="true" />
-            <element signature="e#12452#12453#0" expanded="true" />
-            <element signature="e#12475#12476#0" expanded="true" />
-            <element signature="e#12588#12589#0" expanded="true" />
-            <element signature="e#12621#12622#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$APPLICATION_HOME_DIR$/sdk/platforms/android-19/android.jar!/org/apache/http/client/methods/HttpUriRequest.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="17" selection-start="177" selection-end="177" vertical-scroll-proportion="0.20183486" vertical-offset="0" max-vertical-offset="545">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpRequestRunnable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="130" selection-start="1906" selection-end="1933" vertical-scroll-proportion="0.49624062" vertical-offset="0" max-vertical-offset="4950">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpGetRequest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="5" selection-start="749" selection-end="749" vertical-scroll-proportion="0.0" vertical-offset="396" max-vertical-offset="5192">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/BaseRequest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="3" selection-start="849" selection-end="849" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="396">
-          <folding />
-        </state>
+        <state line="6" column="17" selection-start="177" selection-end="177" vertical-scroll-proportion="0.20183486" vertical-offset="0" max-vertical-offset="545" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParams.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="231" column="49" selection-start="7610" selection-end="7625" vertical-scroll-proportion="0.2932331" vertical-offset="4266" max-vertical-offset="6512">
-          <folding />
-        </state>
+        <state line="231" column="49" selection-start="7610" selection-end="7625" vertical-scroll-proportion="0.2932331" vertical-offset="4266" max-vertical-offset="6512" />
       </provider>
     </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/sdk/sources/android-19/java/lang/Iterable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="17" selection-start="987" selection-end="987" vertical-scroll-proportion="0.39449543" vertical-offset="49" max-vertical-offset="594">
-          <folding />
-        </state>
+        <state line="26" column="17" selection-start="987" selection-end="987" vertical-scroll-proportion="0.39449543" vertical-offset="49" max-vertical-offset="594" />
       </provider>
     </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/sdk/sources/android-19/java/util/Collection.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="27" selection-start="2152" selection-end="2162" vertical-scroll-proportion="0.33211008" vertical-offset="457" max-vertical-offset="6754">
-          <folding />
-        </state>
+        <state line="44" column="27" selection-start="2152" selection-end="2162" vertical-scroll-proportion="0.33211008" vertical-offset="457" max-vertical-offset="6754" />
       </provider>
     </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/sdk/sources/android-19/java/util/List.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="37" selection-start="1203" selection-end="1203" vertical-scroll-proportion="0.33211008" vertical-offset="61" max-vertical-offset="7568">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Headers.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="73" selection-start="325" selection-end="325" vertical-scroll-proportion="0.36330274" vertical-offset="0" max-vertical-offset="545">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
+        <state line="26" column="37" selection-start="1203" selection-end="1203" vertical-scroll-proportion="0.33211008" vertical-offset="61" max-vertical-offset="7568" />
       </provider>
     </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/sdk/sources/android-19/java/lang/annotation/Documented.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="11" selection-start="983" selection-end="983" vertical-scroll-proportion="0.40366971" vertical-offset="0" max-vertical-offset="545">
-          <folding />
-        </state>
+        <state line="25" column="11" selection-start="983" selection-end="983" vertical-scroll-proportion="0.40366971" vertical-offset="0" max-vertical-offset="545" />
       </provider>
     </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/sdk/sources/android-19/java/lang/annotation/Inherited.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="11" selection-start="958" selection-end="958" vertical-scroll-proportion="0.40366971" vertical-offset="0" max-vertical-offset="545">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Key.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="10" selection-start="414" selection-end="414" vertical-scroll-proportion="0.40366971" vertical-offset="0" max-vertical-offset="545">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Method.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="7" selection-start="259" selection-end="259" vertical-scroll-proportion="0.36330274" vertical-offset="0" max-vertical-offset="545">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestName.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="3" selection-start="340" selection-end="340" vertical-scroll-proportion="0.2825688" vertical-offset="0" max-vertical-offset="545">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpResponseHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="5" selection-start="1154" selection-end="1154" vertical-scroll-proportion="0.13157895" vertical-offset="392" max-vertical-offset="924">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/Param.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="3" selection-start="320" selection-end="320" vertical-scroll-proportion="0.4440367" vertical-offset="0" max-vertical-offset="545">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="5" selection-start="558" selection-end="558" vertical-scroll-proportion="0.41353384" vertical-offset="264" max-vertical-offset="3608">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
+        <state line="25" column="11" selection-start="958" selection-end="958" vertical-scroll-proportion="0.40366971" vertical-offset="0" max-vertical-offset="545" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="61" column="17" selection-start="2165" selection-end="2165" vertical-scroll-proportion="1.1578947" vertical-offset="0" max-vertical-offset="1452">
+        <state line="61" column="17" selection-start="2165" selection-end="2165" vertical-scroll-proportion="1.1578947" vertical-offset="0" max-vertical-offset="1452" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Param.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="1" selection-start="457" selection-end="457" vertical-scroll-proportion="0.32648402" vertical-offset="0" max-vertical-offset="876" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/MyApplication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="5" selection-start="1432" selection-end="1432" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="440" />
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/sdk/platforms/android-19/android.jar!/org/apache/http/client/ClientProtocolException.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="13" selection-start="165" selection-end="165" vertical-scroll-proportion="0.15027322" vertical-offset="0" max-vertical-offset="732" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPutRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="74" selection-start="832" selection-end="832" vertical-scroll-proportion="0.0" vertical-offset="462" max-vertical-offset="5566" />
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/sdk/platforms/android-19/android.jar!/org/apache/http/client/methods/HttpGet.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="0" selection-start="408" selection-end="408" vertical-scroll-proportion="0.49590164" vertical-offset="0" max-vertical-offset="488" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpDeleteRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="27" selection-start="1008" selection-end="1008" vertical-scroll-proportion="0.5776256" vertical-offset="264" max-vertical-offset="3080" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/EasyNetworkForAndroid.iml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="12" selection-start="822" selection-end="822" vertical-scroll-proportion="0.32648402" vertical-offset="0" max-vertical-offset="1870" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Method.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="7" selection-start="259" selection-end="259" vertical-scroll-proportion="0.12557077" vertical-offset="0" max-vertical-offset="876" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/headers/Charset.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="13" selection-start="663" selection-end="663" vertical-scroll-proportion="0.0" vertical-offset="66" max-vertical-offset="1056" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/headers/Host.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="13" selection-start="663" selection-end="663" vertical-scroll-proportion="0.07534247" vertical-offset="0" max-vertical-offset="876" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/GzipProcess.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="16" selection-start="803" selection-end="803" vertical-scroll-proportion="0.25114155" vertical-offset="0" max-vertical-offset="876" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/interceptor/GzipProcessRequestInterceptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="13" selection-start="863" selection-end="863" vertical-scroll-proportion="0.12557077" vertical-offset="0" max-vertical-offset="876" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpPostRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="75" column="25" selection-start="1841" selection-end="1841" vertical-scroll-proportion="0.3321033" vertical-offset="1206" max-vertical-offset="5566" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BeijingWeatherRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="1" selection-start="819" selection-end="819" vertical-scroll-proportion="0.36263737" vertical-offset="0" max-vertical-offset="728" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/WeatherRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="1" selection-start="1009" selection-end="1009" vertical-scroll-proportion="0.39285713" vertical-offset="0" max-vertical-offset="728" />
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/sdk/sources/android-19/java/lang/Override.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="0" selection-start="1316" selection-end="1316" vertical-scroll-proportion="0.43640608" vertical-offset="0" max-vertical-offset="857" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/BaseRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="13" selection-start="887" selection-end="887" vertical-scroll-proportion="0.25670946" vertical-offset="0" max-vertical-offset="857" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/source/r/debug/me/xiaopan/easy/network/android/R.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="5" selection-start="387" selection-end="387" vertical-scroll-proportion="0.32142857" vertical-offset="0" max-vertical-offset="10648" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="26" selection-start="151" selection-end="151" vertical-scroll-proportion="0.15172414" vertical-offset="0" max-vertical-offset="580" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="9" selection-start="671" selection-end="671" vertical-scroll-proportion="0.5430267" vertical-offset="411" max-vertical-offset="1078">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BaiduSearchRequest.java">
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/headers/Range.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="11" selection-start="980" selection-end="980" vertical-scroll-proportion="0.37247705" vertical-offset="39" max-vertical-offset="1012">
+        <state line="17" column="30" selection-start="680" selection-end="680" vertical-scroll-proportion="0.078478" vertical-offset="0" max-vertical-offset="1188" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/headers/HttpHeader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="3" selection-start="667" selection-end="667" vertical-scroll-proportion="0.13079667" vertical-offset="0" max-vertical-offset="841" />
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/sdk/platforms/android-19/android.jar!/org/apache/http/message/BasicHeader.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="11" selection-start="246" selection-end="246" vertical-scroll-proportion="0.156956" vertical-offset="0" max-vertical-offset="841" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpGetRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="247" column="53" selection-start="7026" selection-end="7026" vertical-scroll-proportion="0.0" vertical-offset="4230" max-vertical-offset="5104" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpRequestRunnable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="151" column="7" selection-start="5946" selection-end="5946" vertical-scroll-proportion="0.39855072" vertical-offset="2112" max-vertical-offset="4994" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/ResponseCache.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="92" column="9" selection-start="2319" selection-end="2319" vertical-scroll-proportion="0.5552913" vertical-offset="1381" max-vertical-offset="2222" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/HttpResponseHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="5" selection-start="1154" selection-end="1154" vertical-scroll-proportion="0.4842995" vertical-offset="61" max-vertical-offset="924" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/RequestParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="5" selection-start="1409" selection-end="1409" vertical-scroll-proportion="0.549346" vertical-offset="0" max-vertical-offset="4576">
           <folding />
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/enums/MethodType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="7" selection-start="138" selection-end="138" vertical-scroll-proportion="0.18311533" vertical-offset="0" max-vertical-offset="841" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Name.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="10" selection-start="424" selection-end="424" vertical-scroll-proportion="0.26159334" vertical-offset="0" max-vertical-offset="841" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/QiuBaiRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="12" selection-start="785" selection-end="785" vertical-scroll-proportion="0.41854936" vertical-offset="0" max-vertical-offset="841" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/Headers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="67" selection-start="330" selection-end="330" vertical-scroll-proportion="0.13079667" vertical-offset="0" max-vertical-offset="841" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/net/request/BaiduSearchRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="11" selection-start="1137" selection-end="1137" vertical-scroll-proportion="0.26960784" vertical-offset="0" max-vertical-offset="1232" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/annotation/ResponseCache.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="55" selection-start="163" selection-end="211" vertical-scroll-proportion="0.20927468" vertical-offset="0" max-vertical-offset="841" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/StringActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="13" selection-start="1877" selection-end="1877" vertical-scroll-proportion="0.2826087" vertical-offset="250" max-vertical-offset="1144" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/JsonActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="8" selection-start="1466" selection-end="1466" vertical-scroll-proportion="0.7574316" vertical-offset="1" max-vertical-offset="1518" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/RequestObjectActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="67" column="47" selection-start="2477" selection-end="2477" vertical-scroll-proportion="0.313912" vertical-offset="506" max-vertical-offset="1496" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/EasyNetwork.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="9" selection-start="1044" selection-end="1044" vertical-scroll-proportion="0.34007135" vertical-offset="0" max-vertical-offset="841" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/EasyHttpClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="144" column="44" selection-start="5970" selection-end="5970" vertical-scroll-proportion="0.34541062" vertical-offset="1738" max-vertical-offset="7546" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/me/xiaopan/easy/network/android/examples/activity/BinaryActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="49" column="13" selection-start="1886" selection-end="1886" vertical-scroll-proportion="0.7596685" vertical-offset="0" max-vertical-offset="1496">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/BinaryHttpResponseHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="200" selection-start="2086" selection-end="2274" vertical-scroll-proportion="0.42265195" vertical-offset="486" max-vertical-offset="1210" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/JsonHttpResponseHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="109" column="200" selection-start="4374" selection-end="4374" vertical-scroll-proportion="0.45303866" vertical-offset="1256" max-vertical-offset="1980" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/me/xiaopan/easy/network/android/http/StringHttpResponseHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="69" column="200" selection-start="2470" selection-end="2470" vertical-scroll-proportion="0.42265195" vertical-offset="618" max-vertical-offset="1342" />
       </provider>
     </entry>
   </component>
@@ -1384,6 +1284,17 @@
       <state key="ArtifactsStructureConfigurable.UI">
         <settings>
           <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="Copyright.UI">
+        <settings>
           <splitter-proportions>
             <option name="proportions">
               <list>

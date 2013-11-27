@@ -1,5 +1,9 @@
 package me.xiaopan.easy.network.android.http;
 
+import com.google.gson.annotations.SerializedName;
+
+import org.apache.http.Header;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -11,10 +15,14 @@ import java.util.Map;
 import me.xiaopan.easy.java.util.AnnotationUtils;
 import me.xiaopan.easy.java.util.ReflectUtils;
 import me.xiaopan.easy.java.util.StringUtils;
-
-import org.apache.http.Header;
-
-import com.google.gson.annotations.SerializedName;
+import me.xiaopan.easy.network.android.http.annotation.False;
+import me.xiaopan.easy.network.android.http.annotation.Headers;
+import me.xiaopan.easy.network.android.http.annotation.Host;
+import me.xiaopan.easy.network.android.http.annotation.Name;
+import me.xiaopan.easy.network.android.http.annotation.Param;
+import me.xiaopan.easy.network.android.http.annotation.Path;
+import me.xiaopan.easy.network.android.http.annotation.True;
+import me.xiaopan.easy.network.android.http.annotation.Url;
 
 /**
  * 请求解析器，用于解析继承于Request的请求对象
@@ -31,7 +39,7 @@ public class RequestParser {
     }
 
     public String getName(){
-        RequestName name = request.getClass().getAnnotation(RequestName.class);
+        Name name = request.getClass().getAnnotation(Name.class);
         return (name != null && StringUtils.isNotEmpty(name.value()))?name.value():null;
     }
 
@@ -129,7 +137,7 @@ public class RequestParser {
     	List<Header> finalHeaders = new LinkedList<Header>();
     	for(Field field : ReflectUtils.getFields(request.getClass(), true, true, true)){
     		field.setAccessible(true);
-    		if(field.getAnnotation(me.xiaopan.easy.network.android.http.Header.class) != null){	//如果当前字段被标记为需要序列化
+    		if(field.getAnnotation(Headers.class) != null){	//如果当前字段被标记为需要序列化
             	if(Header.class.isAssignableFrom(field.getType())){	//如果是单个
             		try {
 						finalHeaders.add((Header) field.get(request));

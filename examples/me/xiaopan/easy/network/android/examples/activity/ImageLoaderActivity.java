@@ -15,6 +15,10 @@
  */
 package me.xiaopan.easy.network.android.examples.activity;
 
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +29,6 @@ import me.xiaopan.easy.network.android.examples.fragment.ImageGalleryFragment;
 import me.xiaopan.easy.network.android.examples.fragment.ImageGridFragment;
 import me.xiaopan.easy.network.android.examples.fragment.ImageListFragment;
 import me.xiaopan.easy.network.android.examples.fragment.TitleFragment;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
 
 public class ImageLoaderActivity extends FragmentActivity {
 	ViewPager viewPager;

@@ -15,13 +15,14 @@
  */
 package me.xiaopan.easy.network.android.examples.fragment;
 
-import me.xiaopan.easy.network.android.R;
-import me.xiaopan.easy.network.android.examples.adapter.ImageAdapter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import me.xiaopan.easy.network.android.R;
+import me.xiaopan.easy.network.android.examples.adapter.ImageAdapter;
 
 public class ImageListFragment extends TitleFragment {
 	

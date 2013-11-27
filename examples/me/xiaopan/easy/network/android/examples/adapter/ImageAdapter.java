@@ -15,15 +15,16 @@
  */
 package me.xiaopan.easy.network.android.examples.adapter;
 
-import me.xiaopan.easy.network.android.R;
-import me.xiaopan.easy.network.android.image.ImageLoader;
-import me.xiaopan.easy.network.android.image.OptionsFactory;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+
+import me.xiaopan.easy.network.android.R;
+import me.xiaopan.easy.network.android.image.ImageLoader;
+import me.xiaopan.easy.network.android.image.OptionsFactory;
 
 public class ImageAdapter extends BaseAdapter {
 	private Context context;

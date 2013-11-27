@@ -16,17 +16,18 @@
 
 package me.xiaopan.easy.network.android.examples.activity;
 
-import me.xiaopan.easy.network.android.R;
-import me.xiaopan.easy.network.android.examples.beans.Weather;
-import me.xiaopan.easy.network.android.examples.net.request.BeijingWeatherRequest;
-import me.xiaopan.easy.network.android.http.EasyHttpClient;
-import me.xiaopan.easy.network.android.http.JsonHttpResponseHandler;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
+
+import me.xiaopan.easy.network.android.R;
+import me.xiaopan.easy.network.android.examples.beans.Weather;
+import me.xiaopan.easy.network.android.examples.net.request.BeijingWeatherRequest;
+import me.xiaopan.easy.network.android.http.EasyHttpClient;
+import me.xiaopan.easy.network.android.http.JsonHttpResponseHandler;
 
 /**
  * 获取天气信息

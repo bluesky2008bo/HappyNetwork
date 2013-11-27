@@ -15,18 +15,19 @@
  */
 package me.xiaopan.easy.network.android.examples.activity;
 
-import me.xiaopan.easy.network.android.R;
-import me.xiaopan.easy.network.android.examples.util.WebViewManager;
-import me.xiaopan.easy.network.android.http.EasyHttpClient;
-import me.xiaopan.easy.network.android.http.HttpGetRequest;
-import me.xiaopan.easy.network.android.http.ResponseCache;
-import me.xiaopan.easy.network.android.http.StringHttpResponseHandler;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Toast;
+
+import me.xiaopan.easy.network.android.R;
+import me.xiaopan.easy.network.android.examples.util.WebViewManager;
+import me.xiaopan.easy.network.android.http.EasyHttpClient;
+import me.xiaopan.easy.network.android.http.HttpGetRequest;
+import me.xiaopan.easy.network.android.http.ResponseCache;
+import me.xiaopan.easy.network.android.http.StringHttpResponseHandler;
 
 /**
  * 字符串
@@ -41,7 +42,7 @@ public class StringActivity extends Activity {
 		setContentView(R.layout.activity_web);
 		webViewManager = new WebViewManager((WebView) findViewById(R.id.web1));
 		
-		EasyHttpClient.getInstance().get(getBaseContext(), new HttpGetRequest.Builder("http://www.miui.com/forum.php").setResponseCache(new ResponseCache.Builder(true).setCachePeriodOfValidity(20 * 1000).create()).create(), new StringHttpResponseHandler(){
+		EasyHttpClient.getInstance().get(getBaseContext(), new HttpGetRequest.Builder("http://www.miui.com/forum.php").setResponseCache(new ResponseCache.Builder(20 * 1000).create()).create(), new StringHttpResponseHandler(){
 			@Override
 			public void onStart() {
 				findViewById(R.id.loading).setVisibility(View.VISIBLE);

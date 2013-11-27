@@ -16,16 +16,21 @@
 
 package me.xiaopan.easy.network.android.examples.net.request;
 
-import me.xiaopan.easy.network.android.examples.net.BaseRequest;
-import me.xiaopan.easy.network.android.http.Param;
-import me.xiaopan.easy.network.android.http.Url;
-
 import com.google.gson.annotations.Expose;
+
+import me.xiaopan.easy.network.android.examples.net.BaseRequest;
+import me.xiaopan.easy.network.android.http.annotation.Method;
+import me.xiaopan.easy.network.android.http.annotation.Name;
+import me.xiaopan.easy.network.android.http.annotation.Param;
+import me.xiaopan.easy.network.android.http.annotation.Url;
+import me.xiaopan.easy.network.android.http.enums.MethodType;
 
 /**
  * 百度搜索请求
  */
 @Url("http://www.baidu.com/s")
+@Name("百度")
+@Method(MethodType.GET)
 public class BaiduSearchRequest extends BaseRequest {
 	@Param
 	public String rsv_spt = "1";

@@ -1,12 +1,13 @@
 package me.xiaopan.easy.network.android.examples.fragment;
 
-import me.xiaopan.easy.network.android.R;
-import me.xiaopan.easy.network.android.image.ImageLoader;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import me.xiaopan.easy.network.android.R;
+import me.xiaopan.easy.network.android.image.ImageLoader;
 
 public class ImageFragment extends TitleFragment {
 

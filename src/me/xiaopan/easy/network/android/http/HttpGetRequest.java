@@ -1,5 +1,7 @@
 package me.xiaopan.easy.network.android.http;
 
+import org.apache.http.Header;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -9,8 +11,6 @@ import java.util.List;
 
 import me.xiaopan.easy.java.util.DateTimeUtils;
 import me.xiaopan.easy.java.util.StringUtils;
-
-import org.apache.http.Header;
 
 /**
  * Http Get请求

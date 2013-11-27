@@ -15,9 +15,6 @@
  */
 package me.xiaopan.easy.network.android.examples.activity;
 
-import me.xiaopan.easy.network.android.R;
-import me.xiaopan.easy.network.android.http.BinaryHttpResponseHandler;
-import me.xiaopan.easy.network.android.http.EasyHttpClient;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.BitmapFactory;
@@ -25,6 +22,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import me.xiaopan.easy.network.android.R;
+import me.xiaopan.easy.network.android.http.BinaryHttpResponseHandler;
+import me.xiaopan.easy.network.android.http.EasyHttpClient;
 
 /**
  * 使用BinaryResponseHandler下载图片

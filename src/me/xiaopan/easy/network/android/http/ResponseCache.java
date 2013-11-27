@@ -1,56 +1,101 @@
 package me.xiaopan.easy.network.android.http;
 
 /**
- * 缓存配置信息
+ * 缓存配置信息，值得注意的是你必须通过其Builder来创建ResponseCache
  * Created by XIAOPAN on 13-11-24.
  */
 public class ResponseCache {
-    private boolean isCacheResponse;    //是否缓存Http响应
-    private int cachePeriodOfValidity;  //缓存有效期，单位毫秒，超过此时间的本地缓存会被清除，小于0时永久有效
+    /**
+     * 本地缓存缓存有效期，单位毫秒，超过此有效期本地缓存将被清除，然后直接从网络加载，小于0时永久有效
+     */
+    private int periodOfValidity;
 
-    private ResponseCache(){
-    	
-    }
-    
-    public boolean isCacheResponse() {
-        return isCacheResponse;
+    /**
+     * 当本地缓存可用的时候，是否依然从网络加载新的数据来刷新本地缓存
+     */
+    private boolean refreshCache;
+
+    /**
+     * 这是一个私有的构造函数，主要是为了让你使用其Builder来创建ResponseCache
+     */
+    private ResponseCache(){}
+
+    /**
+     * 获取本地缓存缓存有效期
+     * @return 本地缓存缓存有效期，单位毫秒，超过此有效期本地缓存将被清除，然后直接从网络加载，小于0时永久有效
+     */
+    public int getPeriodOfValidity() {
+        return periodOfValidity;
     }
 
-    public void setCacheResponse(boolean isCacheResponse) {
-        this.isCacheResponse = isCacheResponse;
+    /**
+     * 设置本地缓存缓存有效期
+     * @param periodOfValidity 本地缓存缓存有效期，单位毫秒，超过此有效期本地缓存将被清除，然后直接从网络加载，小于0时永久有效
+     */
+    public void setPeriodOfValidity(int periodOfValidity) {
+        this.periodOfValidity = periodOfValidity;
     }
 
-    public int getCachePeriodOfValidity() {
-        return cachePeriodOfValidity;
+    /**
+     * 当本地缓存可用的时候，是否依然从网络加载新的数据来刷新本地缓存
+     * @return
+     */
+    public boolean isRefreshCache() {
+        return refreshCache;
     }
 
-    public void setCachePeriodOfValidity(int cachePeriodOfValidity) {
-        this.cachePeriodOfValidity = cachePeriodOfValidity;
+    /**
+     * 设置当本地缓存可用的时候，是否依然从网络加载新的数据来刷新本地缓存
+     * @param refreshCache
+     */
+    public void setRefreshCache(boolean refreshCache) {
+        this.refreshCache = refreshCache;
     }
 
+    /**
+     * ResponseCache构建器
+     */
     public static class Builder{
         private ResponseCache responseCache;
 
-        public Builder(boolean isCacheResponse) {
+        /**
+         * 创建一个ResponseCache构建器，同时需要你指定本地缓存有效期
+         * @param periodOfValidity 本地缓存缓存有效期，单位毫秒，超过此有效期本地缓存将被清除，然后直接从网络加载，小于0时永久有效
+         */
+        public Builder(int periodOfValidity) {
             responseCache = new ResponseCache();
-            setCacheResponse(isCacheResponse);
-            setCachePeriodOfValidity(-1);
+            setPeriodOfValidity(periodOfValidity);
         }
 
+        /**
+         * 创建一个ResponseCache构建器，本地缓存有效期默认为永久
+         */
         public Builder() {
-            this(true);
+            this(-1);
         }
 
-        public Builder setCacheResponse(boolean isCacheResponse) {
-            responseCache.setCacheResponse(isCacheResponse);
+        /**
+         * 设置本地缓存缓存有效期
+         * @param periodOfValidity 本地缓存缓存有效期，单位毫秒，超过此有效期本地缓存将被清除，然后直接从网络加载，小于0时永久有效
+         */
+        public Builder setPeriodOfValidity(int periodOfValidity) {
+            responseCache.setPeriodOfValidity(periodOfValidity);
             return this;
         }
 
-        public Builder setCachePeriodOfValidity(int cachePeriodOfValidity) {
-            responseCache.setCachePeriodOfValidity(cachePeriodOfValidity);
+        /**
+         * 设置当本地缓存可用的时候，是否依然从网络加载新的数据来刷新本地缓存
+         * @param refreshCache
+         */
+        public Builder setRefreshCache(boolean refreshCache) {
+            responseCache.setRefreshCache(refreshCache);
             return this;
         }
-        
+
+        /**
+         * 创建并返回ResponseCache
+         * @return
+         */
         public ResponseCache create(){
         	return responseCache;
         }

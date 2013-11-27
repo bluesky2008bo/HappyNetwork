@@ -15,13 +15,13 @@
  */
 package me.xiaopan.easy.network.android.http.interceptor;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.protocol.HttpContext;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * 添加请求头的请求拦截器

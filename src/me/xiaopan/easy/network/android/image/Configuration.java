@@ -16,18 +16,18 @@
 
 package me.xiaopan.easy.network.android.image;
 
-import java.io.File;
-
-import me.xiaopan.easy.android.util.FileUtils;
-import me.xiaopan.easy.java.util.StringUtils;
+import android.content.Context;
+import android.os.Handler;
 
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
-import android.content.Context;
-import android.os.Handler;
+import java.io.File;
+
+import me.xiaopan.easy.android.util.FileUtils;
+import me.xiaopan.easy.java.util.StringUtils;
 
 /**
  * 配置

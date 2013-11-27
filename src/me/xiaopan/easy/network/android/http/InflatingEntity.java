@@ -15,12 +15,12 @@
  */
 package me.xiaopan.easy.network.android.http;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.HttpEntityWrapper;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.HttpEntityWrapper;
 
 public class InflatingEntity extends HttpEntityWrapper {
     public InflatingEntity(HttpEntity wrapped) {

@@ -4,17 +4,16 @@ import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 
 import me.xiaopan.easy.network.android.examples.net.BaseRequest;
-import me.xiaopan.easy.network.android.http.Method;
-import me.xiaopan.easy.network.android.http.MethodType;
-import me.xiaopan.easy.network.android.http.Param;
-import me.xiaopan.easy.network.android.http.Url;
-import me.xiaopan.easy.network.android.http.headers.ContentLength;
-import me.xiaopan.easy.network.android.http.headers.Range;
+import me.xiaopan.easy.network.android.http.annotation.Headers;
+import me.xiaopan.easy.network.android.http.annotation.Param;
+import me.xiaopan.easy.network.android.http.annotation.ResponseCache;
+import me.xiaopan.easy.network.android.http.annotation.Url;
 
 /**
  * Created by xiaopan on 13-11-27.
  */
 @Url("http://www.qiushibaike.com/article/52638010")
+@ResponseCache(periodOfValidity = 1000 * 60 * 60 * 24, isRefreshCache = true)
 public class QiuBaiRequest extends BaseRequest{
     @Param
     private String list = "8hr";
@@ -22,7 +21,7 @@ public class QiuBaiRequest extends BaseRequest{
     @Param
     private String s = "4618412";
 
-    @me.xiaopan.easy.network.android.http.Header
+    @Headers
     private Header[] heades;
 
     public QiuBaiRequest() {

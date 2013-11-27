@@ -16,9 +16,6 @@
 
 package me.xiaopan.easy.network.android.http;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
@@ -30,6 +27,9 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 配置

@@ -15,11 +15,12 @@
  */
 package me.xiaopan.easy.network.android.examples;
 
+import android.app.Application;
+
 import me.xiaopan.easy.network.android.R;
 import me.xiaopan.easy.network.android.http.EasyHttpClient;
 import me.xiaopan.easy.network.android.image.ImageLoader;
 import me.xiaopan.easy.network.android.image.OptionsFactory;
-import android.app.Application;
 
 public class MyApplication extends Application {
 	@Override

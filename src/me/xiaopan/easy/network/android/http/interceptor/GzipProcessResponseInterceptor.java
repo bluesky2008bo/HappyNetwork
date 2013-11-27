@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package me.xiaopan.easy.network.android.http.interceptor;
-import me.xiaopan.easy.network.android.http.InflatingEntity;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -22,6 +21,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.protocol.HttpContext;
+
+import me.xiaopan.easy.network.android.http.InflatingEntity;
 
 public class GzipProcessResponseInterceptor implements HttpResponseInterceptor, GzipProcess {
     

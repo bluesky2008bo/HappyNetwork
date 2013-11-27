@@ -15,15 +15,9 @@
  */
 package me.xiaopan.easy.network.android.image;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.HashSet;
-import java.util.Set;
-
-import me.xiaopan.easy.java.util.CircleList;
-import me.xiaopan.easy.java.util.StringUtils;
-import me.xiaopan.easy.network.android.EasyNetwork;
+import android.graphics.Bitmap;
+import android.util.Log;
+import android.widget.ImageView;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.conn.scheme.PlainSocketFactory;
@@ -36,9 +30,15 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpProtocolParams;
 
-import android.graphics.Bitmap;
-import android.util.Log;
-import android.widget.ImageView;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashSet;
+import java.util.Set;
+
+import me.xiaopan.easy.java.util.CircleList;
+import me.xiaopan.easy.java.util.StringUtils;
+import me.xiaopan.easy.network.android.EasyNetwork;
 
 /**
  * 图片加载器，可以从网络或者本地加载图片，并且支持自动清除缓存

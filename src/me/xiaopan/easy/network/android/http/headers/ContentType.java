@@ -15,13 +15,13 @@
  */
 package me.xiaopan.easy.network.android.http.headers;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import me.xiaopan.easy.java.util.StringUtils;
-
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
 
 public class ContentType extends HttpHeader{
 	/**

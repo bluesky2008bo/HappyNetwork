@@ -17,15 +17,14 @@
 package me.xiaopan.easy.network.android.examples.net.request;
 
 import me.xiaopan.easy.network.android.examples.net.BaseRequest;
-import me.xiaopan.easy.network.android.http.Host;
-import me.xiaopan.easy.network.android.http.Method;
-import me.xiaopan.easy.network.android.http.MethodType;
+import me.xiaopan.easy.network.android.http.annotation.Host;
+import me.xiaopan.easy.network.android.http.enums.MethodType;
 
 /**
  * 天气请求
  */
 @Host("http://m.weather.com.cn")
-@Method(MethodType.POST)
+@me.xiaopan.easy.network.android.http.annotation.Method(MethodType.POST)
 public class WeatherRequest extends BaseRequest{
 	
 }

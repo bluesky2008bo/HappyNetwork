@@ -15,15 +15,15 @@
  */
 package me.xiaopan.easy.network.android.http;
 
+import android.app.Activity;
+import android.content.Context;
+import android.os.AsyncTask;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import android.app.Activity;
-import android.content.Context;
-import android.os.AsyncTask;
 
 /**
  * 下载图片异步任务

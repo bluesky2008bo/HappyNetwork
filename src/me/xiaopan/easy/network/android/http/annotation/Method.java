@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import me.xiaopan.easy.network.android.http.MethodType;
+import me.xiaopan.easy.network.android.http.enums.MethodType;
 
 /**
  * 请求方式

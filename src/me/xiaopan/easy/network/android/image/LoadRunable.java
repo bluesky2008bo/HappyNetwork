@@ -15,14 +15,7 @@
  */
 package me.xiaopan.easy.network.android.image;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-
-import me.xiaopan.easy.java.util.StringUtils;
+import android.graphics.Bitmap;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -32,7 +25,14 @@ import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.util.EntityUtils;
 
-import android.graphics.Bitmap;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+
+import me.xiaopan.easy.java.util.StringUtils;
 
 /**
  * 加载任务

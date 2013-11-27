@@ -1,11 +1,12 @@
 package me.xiaopan.easy.network.android.image;
 
+import android.graphics.Bitmap;
+import android.widget.ImageView;
+
 import java.io.File;
 
 import me.xiaopan.easy.android.util.BitmapDecoder;
 import me.xiaopan.easy.android.util.DeviceUtils;
-import android.graphics.Bitmap;
-import android.widget.ImageView;
 
 /**
  * 根据最大像素数来读取位图的位图处理器，默认最大像素数为屏幕的宽乘以屏幕的高

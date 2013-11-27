@@ -15,8 +15,6 @@
  */
 package me.xiaopan.easy.network.android.image;
 
-import java.io.File;
-
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -27,6 +25,8 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.widget.ImageView;
+
+import java.io.File;
 
 /**
  * 圆角位图加载监听器，此监听器会把原始位图处理成宽高同其ImageView的宽高一样，并且还是圆角的

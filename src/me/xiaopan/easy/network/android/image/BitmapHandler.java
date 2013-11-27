@@ -15,10 +15,10 @@
  */
 package me.xiaopan.easy.network.android.image;
 
-import java.io.File;
-
 import android.graphics.Bitmap;
 import android.widget.ImageView;
+
+import java.io.File;
 
 /**
  * 位图加载处理器

@@ -15,11 +15,12 @@
  */
 package me.xiaopan.easy.network.android.examples.activity;
 
+import android.app.ListActivity;
+import android.os.Bundle;
+
 import me.xiaopan.easy.network.android.R;
 import me.xiaopan.easy.network.android.examples.adapter.ActivityAdapter;
 import me.xiaopan.easy.network.android.examples.beans.ActivityItem;
-import android.app.ListActivity;
-import android.os.Bundle;
 
 public class MainActivity extends ListActivity {
 

@@ -16,10 +16,10 @@
 
 package me.xiaopan.easy.network.android.image;
 
+import android.graphics.Bitmap;
+
 import java.lang.ref.SoftReference;
 import java.util.concurrent.ConcurrentHashMap;
-
-import android.graphics.Bitmap;
 
 /**
  * 使用软引用的方式来缓存位图

@@ -15,14 +15,15 @@
  */
 package me.xiaopan.easy.network.android.http;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.util.EntityUtils;
-
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.entity.BufferedHttpEntity;
+import org.apache.http.util.EntityUtils;
 
 /**
  * 默认的二进制Http响应处理器
@@ -58,7 +59,7 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
 			HttpEntity httpEntity = httpResponse.getEntity();
 			handler.sendMessage(handler.obtainMessage(MESSAGE_SUCCESS, httpEntity != null?EntityUtils.toByteArray(new BufferedHttpEntity(httpEntity)):null));
 		}else{
-			handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, new HttpStatusCodeException(httpResponse.getStatusLine().getStatusCode())));
+			handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode())));
 		}
 	}
 
