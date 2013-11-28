@@ -6,6 +6,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:0.6.+'
     }
 }
+
 apply plugin: 'android'
 
 dependencies {
@@ -27,17 +28,41 @@ android {
             assets.srcDirs = ['assets']
         }
 
+//        hiapk {
+//            manifest.srcFile 'manifests/AndroidManifest1.xml'
+//        }
+//
+//        playstore {
+//            manifest.srcFile 'manifests/AndroidManifest2.xml'
+//        }
 
-        // Move the tests to tests/java, tests/res, etc...
         instrumentTest.setRoot('tests')
-
-        // Move the build types to build-types/<type>
-        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
-        // This moves them out of them default location under src/<type>/... which would
-        // conflict with src/ being used by the main source set.
-        // Adding new build types or product flavors should be accompanied
-        // by a similar customization.
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
+    }
+
+    signingConfigs{
+        myConfig{
+            storeFile file("docs/EasyNetworkForAndroid.jks")
+            storePassword "fajPWWxiFNIk87XA"
+            keyAlias "easy_network_for_android"
+            keyPassword "fajPWWxiFNIk87XA"
+        }
+    }
+
+    buildTypes{
+        release{
+            signingConfig signingConfigs.myConfig
+        }
+    }
+
+    productFlavors {
+        playstore {
+            packageName='com.youxiachai.androidgradle.playstore'
+        }
+
+        hiapk {
+            packageName='com.youxiachai.androidgradle.amazonappstore'
+        }
     }
 }
