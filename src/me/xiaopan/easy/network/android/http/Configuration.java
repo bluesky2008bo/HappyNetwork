@@ -16,6 +16,8 @@
 
 package me.xiaopan.easy.network.android.http;
 
+import android.os.Handler;
+
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
@@ -42,11 +44,13 @@ public class Configuration {
 	private String logTag;	//Log Tag
 	private EasyHttpClient easyHhttpClient;
     private Map<String, String> headerMap;	//请求头Map
+    private Handler handler;
 	
 	public Configuration(EasyHttpClient httpClient){
 		this.easyHhttpClient = httpClient;
         headerMap = new HashMap<String, String>();
         logTag = "EasyHttpClient";
+        handler = new Handler();
 	}
     
     /**
@@ -199,8 +203,8 @@ public class Configuration {
 
     /**
      * 设置Http Auth认证
-     * @param username 用户名
-     * @param password 密码
+     * @param user 用户名
+     * @param pass 密码
      */
     public void setBasicAuth(String user, String pass){
         setBasicAuth(user, pass, AuthScope.ANY);
@@ -208,11 +212,27 @@ public class Configuration {
     
    /**
      * 设置Http Auth认证
-     * @param username 用户名
-     * @param password 密码
+     * @param user 用户名
+     * @param pass 密码
      * @param scope 
      */
     public void setBasicAuth( String user, String pass, AuthScope scope){
     	easyHhttpClient.getHttpClient().getCredentialsProvider().setCredentials(scope, new UsernamePasswordCredentials(user,pass));
+    }
+
+    /**
+     * 获取Hander
+     * @return
+     */
+    public Handler getHandler() {
+        return handler;
+    }
+
+    /**
+     * 设置Hande
+     * @param handler
+     */
+    public void setHandler(Handler handler) {
+        this.handler = handler;
     }
 }

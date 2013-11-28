@@ -16,9 +16,7 @@
 package me.xiaopan.easy.network.android.http;
 
 
-import android.annotation.SuppressLint;
 import android.os.Handler;
-import android.os.Message;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -26,57 +24,53 @@ import org.apache.http.client.HttpResponseException;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.util.EntityUtils;
 
-import me.xiaopan.easy.network.android.EasyNetwork;
-
 /**
  * 默认的字符串Http响应处理器
  */
 public abstract class StringHttpResponseHandler extends HttpResponseHandler {
-	private static final int MESSAGE_START = 0;
-	private static final int MESSAGE_SUCCESS = 1;
-	private static final int MESSAGE_FAILURE = 2;
-	private Handler handler;
-	
-	@SuppressLint("HandlerLeak")
-	public StringHttpResponseHandler(){
-		handler = new Handler(){
-			@Override
-			public void handleMessage(Message msg) {
-				switch(msg.what) {
-					case MESSAGE_START: onStart(); break;
-					case MESSAGE_SUCCESS: onSuccess((String) msg.obj); break;
-					case MESSAGE_FAILURE: onFailure((Throwable) msg.obj); break;
-				}
-			}
-		};
-	}
-	
+
 	@Override
-	public void start() {
-		handler.sendEmptyMessage(MESSAGE_START);
+	public void start(final Handler handler) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                onStart();
+            }
+        });
 	}
 
 	@Override
-	public void handleResponse(HttpResponse httpResponse) throws Throwable {
+	public void handleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isCache, final boolean isRefreshCacheAndCallback) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			/* 读取内容并转换成字符串 */
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
-				handler.sendMessage(handler.obtainMessage(MESSAGE_SUCCESS, EntityUtils.toString(new BufferedHttpEntity(httpEntity), EasyNetwork.CHARSET_NAME_UTF8)));
+                final String responseContent = EntityUtils.toString(new BufferedHttpEntity(httpEntity), HttpUtils.getResponseCharset(httpResponse));
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onSuccess(responseContent, isCache, isRefreshCacheAndCallback);
+                    }
+                });
 			}else{
-				handler.sendMessage(handler.obtainMessage(MESSAGE_SUCCESS));
+                throw new Exception("没有响应体");
 			}
 		}else{
-            handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode())));
+            throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode());
 		}
 	}
 
 	@Override
-	public void exception(Throwable e) {
-		handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, e));
+	public void exception(final Handler handler, final Throwable e) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                onFailure(e);
+            }
+        });
 	}
 
 	public abstract void onStart();
-	public abstract void onSuccess(String responseContent);
+	public abstract void onSuccess(String responseContent, boolean isCache, boolean isRefreshCacheAndCallback);
 	public abstract void onFailure(Throwable throwable);
 }

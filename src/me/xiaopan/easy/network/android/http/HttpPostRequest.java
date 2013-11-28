@@ -256,6 +256,10 @@ public class HttpPostRequest {
             httpRequest.setUrl(url);
             httpRequest.setParams(requestParser.getParams(httpRequest.getParams()));
             httpRequest.addHeaders(requestParser.getHeaders());
+            ResponseCache responseCache = requestParser.getResponseCache();
+            if(responseCache != null){
+                httpRequest.setResponseCache(responseCache);
+            }
             return this;
         }
 

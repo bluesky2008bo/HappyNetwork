@@ -16,4 +16,10 @@ public @interface ResponseCache {
      * @return
      */
     public boolean isRefreshCache() default false;
+
+    /**
+     * 当刷新本地缓存完成的时候是否再次回调HttpResponseHandler.handleResponse()
+     * @return
+     */
+    public boolean isRefreshCallback() default false;
 }

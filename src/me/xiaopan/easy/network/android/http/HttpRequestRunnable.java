@@ -23,7 +23,6 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
@@ -63,33 +62,39 @@ public class HttpRequestRunnable implements Runnable {
     @Override
     public void run() {
     	if(httpUriRequest != null && httpResponseHandler != null) {
-            httpResponseHandler.start();
+            try{
+                httpResponseHandler.start(easyHttpClient.getConfiguration().getHandler());
 
-            /* 判断是否需要从本地加载 */
-            boolean fromlocalLoad = false;
-            File cacheEntityFile = null, cacheHeadersFile = null;	//缓存相应实体的文件,缓存响应头的文件
-            String uri = httpUriRequest.getURI().toString();
-            if(responseCache != null){
-                String id = StringUtils.MD5(uri);
-                cacheEntityFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".entity");
-                cacheHeadersFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".headers");
-                fromlocalLoad = cacheEntityFile.exists() && cacheHeadersFile.exists();
-                if(fromlocalLoad && responseCache.getPeriodOfValidity() > 0){
-                    Calendar calendar = new GregorianCalendar();
-                    calendar.add(Calendar.MILLISECOND, -responseCache.getPeriodOfValidity());
-                    fromlocalLoad = calendar.getTimeInMillis() < cacheEntityFile.lastModified();
-                    if(!fromlocalLoad){
-                        cacheEntityFile.delete();
-                        cacheHeadersFile.delete();
+                /* 判断是否需要从本地加载 */
+                boolean fromlocalLoad = false;
+                File cacheEntityFile = null, cacheHeadersFile = null;	//缓存相应实体的文件,缓存响应头的文件
+                String uri = httpUriRequest.getURI().toString();
+                if(responseCache != null){
+                    String id = StringUtils.MD5(uri);
+                    cacheEntityFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".entity");
+                    cacheHeadersFile = new File(FileUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".headers");
+                    fromlocalLoad = cacheEntityFile.exists() && cacheHeadersFile.exists();
+                    if(fromlocalLoad && responseCache.getPeriodOfValidity() > 0){
+                        Calendar calendar = new GregorianCalendar();
+                        calendar.add(Calendar.MILLISECOND, -responseCache.getPeriodOfValidity());
+                        fromlocalLoad = calendar.getTimeInMillis() < cacheEntityFile.lastModified();
+                        if(!fromlocalLoad){
+                            cacheEntityFile.delete();
+                            cacheHeadersFile.delete();
+                        }
                     }
                 }
-            }
 
-            /* 根据需要从本地或者网络加载数据 */
-            if(fromlocalLoad){
-                fromLocalLoad(uri, cacheEntityFile, cacheHeadersFile);
-            }else{
-                fromNetworkLoad(uri, cacheEntityFile, cacheHeadersFile, false);
+                /* 根据需要从本地或者网络加载数据 */
+                if(fromlocalLoad){
+                    fromLocalLoad(uri, cacheEntityFile, cacheHeadersFile);
+                }else{
+                    fromNetworkLoad(uri, cacheEntityFile, cacheHeadersFile, false);
+                }
+            }catch(Throwable throwable){
+                throwable.printStackTrace();
+                easyHttpClient.log(name + "（总的）加载失败："+throwable.toString());
+                httpResponseHandler.exception(easyHttpClient.getConfiguration().getHandler(), throwable);
             }
     	}
     }
@@ -122,7 +127,7 @@ public class HttpRequestRunnable implements Runnable {
 			httpResponse.setEntity(new InputStreamEntity(new FileInputStream(cacheEntityFile), cacheEntityFile.length()));
 
             /* 回调处理响应 */
-            httpResponseHandler.handleResponse(httpResponse, true, responseCache.isRefreshCache() && responseCache.isRefreshCallback());
+            httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), httpResponse, true, responseCache.isRefreshCache() && responseCache.isRefreshCallback());
 
             /* 如果需要刷新本地缓存 */
             if(responseCache.isRefreshCache()){
@@ -131,7 +136,7 @@ public class HttpRequestRunnable implements Runnable {
             }
 		}catch(Throwable throwable){
 			throwable.printStackTrace();
-            easyHttpClient.log(name + "（本地）加载失败，重新从网络加载");
+            easyHttpClient.log(name + "（本地）加载失败，重新从网络加载："+throwable.toString());
             fromNetworkLoad(uri, cacheEntityFile, cacheHeadersFile, false);
 		}
     }
@@ -149,7 +154,7 @@ public class HttpRequestRunnable implements Runnable {
             HttpResponse httpResponse = easyHttpClient.getHttpClient().execute(httpUriRequest, easyHttpClient.getHttpContext());
 
             /* 如果需要缓存 */
-            if(responseCache != null && httpResponseHandler.isCanCache(httpResponse)){
+            if(responseCache != null && httpResponseHandler.isCanCache(easyHttpClient.getConfiguration().getHandler(), httpResponse)){
                 if(me.xiaopan.easy.java.util.FileUtils.createFile(cacheHeadersFile) != null && me.xiaopan.easy.java.util.FileUtils.createFile(cacheEntityFile) != null){
                     InputStream inputStream = null;
                     FileOutputStream fileOutputStream = null;
@@ -192,75 +197,13 @@ public class HttpRequestRunnable implements Runnable {
 
             /* 回调处理响应 */
             if(!refresh || (responseCache != null && responseCache.isRefreshCallback())){
-                httpResponseHandler.handleResponse(httpResponse, false, false);
+                httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), httpResponse, false, false);
             }
         }catch(Throwable throwable){
             throwable.printStackTrace();
+            easyHttpClient.log(name + "（网络）加载失败："+throwable.toString());
             httpUriRequest.abort();
-            httpResponseHandler.exception(throwable);
+            httpResponseHandler.exception(easyHttpClient.getConfiguration().getHandler(), throwable);
         }
     }
-
-//    private void makeRequest() throws IOException {
-//        if(!Thread.currentThread().isInterrupted()) {
-//        	try {
-//        		HttpResponse response = httpClient.execute(httpUriRequest, httpContext);
-//        		if(!Thread.currentThread().isInterrupted()) {
-//        			if(httpResponseHandler != null) {
-//        				httpResponseHandler.sendResponseMessage(response);
-//        			}
-//        		} else{
-//        		}
-//        	} catch (IOException e) {
-//        		if(!Thread.currentThread().isInterrupted()) {
-//        			throw e;
-//        		}
-//        	}
-//        }
-//    }
-//
-//    private int executionCount;
-//    private void makeRequestWithRetries() throws ConnectException {
-//        // This is an additional layer of retry logic lifted from droid-fu
-//        // See: https://github.com/kaeppler/droid-fu/blob/master/src/main/java/com/github/droidfu/http/BetterHttpRequestBase.java
-//        boolean retry = true;
-//        IOException cause = null;
-//        HttpRequestRetryHandler retryHandler = httpClient.getHttpRequestRetryHandler();
-//        while (retry) {
-//            try {
-//                makeRequest();
-//                return;
-//            } catch (UnknownHostException e) {
-//		        if(httpResponseHandler != null) {
-//		            httpResponseHandler.sendFailureMessage(e, "can't resolve host");
-//		        }
-//	        	return;
-//            }catch (SocketException e){
-//                // Added to detect host unreachable
-//                if(httpResponseHandler != null) {
-//                    httpResponseHandler.sendFailureMessage(e, "can't resolve host");
-//                }
-//                return;
-//            }catch (SocketTimeoutException e){
-//                if(httpResponseHandler != null) {
-//                    httpResponseHandler.sendFailureMessage(e, "socket time out");
-//                }
-//                return;
-//            } catch (IOException e) {
-//                cause = e;
-//                retry = retryHandler.retryRequest(cause, ++executionCount, httpContext);
-//            } catch (NullPointerException e) {
-//                // there's a bug in HttpClient 4.0.x that on some occasions causes
-//                // DefaultRequestExecutor to throw an NPE, see
-//                // http://code.google.com/p/android/issues/detail?id=5255
-//                cause = new IOException("NPE in HttpClient" + e.getMessage());
-//                retry = retryHandler.retryRequest(cause, ++executionCount, httpContext);
-//            }
-//        }
-//
-//        // no retries left, crap out with exception
-//        ConnectException ex = new ConnectException();
-//        ex.initCause(cause);
-//        throw ex;
-//    }
 }

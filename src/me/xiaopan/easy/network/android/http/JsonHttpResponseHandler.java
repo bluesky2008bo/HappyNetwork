@@ -15,9 +15,7 @@
  */
 package me.xiaopan.easy.network.android.http;
 
-import android.annotation.SuppressLint;
 import android.os.Handler;
-import android.os.Message;
 
 import com.google.gson.GsonBuilder;
 
@@ -36,52 +34,29 @@ import me.xiaopan.easy.network.android.http.annotation.ResponseBodyKey;
  * 默认的JsonHttp响应处理器
  */
 public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
-	private static final int MESSAGE_START = 0;
-	private static final int MESSAGE_SUCCESS = 1;
-	private static final int MESSAGE_FAILURE = 2;
 	private Class<?> responseClass;
 	private Type responseType;
-	private Handler handler;
-	
-	@SuppressLint("HandlerLeak")
+
 	public JsonHttpResponseHandler(Class<?> responseClass){
 		this.responseClass = responseClass;
-		handler = new Handler(){
-			@SuppressWarnings("unchecked")
-			@Override
-			public void handleMessage(Message msg) {
-				switch(msg.what) {
-					case MESSAGE_START: onStart(); break;
-					case MESSAGE_SUCCESS: onSuccess((T) msg.obj); break;
-					case MESSAGE_FAILURE: onFailure((Throwable) msg.obj); break;
-				}
-			}
-		};
 	}
 	
-	@SuppressLint("HandlerLeak")
 	public JsonHttpResponseHandler(Type responseType){
 		this.responseType = responseType;
-		handler = new Handler(){
-			@SuppressWarnings("unchecked")
-			@Override
-			public void handleMessage(Message msg) {
-				switch(msg.what) {
-					case MESSAGE_START: onStart(); break;
-					case MESSAGE_SUCCESS: onSuccess((T) msg.obj); break;
-					case MESSAGE_FAILURE: onFailure((Throwable) msg.obj); break;
-				}
-			}
-		};
 	}
 	
 	@Override
-	public void start() {
-		handler.sendEmptyMessage(MESSAGE_START);
+	public void start(final Handler handler) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                onStart();
+            }
+        });
 	}
 
 	@Override
-	public void handleResponse(HttpResponse httpResponse) throws Throwable {
+	public void handleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isCache, final boolean isRefreshCacheAndCallback) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
@@ -89,34 +64,57 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 				String jsonString = EntityUtils.toString(new BufferedHttpEntity(httpEntity), HttpUtils.getResponseCharset(httpResponse));
 				if(jsonString != null && !"".equals(jsonString)){
 					if(responseClass != null){	//如果是要转换成一个对象
-						ResponseBodyKey responseBodyKey = responseClass.getAnnotation(ResponseBodyKey.class);
+                        ResponseBodyKey responseBodyKey = responseClass.getAnnotation(ResponseBodyKey.class);
 						if(responseBodyKey != null && responseBodyKey.value() != null && !"".equals(responseBodyKey.value())){
-							handler.sendMessage(handler.obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey.value()), responseClass)));
+                            final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey.value()), responseClass);
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    onSuccess((T) object, isCache, isRefreshCacheAndCallback);
+                                }
+                            });
 						}else{
-							handler.sendMessage(handler.obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseClass)));
+                            final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseClass);
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    onSuccess((T) object, isCache, isRefreshCacheAndCallback);
+                                }
+                            });
 						}
 					}else if(responseType != null){	//如果是要转换成一个集合
-						handler.sendMessage(handler.obtainMessage(MESSAGE_SUCCESS, new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseType)));
+                        final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseType);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                onSuccess((T) object, isCache, isRefreshCacheAndCallback);
+                            }
+                        });
 					}else{
-						handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, new Exception("responseClass和responseType至少有一个不能为null")));
+                        throw new Exception("responseClass和responseType至少有一个不能为null");
 					}
 				}else{
-					handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, new Exception("响应内容为空")));
+                    throw new Exception("响应内容为空");
 				}
 			}else{
-				handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, new Exception("没有响应实体")));
+                throw new Exception("没有响应体");
 			}
 		}else{
-            handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode())));
+            throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode());
 		}
 	}
 	
 	@Override
-	public void exception(Throwable e) {
-		handler.sendMessage(handler.obtainMessage(MESSAGE_FAILURE, e));
+	public void exception(final Handler handler, final Throwable e) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                onFailure(e);
+            }
+        });
 	}
 	
 	public abstract void onStart();
-	public abstract void onSuccess(T responseObject);
+	public abstract void onSuccess(T responseObject, boolean isCache, boolean isRefreshCacheAndCallback);
 	public abstract void onFailure(Throwable throwable);
 }

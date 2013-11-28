@@ -21,6 +21,7 @@ import me.xiaopan.easy.network.android.http.annotation.Host;
 import me.xiaopan.easy.network.android.http.annotation.Name;
 import me.xiaopan.easy.network.android.http.annotation.Param;
 import me.xiaopan.easy.network.android.http.annotation.Path;
+import me.xiaopan.easy.network.android.http.annotation.ResponseCache;
 import me.xiaopan.easy.network.android.http.annotation.True;
 import me.xiaopan.easy.network.android.http.annotation.Url;
 
@@ -176,6 +177,19 @@ public class RequestParser {
     	}else{
     		return null;
     	}
+    }
+
+    /**
+     * 获取响应缓存配置信息
+     * @return
+     */
+    public me.xiaopan.easy.network.android.http.ResponseCache getResponseCache(){
+        ResponseCache responseCacheAnnotation = request.getClass().getAnnotation(ResponseCache.class);
+        if(responseCacheAnnotation != null){
+            return new me.xiaopan.easy.network.android.http.ResponseCache.Builder().setRefreshCache(responseCacheAnnotation.isRefreshCache()).setPeriodOfValidity(responseCacheAnnotation.periodOfValidity()).setRefreshCallback(responseCacheAnnotation.isRefreshCallback()).create();
+        }else{
+            return null;
+        }
     }
 
     /**

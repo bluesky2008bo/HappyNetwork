@@ -49,7 +49,7 @@ public class StringActivity extends Activity {
 			}
 
 			@Override
-			public void onSuccess(String responseContent) {
+			public void onSuccess(String responseContent, boolean isCache, boolean isRefreshCacheAndCallback) {
 				webViewManager.getWebView().loadData(responseContent, "text/html;charset=utf-8", null);
 				findViewById(R.id.loading).setVisibility(View.GONE);
 			}

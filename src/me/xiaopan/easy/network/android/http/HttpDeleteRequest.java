@@ -140,6 +140,10 @@ public class HttpDeleteRequest {
             }
             httpRequest.setUrl(url);
             httpRequest.addHeaders(requestParser.getHeaders());
+            ResponseCache responseCache = requestParser.getResponseCache();
+            if(responseCache != null){
+                httpRequest.setResponseCache(responseCache);
+            }
             return this;
         }
 
