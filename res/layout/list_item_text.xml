@@ -2,7 +2,7 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/base_match_wrap"
     android:id="@android:id/text1"
-    android:textColor="@color/base_black"
+    android:textColor="@android:color/black"
     android:textSize="@dimen/base_textSize_default"
 	android:padding="@dimen/base_padding_specialLarge"
 	android:text=""

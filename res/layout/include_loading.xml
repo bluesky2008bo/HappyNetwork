@@ -9,5 +9,5 @@
     
 	<ProgressBar style="@style/base_wrap_wrap"/>
 	<include layout="@layout/include_spacing_vertical_large"/>
-	<TextView style="@style/base_wrap_wrap" android:text="@string/base_loadingLater" />
+	<TextView style="@style/base_wrap_wrap" android:text="加载中…" />
 </LinearLayout>

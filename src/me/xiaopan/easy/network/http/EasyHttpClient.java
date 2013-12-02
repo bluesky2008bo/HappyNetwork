@@ -23,7 +23,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.Future;
 
 import me.xiaopan.easy.java.util.StringUtils;
-import me.xiaopan.easy.network.EasyNetwork;
 import me.xiaopan.easy.network.http.annotation.Method;
 import me.xiaopan.easy.network.http.enums.MethodType;
 import me.xiaopan.easy.network.http.interceptor.AddRequestHeaderRequestInterceptor;
@@ -57,6 +56,7 @@ import android.util.Log;
  * Http客户端，所有的Http操作都将由此类来异步完成，同时此类提供一个单例模式来方便直接使用
  */
 public class EasyHttpClient {
+	public static final String CHARSET_NAME_UTF8 = "UTF-8";
 	private boolean debugMode;
 	private Configuration configuration;	//配置
 	private HttpContext httpContext;	//Http上下文
@@ -109,7 +109,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void execute(Context context, String name, HttpUriRequest httpRequest, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
-        Future<?> request = EasyNetwork.getThreadPool().submit(new HttpRequestRunnable(context, this, name, httpRequest, responseCache, httpResponseHandler));
+        Future<?> request = getConfiguration().getThreadPool().submit(new HttpRequestRunnable(context, this, name, httpRequest, responseCache, httpResponseHandler));
         if(context != null) {
             List<WeakReference<Future<?>>> requestList = requestMap.get(context);
             if(requestList == null) {

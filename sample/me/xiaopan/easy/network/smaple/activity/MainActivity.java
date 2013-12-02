@@ -33,7 +33,6 @@ public class MainActivity extends ListActivity {
 			, new ActivityItem(getString(R.string.activityTitle_string), StringActivity.class)
 			, new ActivityItem(getString(R.string.activityTitle_json), JsonActivity.class)
 			, new ActivityItem(getString(R.string.activityTitle_requestObject), RequestObjectActivity.class)
-			, new ActivityItem(getString(R.string.activityTitle_imageLoader), ImageLoaderActivity.class)
 		));
 	}
 }

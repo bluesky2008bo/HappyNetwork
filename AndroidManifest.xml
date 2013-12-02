@@ -23,7 +23,6 @@
         <activity android:name="me.xiaopan.easy.network.smaple.activity.StringActivity" android:label="@string/activityTitle_string"/>
         <activity android:name="me.xiaopan.easy.network.smaple.activity.JsonActivity" android:label="@string/activityTitle_json"/>
         <activity android:name="me.xiaopan.easy.network.smaple.activity.RequestObjectActivity" android:label="@string/activityTitle_requestObject"/>
-        <activity android:name="me.xiaopan.easy.network.smaple.activity.ImageLoaderActivity" android:label="@string/activityTitle_imageLoader"/>
     </application>
 	
 </manifest>

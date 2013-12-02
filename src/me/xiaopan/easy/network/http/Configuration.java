@@ -18,6 +18,8 @@ package me.xiaopan.easy.network.http;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -45,6 +47,7 @@ public class Configuration {
 	private EasyHttpClient easyHhttpClient;
     private Map<String, String> headerMap;	//请求头Map
     private Handler handler;
+	private ThreadPoolExecutor threadPool;	//线程池
 	
 	public Configuration(EasyHttpClient httpClient){
 		this.easyHhttpClient = httpClient;
@@ -235,4 +238,23 @@ public class Configuration {
     public void setHandler(Handler handler) {
         this.handler = handler;
     }
+
+    /**
+     * 获取线程池
+     * @return
+     */
+    public ThreadPoolExecutor getThreadPool() {
+        if(threadPool == null){
+            threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+        }
+        return threadPool;
+    }
+    
+	/**
+	 * 设置线程池
+	 * @param threadPool
+	 */
+	public void setThreadPool(ThreadPoolExecutor threadPool) {
+		this.threadPool = threadPool;
+	}
 }

@@ -1,8 +1,0 @@
-<!-- 图片加载器页面 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" style="@style/layout_body">
-	<android.support.v4.view.ViewPager style="@style/base_match_match" android:id="@+id/viewPager_main">
-	    <android.support.v4.view.PagerTabStrip style="@style/base_match_wrap" android:id="@+id/pagerTabStrip_main"/>
-	</android.support.v4.view.ViewPager>
-	
-    <include layout="@layout/include_shadow_down"/>
-</FrameLayout>

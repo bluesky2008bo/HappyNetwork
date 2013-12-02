@@ -3,4 +3,5 @@
 <resources>
     <!-- 正文区背景 -->
     <color name="body_backg">#f0f4f6</color>
+    <color name="base_gray">#ff969696</color>
 </resources>
