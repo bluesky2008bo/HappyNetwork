@@ -19,7 +19,7 @@
     <dimen name="edit_minHeight">60dp</dimen>
     
     <!-- 阴影 - 高度 -->
-    <dimen name="shadow_height">4dp</dimen>
+    <dimen name="shadow_height">2dp</dimen>
     
     <!-- 间隔 - 高度 -->
     <dimen name="spacing_height">10dp</dimen>
