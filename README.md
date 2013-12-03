@@ -1,4 +1,4 @@
-#EasyNetwork
+# ![Logo](https://github.com/ixiaopan/EasyNetwork/raw/master/res/drawable-mdpi/ic_launcher.png) EasyNetwork
 
 这是一个Android网络访问库，旨在用最简单的方式（同时又极具扩展性）来访问网络！EasyHttpClient是在开源项目android-async-http的基础上扩展而来的
 
