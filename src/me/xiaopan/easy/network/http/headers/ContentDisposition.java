@@ -15,10 +15,6 @@
  */
 package me.xiaopan.easy.network.http.headers;
 
-import me.xiaopan.easy.java.util.StringUtils;
-
-
-
 public class ContentDisposition extends HttpHeader{
 	/**
 	 * 名字
@@ -53,12 +49,12 @@ public class ContentDisposition extends HttpHeader{
 	public void setValue(String value) {
 		this.value = value;
 		if(value != null){
-			String[] strs = StringUtils.split(value, ';');
+			String[] strs = GeneralUtils.split(value, ';');
 			if(strs.length > 0){
 				setDisposition(strs[0]);
 			}
 			if(strs.length > 1){
-				strs = StringUtils.split(strs[1], '=');
+				strs = GeneralUtils.split(strs[1], '=');
 				if(strs.length > 1){
 					setFileName(strs[1]);
 				}

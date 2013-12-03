@@ -18,8 +18,6 @@ package me.xiaopan.easy.network.http.headers;
 import java.util.HashMap;
 import java.util.Map;
 
-import me.xiaopan.easy.java.util.StringUtils;
-
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 
@@ -108,12 +106,12 @@ public class ContentType extends HttpHeader{
 	public void setValue(String value) {
 		this.value = value;
 		if(value != null){
-			String[] strs = StringUtils.split(value, ';');
+			String[] strs = GeneralUtils.split(value, ';');
 			if(strs.length > 0){
 				setType(strs[0]);
 			}
 			if(strs.length > 1){
-				strs = StringUtils.split(strs[1], '=');
+				strs = GeneralUtils.split(strs[1], '=');
 				if(strs.length > 1){
 					setCharset(strs[1]);
 				}

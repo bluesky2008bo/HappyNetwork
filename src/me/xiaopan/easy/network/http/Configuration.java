@@ -21,39 +21,119 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import me.xiaopan.easy.network.http.interceptor.AddRequestHeaderRequestInterceptor;
+import me.xiaopan.easy.network.http.interceptor.GzipProcessRequestInterceptor;
+import me.xiaopan.easy.network.http.interceptor.GzipProcessResponseInterceptor;
+
+import org.apache.http.HttpVersion;
 import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.conn.params.ConnPerRouteBean;
+import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.SyncBasicHttpContext;
 
 import android.os.Handler;
+import android.util.Log;
 
 /**
  * 配置
  */
 public class Configuration {
-	private int maxRetries;	//最大重试次数
-	private int connectionTimeout;	//连接超时时间
-	private int maxConnections;	//最大连接数
-	private int socketBufferSize;	//Socket缓存池大小
-	private String logTag;	//Log Tag
-	private EasyHttpClient easyHhttpClient;
-    private Map<String, String> headerMap;	//请求头Map
-    private Handler handler;
+	private int maxRetries = 5;	//最大重试次数
+	private int connectionTimeout = 20000;	//连接超时时间
+	private int maxConnections = 10;	//最大连接数
+	private int socketBufferSize = 8192;	//Socket缓存池大小
+	private boolean debugMode;
+	private String logTag = "EasyHttpClient";	//Log Tag
+	private String userAgent;
+	private String defaultCacheDirerctory;	//默认缓存目录
+	private Handler handler = new Handler();
+	private CookieStore cookieStore;
+	private HttpContext httpContext;	//Http上下文
+	private SSLSocketFactory sslSocketFactory;
+	private DefaultHttpClient httpClient;
+    private Map<String, String> headerMap = new HashMap<String, String>();	//请求头Map
 	private ThreadPoolExecutor threadPool;	//线程池
+    private AuthScope authScope;
+    private Credentials credentials;
 	
-	public Configuration(EasyHttpClient httpClient){
-		this.easyHhttpClient = httpClient;
-        headerMap = new HashMap<String, String>();
-        logTag = "EasyHttpClient";
-        handler = new Handler();
+    private Configuration(){
+	}
+	
+	/**
+	 * 获取Http上下文
+	 * @return the httpContext
+	 */
+	public HttpContext getHttpContext() {
+		if(httpContext == null){
+			httpContext = new SyncBasicHttpContext(new BasicHttpContext());
+			if(cookieStore != null){
+				httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+			}
+		}
+		return httpContext;
+	}
+
+	/**
+	 * 设置Http上下文
+	 * @param httpContext the httpContext to set
+	 */
+	public void setHttpContext(HttpContext httpContext) {
+		this.httpContext = httpContext;
+	}
+
+	/**
+	 * 获取Http客户端
+	 * @return
+	 */
+	public final HttpClient getHttpClient() {
+		if(httpClient == null){
+	        BasicHttpParams httpParams = new BasicHttpParams();
+	        GeneralUtils.setConnectionTimeout(httpParams, connectionTimeout);
+			GeneralUtils.setMaxConnections(httpParams, maxConnections);
+			GeneralUtils.setSocketBufferSize(httpParams, socketBufferSize);
+	        HttpConnectionParams.setTcpNoDelay(httpParams, true);
+	        HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);
+	        if(userAgent != null){
+             	HttpProtocolParams.setUserAgent(httpParams, userAgent);
+	        }
+	        SchemeRegistry schemeRegistry = new SchemeRegistry();
+	        schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+	        schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+	        httpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams, schemeRegistry), httpParams);
+	        httpClient.addRequestInterceptor(new GzipProcessRequestInterceptor());
+	        httpClient.addRequestInterceptor(new AddRequestHeaderRequestInterceptor(getHeaderMap()));
+	        httpClient.addResponseInterceptor(new GzipProcessResponseInterceptor());
+	        httpClient.setHttpRequestRetryHandler(new RetryHandler(maxRetries));
+	        if(sslSocketFactory != null){
+	    		httpClient.getConnectionManager().getSchemeRegistry().register(new Scheme("https", sslSocketFactory, 443));
+	    	}
+	        if(authScope != null && credentials != null){
+	    		httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
+	    	}
+		}
+		return httpClient;
+	}
+
+	/**
+	 * 设置Http客户端
+	 * @param httpClient
+	 */
+	public void setHttpClient(DefaultHttpClient httpClient) {
+		this.httpClient = httpClient;
 	}
     
     /**
@@ -96,6 +176,22 @@ public class Configuration {
 	public void setLogTag(String logTag) {
 		this.logTag = logTag;
 	}
+	
+	/**
+	 * 获取默认缓存目录
+	 * @return
+	 */
+	public String getDefaultCacheDirerctory() {
+		return defaultCacheDirerctory;
+	}
+
+	/**
+	 * 设置默认缓存目录
+	 * @param defaultCacheDirerctory
+	 */
+	public void setDefaultCacheDirerctory(String defaultCacheDirerctory) {
+		this.defaultCacheDirerctory = defaultCacheDirerctory;
+	}
 
 	/**
 	 * 获取最大重置次数
@@ -110,9 +206,9 @@ public class Configuration {
 	 * @param maxRetries
 	 */
 	public void setMaxRetries(int maxRetries) {
-		if(maxRetries > 0){
-			this.maxRetries = maxRetries;
-			easyHhttpClient.getHttpClient().setHttpRequestRetryHandler(new RetryHandler(maxRetries));
+		this.maxRetries = maxRetries;
+		if(httpClient != null){
+			httpClient.setHttpRequestRetryHandler(new RetryHandler(this.maxRetries));
 		}
 	}
 
@@ -129,13 +225,8 @@ public class Configuration {
 	 * @param connectionTimeout
 	 */
 	public void setConnectionTimeout(int connectionTimeout) {
-		if(connectionTimeout > 0){
-			this.connectionTimeout = connectionTimeout;
-			HttpParams httpParams = easyHhttpClient.getHttpClient().getParams();
-			ConnManagerParams.setTimeout(httpParams, connectionTimeout);
-			HttpConnectionParams.setSoTimeout(httpParams, connectionTimeout);
-			HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
-		}
+		this.connectionTimeout = connectionTimeout;
+		GeneralUtils.setConnectionTimeout(httpClient, this.connectionTimeout);
 	}
 
 	/**
@@ -151,12 +242,8 @@ public class Configuration {
 	 * @param maxConnections
 	 */
 	public void setMaxConnections(int maxConnections) {
-		if(maxConnections > 0){
-			this.maxConnections = maxConnections;
-			HttpParams httpParams = easyHhttpClient.getHttpClient().getParams();
-			ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(maxConnections));
-			ConnManagerParams.setMaxTotalConnections(httpParams, maxConnections);
-		}
+		this.maxConnections = maxConnections;
+		GeneralUtils.setMaxConnections(httpClient, this.maxConnections);
 	}
 
 	/**
@@ -172,36 +259,78 @@ public class Configuration {
 	 * @param socketBufferSize
 	 */
 	public void setSocketBufferSize(int socketBufferSize) {
-		if(socketBufferSize > 0){
-			this.socketBufferSize = socketBufferSize;
-			HttpParams httpParams = easyHhttpClient.getHttpClient().getParams();
-			HttpConnectionParams.setSocketBufferSize(httpParams, socketBufferSize);
-		}
+		this.socketBufferSize = socketBufferSize;
+		GeneralUtils.setSocketBufferSize(httpClient, this.socketBufferSize);
 	}
 	
+	/**
+	 * @return the cookieStore
+	 */
+	public CookieStore getCookieStore() {
+		return cookieStore;
+	}
+
 	/**
      * 设置Cookie仓库，将在发送请求时使用此Cookie仓库
      * @param cookieStore 另请参见 {@link PersistentCookieStore}
      */
     public void setCookieStore(CookieStore cookieStore) {
-    	easyHhttpClient.getHttpContext().setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+    	this.cookieStore = cookieStore;
+    	if(httpContext != null){
+    		httpContext.setAttribute(ClientContext.COOKIE_STORE, this.cookieStore);
+    	}
     }
     
     /**
+     * 获取代理信息
+	 * @return the userAgent
+	 */
+	public String getUserAgent() {
+		return userAgent;
+	}
+
+	/**
      * 设置代理，在之后的每一次请求都将使用此代理
      * @param userAgent 用户代理的信息将会添加在“User-Agent”请求头中
      */
     public void setUserAgent(String userAgent) {
-        HttpProtocolParams.setUserAgent(easyHhttpClient.getHttpClient().getParams(), userAgent);
+    	this.userAgent = userAgent;
+        if(httpClient != null){
+        	HttpProtocolParams.setUserAgent(httpClient.getParams(), this.userAgent);
+        }
     }
     
     /**
+	 * @return the sslSocketFactory
+	 */
+	public SSLSocketFactory getSSLSocketFactory() {
+		return sslSocketFactory;
+	}
+
+	/**
      * Sets the SSLSocketFactory to user when making requests. By default,
      * a new, default SSLSocketFactory is used.
      * @param sslSocketFactory the socket factory to use for https requests.
      */
     public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
-    	easyHhttpClient.getHttpClient().getConnectionManager().getSchemeRegistry().register(new Scheme("https", sslSocketFactory, 443));
+    	this.sslSocketFactory = sslSocketFactory;
+    	if(httpClient != null){
+    		httpClient.getConnectionManager().getSchemeRegistry().register(new Scheme("https", this.sslSocketFactory, 443));
+    	}
+    }
+    
+   /**
+     * 设置Http Auth认证
+     * @param user 用户名
+     * @param pass 密码
+     * @param scope 
+     */
+    public void setBasicAuth(String user, String pass, AuthScope scope){
+    	authScope = scope;
+    	credentials = new UsernamePasswordCredentials(user,pass);
+    	if(httpClient != null){
+    		httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
+    	}
     }
 
     /**
@@ -211,16 +340,6 @@ public class Configuration {
      */
     public void setBasicAuth(String user, String pass){
         setBasicAuth(user, pass, AuthScope.ANY);
-    }
-    
-   /**
-     * 设置Http Auth认证
-     * @param user 用户名
-     * @param pass 密码
-     * @param scope 
-     */
-    public void setBasicAuth( String user, String pass, AuthScope scope){
-    	easyHhttpClient.getHttpClient().getCredentialsProvider().setCredentials(scope, new UsernamePasswordCredentials(user,pass));
     }
 
     /**
@@ -232,7 +351,7 @@ public class Configuration {
     }
 
     /**
-     * 设置Hande
+     * 设置Handler
      * @param handler
      */
     public void setHandler(Handler handler) {
@@ -256,5 +375,214 @@ public class Configuration {
 	 */
 	public void setThreadPool(ThreadPoolExecutor threadPool) {
 		this.threadPool = threadPool;
+	}
+    
+	/**
+	 * 输出LOG
+	 * @param logContent LOG内容
+	 */
+	public void log(String logContent){
+		if(debugMode){
+			Log.d(getLogTag(), logContent);
+		}
+	}
+
+	/**
+	 * 判断是否开启调试模式
+	 * @return 
+	 */
+	public boolean isDebugMode() {
+		return debugMode;
+	}
+
+	/**
+	 * 设置是否开启调试模式，开启调试模式后会在控制台输出LOG
+	 * @param debugMode 
+	 */
+	public void setDebugMode(boolean debugMode) {
+		this.debugMode = debugMode;
+	}
+	
+	public static class Builder{
+		private Configuration configuration;
+		
+		public Builder(){
+			configuration = new Configuration();
+		}
+		
+		/**
+		 * 设置Http上下文
+		 * @param httpContext the httpContext to set
+		 */
+		public Builder setHttpContext(HttpContext httpContext) {
+			configuration.setHttpContext(httpContext);
+			return this;
+		}
+
+		/**
+		 * 设置Http客户端
+		 * @param httpClient
+		 */
+		public Builder setHttpClient(DefaultHttpClient httpClient) {
+			configuration.setHttpClient(httpClient);
+			return this;
+		}
+	    
+	    /**
+	     * 添加一个请求头参数，这些参数都会在发送请求之前添加到请求体中
+	     * @param header 参数名
+	     * @param value 参数值
+	     */
+	    public Builder addHeader(String header, String value) {
+	    	configuration.addHeader(header, value);
+			return this;
+	    }
+
+		/**
+		 * 设置通用请求头集合
+		 * @param headerMap
+		 */
+		public Builder setHeaderMap(Map<String, String> headerMap) {
+			configuration.setHeaderMap(headerMap);
+			return this;
+		}
+		
+		/**
+		 * 设置Log Tag
+		 * @param logTag
+		 */
+		public Builder setLogTag(String logTag) {
+			configuration.setLogTag(logTag);
+			return this;
+		}
+		
+		/**
+		 * 设置默认缓存目录
+		 * @param defaultCacheDirerctory
+		 */
+		public Builder setDefaultCacheDirerctory(String defaultCacheDirerctory) {
+			configuration.setDefaultCacheDirerctory(defaultCacheDirerctory);
+			return this;
+		}
+
+		/**
+		 * 设置最大重置次数
+		 * @param maxRetries
+		 */
+		public Builder setMaxRetries(int maxRetries) {
+			configuration.setMaxRetries(maxRetries);
+			return this;
+		}
+
+		/**
+		 * 设置连接超时间，单位毫秒
+		 * @param connectionTimeout
+		 */
+		public Builder setConnectionTimeout(int connectionTimeout) {
+			configuration.setConnectionTimeout(connectionTimeout);
+			return this;
+		}
+
+		/**
+		 * 设置最大连接数
+		 * @param maxConnections
+		 */
+		public Builder setMaxConnections(int maxConnections) {
+			configuration.setMaxConnections(maxConnections);
+			return this;
+		}
+
+		/**
+		 * 设置Socket缓存池大小
+		 * @param socketBufferSize
+		 */
+		public Builder setSocketBufferSize(int socketBufferSize) {
+			configuration.setSocketBufferSize(socketBufferSize);
+			return this;
+		}
+		
+		/**
+	     * 设置Cookie仓库，将在发送请求时使用此Cookie仓库
+	     * @param cookieStore 另请参见 {@link PersistentCookieStore}
+	     */
+	    public Builder setCookieStore(CookieStore cookieStore) {
+	    	configuration.setCookieStore(cookieStore);
+			return this;
+	    }
+	    
+		/**
+	     * 设置代理，在之后的每一次请求都将使用此代理
+	     * @param userAgent 用户代理的信息将会添加在“User-Agent”请求头中
+	     */
+	    public Builder setUserAgent(String userAgent) {
+	    	configuration.setUserAgent(userAgent);
+			return this;
+	    }
+	    
+		/**
+	     * Sets the SSLSocketFactory to user when making requests. By default,
+	     * a new, default SSLSocketFactory is used.
+	     * @param sslSocketFactory the socket factory to use for https requests.
+	     */
+	    public Builder setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
+	    	configuration.setSSLSocketFactory(sslSocketFactory);
+			return this;
+	    }
+	    
+	   /**
+	     * 设置Http Auth认证
+	     * @param user 用户名
+	     * @param pass 密码
+	     * @param scope 
+	     */
+	    public Builder setBasicAuth(String user, String pass, AuthScope scope){
+	    	configuration.setBasicAuth(user, pass, scope);
+			return this;
+	    }
+
+	    /**
+	     * 设置Http Auth认证
+	     * @param user 用户名
+	     * @param pass 密码
+	     */
+	    public Builder setBasicAuth(String user, String pass){
+	    	configuration. setBasicAuth(user, pass);
+			return this;
+	    }
+
+	    /**
+	     * 设置Handler
+	     * @param handler
+	     */
+	    public Builder setHandler(Handler handler) {
+	    	configuration.setHandler(handler);
+			return this;
+	    }
+
+		/**
+		 * 设置线程池
+		 * @param threadPool
+		 */
+		public Builder setThreadPool(ThreadPoolExecutor threadPool) {
+			configuration.setThreadPool(threadPool);
+			return this;
+		}
+
+		/**
+		 * 设置是否开启调试模式，开启调试模式后会在控制台输出LOG
+		 * @param debugMode 
+		 */
+		public Builder setDebugMode(boolean debugMode) {
+			configuration.setDebugMode(debugMode);
+			return this;
+		}
+		
+		/**
+		 * 创建
+		 * @return
+		 */
+		public Configuration create(){
+			return configuration;
+		}
 	}
 }

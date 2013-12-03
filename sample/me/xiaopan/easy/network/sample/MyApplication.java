@@ -22,6 +22,6 @@ public class MyApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		EasyHttpClient.getInstance().setDebugMode(true);
+		EasyHttpClient.getInstance().getConfiguration().setDebugMode(true);
 	}
 }

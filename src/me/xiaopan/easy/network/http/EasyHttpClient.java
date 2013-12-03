@@ -22,68 +22,24 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.Future;
 
-import me.xiaopan.easy.java.util.StringUtils;
 import me.xiaopan.easy.network.http.annotation.Method;
 import me.xiaopan.easy.network.http.enums.MethodType;
-import me.xiaopan.easy.network.http.interceptor.AddRequestHeaderRequestInterceptor;
-import me.xiaopan.easy.network.http.interceptor.GzipProcessRequestInterceptor;
-import me.xiaopan.easy.network.http.interceptor.GzipProcessResponseInterceptor;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpVersion;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.SyncBasicHttpContext;
 
 import android.content.Context;
-import android.util.Log;
 
 /**
  * Http客户端，所有的Http操作都将由此类来异步完成，同时此类提供一个单例模式来方便直接使用
  */
 public class EasyHttpClient {
-	public static final String CHARSET_NAME_UTF8 = "UTF-8";
-	private boolean debugMode;
 	private Configuration configuration;	//配置
-	private HttpContext httpContext;	//Http上下文
-	private DefaultHttpClient httpClient;	//Http客户端
     private Map<Context, List<WeakReference<Future<?>>>> requestMap;	//请求Map
-	
-	public EasyHttpClient(){
-		configuration = new Configuration(this);
-		httpContext = new SyncBasicHttpContext(new BasicHttpContext());
-		requestMap = new WeakHashMap<Context, List<WeakReference<Future<?>>>>();
-		
-		/* 初始化HttpClient */
-        SchemeRegistry schemeRegistry = new SchemeRegistry();
-        schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-        schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
-        BasicHttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setTcpNoDelay(httpParams, true);
-        HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);
-        httpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams, schemeRegistry), httpParams);
-        httpClient.addRequestInterceptor(new GzipProcessRequestInterceptor());
-        httpClient.addRequestInterceptor(new AddRequestHeaderRequestInterceptor(configuration.getHeaderMap()));
-        httpClient.addResponseInterceptor(new GzipProcessResponseInterceptor());
-        configuration.setConnectionTimeout(20000);
-        configuration.setMaxConnections(10);
-        configuration.setSocketBufferSize(8192);
-        configuration.setMaxRetries(5);
-	}
 	
 	/**
 	 * 实例持有器
@@ -111,10 +67,10 @@ public class EasyHttpClient {
     public void execute(Context context, String name, HttpUriRequest httpRequest, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
         Future<?> request = getConfiguration().getThreadPool().submit(new HttpRequestRunnable(context, this, name, httpRequest, responseCache, httpResponseHandler));
         if(context != null) {
-            List<WeakReference<Future<?>>> requestList = requestMap.get(context);
+            List<WeakReference<Future<?>>> requestList = getRequestMap().get(context);
             if(requestList == null) {
                 requestList = new LinkedList<WeakReference<Future<?>>>();
-                requestMap.put(context, requestList);
+                getRequestMap().put(context, requestList);
             }
             requestList.add(new WeakReference<Future<?>>(request));
         }
@@ -173,7 +129,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void get(Context context, HttpGetRequest httpRequest, HttpResponseHandler httpResponseHandler) {
-        if(StringUtils.isNotEmpty(httpRequest.getUrl())){
+        if(GeneralUtils.isNotEmpty(httpRequest.getUrl())){
             HttpGet httGet = new HttpGet(HttpUtils.getUrlByParams(httpRequest.getUrl(), httpRequest.getParams()));
             HttpUtils.appendHeaders(httGet, httpRequest.getHeaders());
             execute(context, httpRequest.getName(), httGet, httpRequest.getResponseCache(), httpResponseHandler);
@@ -214,13 +170,13 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void post(Context context, HttpPostRequest httpRequest, HttpResponseHandler httpResponseHandler){
-        if(StringUtils.isNotEmpty(httpRequest.getUrl())){
+        if(GeneralUtils.isNotEmpty(httpRequest.getUrl())){
             HttpPost httPost = new HttpPost(httpRequest.getUrl());
             HttpUtils.appendHeaders(httPost, httpRequest.getHeaders());
 
             HttpEntity httpEntity = httpRequest.getHttpEntity();
             if(httpEntity == null && httpRequest.getParams() != null){
-                log(httpRequest.getName() + " 请求实体：" + httpRequest.getParams().toString());
+                getConfiguration().log(httpRequest.getName() + " 请求实体：" + httpRequest.getParams().toString());
                 httpEntity = httpRequest.getParams().getEntity();
             }
             if(httpEntity != null){
@@ -265,13 +221,13 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void put(Context context, HttpPutRequest httpRequest, HttpResponseHandler httpResponseHandler){
-        if(StringUtils.isNotEmpty(httpRequest.getUrl())){
+        if(GeneralUtils.isNotEmpty(httpRequest.getUrl())){
             HttpPut httPut = new HttpPut(httpRequest.getUrl());
             HttpUtils.appendHeaders(httPut, httpRequest.getHeaders());
 
             HttpEntity httpEntity = httpRequest.getHttpEntity();
             if(httpEntity == null && httpRequest.getParams() != null){
-                log(httpRequest.getName() + " 请求实体：" + httpRequest.getParams().toString());
+            	getConfiguration().log(httpRequest.getName() + " 请求实体：" + httpRequest.getParams().toString());
                 httpEntity = httpRequest.getParams().getEntity();
             }
             if(httpEntity != null){
@@ -316,7 +272,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void delete(Context context, HttpDeleteRequest httpRequest, HttpResponseHandler httpResponseHandler) {
-        if(StringUtils.isNotEmpty(httpRequest.getUrl())){
+        if(GeneralUtils.isNotEmpty(httpRequest.getUrl())){
             HttpDelete httDelete = new HttpDelete(httpRequest.getUrl());
             HttpUtils.appendHeaders(httDelete, httpRequest.getHeaders());
             execute(context, httpRequest.getName(), httDelete, httpRequest.getResponseCache(), httpResponseHandler);
@@ -336,7 +292,7 @@ public class EasyHttpClient {
      * @param mayInterruptIfRunning 如果有请求正在运行中的话是否尝试中断
      */
     public void cancelRequests(Context context, boolean mayInterruptIfRunning) {
-        List<WeakReference<Future<?>>> requestList = requestMap.get(context);
+        List<WeakReference<Future<?>>> requestList = getRequestMap().get(context);
         if(requestList != null) {
             for(WeakReference<Future<?>> requestRef : requestList) {
                 Future<?> requestFuture = requestRef.get();
@@ -345,34 +301,8 @@ public class EasyHttpClient {
                 }
             }
         }
-        requestMap.remove(context);
+        getRequestMap().remove(context);
     }
-    
-    /**
-     * 获取Http客户端
-     * @return
-     */
-    public DefaultHttpClient getHttpClient() {
-		return httpClient;
-	}
-	
-	/**
-	 * 获取Http上下文
-	 * @return
-	 */
-	public HttpContext getHttpContext() {
-		return httpContext;
-	}
-
-	/**
-	 * 输出LOG
-	 * @param logContent LOG内容
-	 */
-	public void log(String logContent){
-		if(debugMode){
-			Log.d(configuration.getLogTag(), logContent);
-		}
-	}
 
     /**
      * 获取配置
@@ -383,18 +313,17 @@ public class EasyHttpClient {
 	}
 
 	/**
-	 * 判断是否开启调试模式
-	 * @return 
+	 * 设置配置
+	 * @param configuration
 	 */
-	public boolean isDebugMode() {
-		return debugMode;
+	public void setConfiguration(Configuration configuration) {
+		this.configuration = configuration;
 	}
 
-	/**
-	 * 设置是否开启调试模式，开启调试模式后会在控制台输出LOG
-	 * @param debugMode 
-	 */
-	public void setDebugMode(boolean debugMode) {
-		this.debugMode = debugMode;
+	private Map<Context, List<WeakReference<Future<?>>>> getRequestMap() {
+		if(requestMap == null){
+			requestMap = new WeakHashMap<Context, List<WeakReference<Future<?>>>>();
+		}
+		return requestMap;
 	}
 }

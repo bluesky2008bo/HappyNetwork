@@ -17,7 +17,6 @@ package me.xiaopan.easy.network.http;
 
 import java.util.List;
 
-import me.xiaopan.easy.java.util.StringUtils;
 import me.xiaopan.easy.network.http.headers.ContentType;
 
 import org.apache.http.Header;
@@ -33,9 +32,9 @@ public class HttpUtils {
 	public static final String getResponseCharset(HttpResponse httpResponse){
 		ContentType contentType = ContentType.getContentType(httpResponse);
 		if(contentType != null){
-			return contentType.getCharset(EasyHttpClient.CHARSET_NAME_UTF8);
+			return contentType.getCharset("UTF-8");
 		}else{
-			return EasyHttpClient.CHARSET_NAME_UTF8;
+			return "UTF-8";
 		}
 	}
 	
@@ -48,7 +47,7 @@ public class HttpUtils {
 	public static final String getUrlByParams(String url, RequestParams params) {
         if(params != null) {
             String paramString = params.getParamString();
-            if(StringUtils.isNotEmpty(paramString)){
+            if(GeneralUtils.isNotEmpty(paramString)){
             	if (url.indexOf("?") == -1) {
             		url += "?" + paramString;
             	} else {

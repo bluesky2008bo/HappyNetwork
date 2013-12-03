@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import me.xiaopan.easy.java.util.DateTimeUtils;
-import me.xiaopan.easy.java.util.StringUtils;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 
@@ -26,7 +23,7 @@ public class HttpPostRequest {
     private HttpEntity httpEntity;  //Http请求体
 
     private HttpPostRequest(){
-        setName(DateTimeUtils.getCurrentDateTimeByDefultFormat() + " POST ");
+        setName(GeneralUtils.getCurrentDateTimeByDefultFormat() + " POST ");
     }
 
     public String getName() {
@@ -78,7 +75,7 @@ public class HttpPostRequest {
     }
 
     public void addParam(String key, String value){
-        if(StringUtils.isNotEmpty(key, value)){
+        if(GeneralUtils.isNotEmpty(key, value)){
             if(params == null){
                 params = new RequestParams();
             }
@@ -87,7 +84,7 @@ public class HttpPostRequest {
     }
 
     public void addParam(String key, ArrayList<String> values){
-        if(StringUtils.isNotEmpty(key) && values != null && values.size() > 0){
+        if(GeneralUtils.isNotEmpty(key) && values != null && values.size() > 0){
             if(params == null){
                 params = new RequestParams();
             }
@@ -96,7 +93,7 @@ public class HttpPostRequest {
     }
 
     public void addParam(String key, File value){
-        if(StringUtils.isNotEmpty(key) && value != null && value.exists()){
+        if(GeneralUtils.isNotEmpty(key) && value != null && value.exists()){
             if(params == null){
                 params = new RequestParams();
             }
@@ -109,7 +106,7 @@ public class HttpPostRequest {
     }
 
     public void addParam(String key, InputStream value){
-        if(StringUtils.isNotEmpty(key) && value != null){
+        if(GeneralUtils.isNotEmpty(key) && value != null){
             if(params == null){
                 params = new RequestParams();
             }
@@ -118,7 +115,7 @@ public class HttpPostRequest {
     }
 
     public void addParam(String key, InputStream value, String fileName){
-        if(StringUtils.isNotEmpty(key, fileName) && value != null){
+        if(GeneralUtils.isNotEmpty(key, fileName) && value != null){
             if(params == null){
                 params = new RequestParams();
             }
@@ -127,7 +124,7 @@ public class HttpPostRequest {
     }
 
     public void addParam(String key, InputStream value, String fileName, String contentType){
-        if(StringUtils.isNotEmpty(key, fileName, contentType) && value != null){
+        if(GeneralUtils.isNotEmpty(key, fileName, contentType) && value != null){
             if(params == null){
                 params = new RequestParams();
             }
@@ -246,11 +243,11 @@ public class HttpPostRequest {
         public Builder setRequest(Request request){
         	RequestParser requestParser = new RequestParser(request);
             String requestName = requestParser.getName();
-            if(StringUtils.isNotEmpty(requestName)){
+            if(GeneralUtils.isNotEmpty(requestName)){
                 httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
             }
         	String url = requestParser.getUrl();
-            if(StringUtils.isEmpty(url)){
+            if(GeneralUtils.isEmpty(url)){
                 throw new IllegalArgumentException("你必须在Request上使用Url注解或者Host加Path注解指定请求地址");
             }
             httpRequest.setUrl(url);

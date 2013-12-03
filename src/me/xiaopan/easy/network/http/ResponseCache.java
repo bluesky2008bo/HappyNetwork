@@ -19,6 +19,11 @@ public class ResponseCache {
      * 当刷新本地缓存完成的时候是否再次回调HttpResponseHandler.handleResponse()
      */
     private boolean refreshCallback;
+    
+    /**
+     * 缓存目录
+     */
+    private String cacheDirectory;
 
     /**
      * 这是一个私有的构造函数，主要是为了让你使用其Builder来创建ResponseCache
@@ -72,8 +77,24 @@ public class ResponseCache {
     public void setRefreshCallback(boolean refreshCallback) {
         this.refreshCallback = refreshCallback;
     }
-
+    
     /**
+     * 获取缓存目录
+     * @return
+     */
+    public String getCacheDirectory() {
+		return cacheDirectory;
+	}
+
+	/**
+	 * 设置缓存目录
+	 * @param cacheDirectory
+	 */
+	public void setCacheDirectory(String cacheDirectory) {
+		this.cacheDirectory = cacheDirectory;
+	}
+
+	/**
      * ResponseCache构建器
      */
     public static class Builder{
@@ -122,6 +143,15 @@ public class ResponseCache {
             responseCache.setRefreshCallback(refreshCallback);
             return this;
         }
+
+    	/**
+    	 * 设置缓存目录
+    	 * @param cacheDirectory
+    	 */
+    	public Builder setCacheDirectory(String cacheDirectory) {
+    		responseCache.setCacheDirectory(cacheDirectory);
+    		return this;
+    	}
 
         /**
          * 创建并返回ResponseCache
