@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import me.xiaopan.easy.network.http.annotation.False;
-import me.xiaopan.easy.network.http.annotation.RequestHeader;
 import me.xiaopan.easy.network.http.annotation.Host;
+import me.xiaopan.easy.network.http.annotation.Path;
+import me.xiaopan.easy.network.http.annotation.RequestHeader;
 import me.xiaopan.easy.network.http.annotation.RequestName;
 import me.xiaopan.easy.network.http.annotation.RequestParam;
-import me.xiaopan.easy.network.http.annotation.Path;
 import me.xiaopan.easy.network.http.annotation.ResponseCache;
 import me.xiaopan.easy.network.http.annotation.True;
 import me.xiaopan.easy.network.http.annotation.Url;

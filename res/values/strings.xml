@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">EasyNetwork</string>
+    <string name="app_name">Easy Network</string>
     
     <string name="activityTitle_binary">使用BinaryHttpResponseHandler下载图片</string>
     <string name="activityTitle_string">使用StringHttpResponseHandler获取文本</string>
