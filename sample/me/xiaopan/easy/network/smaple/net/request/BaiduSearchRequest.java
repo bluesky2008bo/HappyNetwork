@@ -16,11 +16,9 @@
 
 package me.xiaopan.easy.network.smaple.net.request;
 
-import me.xiaopan.easy.network.http.annotation.Method;
-import me.xiaopan.easy.network.http.annotation.Name;
-import me.xiaopan.easy.network.http.annotation.Param;
+import me.xiaopan.easy.network.http.annotation.RequestName;
+import me.xiaopan.easy.network.http.annotation.RequestParam;
 import me.xiaopan.easy.network.http.annotation.Url;
-import me.xiaopan.easy.network.http.enums.MethodType;
 import me.xiaopan.easy.network.smaple.net.BaseRequest;
 
 import com.google.gson.annotations.Expose;
@@ -29,37 +27,36 @@ import com.google.gson.annotations.Expose;
  * 百度搜索请求
  */
 @Url("http://www.baidu.com/s")
-@Name("百度")
-@Method(MethodType.GET)
+@RequestName("百度搜索")
 public class BaiduSearchRequest extends BaseRequest {
-	@Param
+	@RequestParam
 	public String rsv_spt = "1";
 	
-	@Param
+	@RequestParam
 	public String issp = "1";
 	
 	@Expose
 	public String rsv_bp = "0";
 	
-	@Param
+	@RequestParam
 	public String ie = "utf-8";
 	
-	@Param
+	@RequestParam
 	public String tn = "98012088_3_dg";
 	
-	@Param
+	@RequestParam
 	public String rsv_sug3 = "4";
 	
-	@Param
+	@RequestParam
 	public String rsv_sug = "0";
 	
-	@Param
+	@RequestParam
 	public String rsv_sug1 = "3";
 	
-	@Param
+	@RequestParam
 	public String rsv_sug4 = "481";
 	
-	@Param("wd")
+	@RequestParam("wd")
 	public String keyword;
 	
 	/**

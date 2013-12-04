@@ -1,7 +1,7 @@
 package me.xiaopan.easy.network.smaple.net.request;
 
-import me.xiaopan.easy.network.http.annotation.Headers;
-import me.xiaopan.easy.network.http.annotation.Param;
+import me.xiaopan.easy.network.http.annotation.RequestHeader;
+import me.xiaopan.easy.network.http.annotation.RequestParam;
 import me.xiaopan.easy.network.http.annotation.ResponseCache;
 import me.xiaopan.easy.network.http.annotation.Url;
 import me.xiaopan.easy.network.smaple.net.BaseRequest;
@@ -15,13 +15,13 @@ import org.apache.http.message.BasicHeader;
 @Url("http://www.qiushibaike.com/article/52638010")
 @ResponseCache(periodOfValidity = 1000 * 60 * 60 * 24, isRefreshCache = true)
 public class QiuBaiRequest extends BaseRequest{
-    @Param
+    @RequestParam
     private String list = "8hr";
 
-    @Param
+    @RequestParam
     private String s = "4618412";
 
-    @Headers
+    @RequestHeader
     private Header[] heades;
 
     public QiuBaiRequest() {

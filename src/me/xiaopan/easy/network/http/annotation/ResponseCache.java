@@ -22,4 +22,10 @@ public @interface ResponseCache {
      * @return
      */
     public boolean isRefreshCallback() default false;
+    
+    /**
+     * 缓存目录
+     * @return
+     */
+    public String cacheDirectory() default "";
 }

@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package me.xiaopan.easy.network.http.annotation;
 
-package me.xiaopan.easy.network.smaple.net;
-
-import me.xiaopan.easy.network.http.Request;
-import me.xiaopan.easy.network.http.annotation.RequestMethod;
-import me.xiaopan.easy.network.http.enums.MethodType;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * 基本请求，可以将一些每个请求都必须有的参数定义在此
+ * 在使用JsonHttpResponseHandler的时候，如果你在要转换的目标类上加了此注解，那么将在返回的json字符串中取出键为此注解的值的json字符串来转换为目标类
  */
-@RequestMethod(MethodType.GET)
-public class BaseRequest implements Request {
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Inherited
+public @interface ResponseBody {
+	String value();
 }

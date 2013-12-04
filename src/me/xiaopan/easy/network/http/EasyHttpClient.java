@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.Future;
 
-import me.xiaopan.easy.network.http.annotation.Method;
+import me.xiaopan.easy.network.http.annotation.RequestMethod;
 import me.xiaopan.easy.network.http.enums.MethodType;
 
 import org.apache.http.HttpEntity;
@@ -96,9 +96,9 @@ public class EasyHttpClient {
         if(request != null){
             /* 解析请求方式 */
             MethodType methodType = null;
-            Method method = request.getClass().getAnnotation(Method.class);
-            if(method != null){
-                methodType = method.value();
+            RequestMethod requestMethod = request.getClass().getAnnotation(RequestMethod.class);
+            if(requestMethod != null){
+                methodType = requestMethod.value();
             }else{
                 methodType = MethodType.GET;
             }

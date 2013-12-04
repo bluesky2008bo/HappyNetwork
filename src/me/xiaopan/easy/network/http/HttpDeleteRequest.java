@@ -127,7 +127,7 @@ public class HttpDeleteRequest {
 
         public Builder setRequest(Request request){
         	RequestParser requestParser = new RequestParser(request);
-            String requestName = requestParser.getName();
+            String requestName = requestParser.getRequestName();
             if(GeneralUtils.isNotEmpty(requestName)){
                 httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
             }
@@ -136,7 +136,7 @@ public class HttpDeleteRequest {
                 throw new IllegalArgumentException("你必须在Request上使有Url注解或者Host加Path注解指定请求地址");
             }
             httpRequest.setUrl(url);
-            httpRequest.addHeaders(requestParser.getHeaders());
+            httpRequest.addHeaders(requestParser.getRequestHeaders());
             ResponseCache responseCache = requestParser.getResponseCache();
             if(responseCache != null){
                 httpRequest.setResponseCache(responseCache);

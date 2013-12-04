@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import me.xiaopan.easy.network.http.annotation.False;
-import me.xiaopan.easy.network.http.annotation.Headers;
+import me.xiaopan.easy.network.http.annotation.RequestHeader;
 import me.xiaopan.easy.network.http.annotation.Host;
-import me.xiaopan.easy.network.http.annotation.Name;
-import me.xiaopan.easy.network.http.annotation.Param;
+import me.xiaopan.easy.network.http.annotation.RequestName;
+import me.xiaopan.easy.network.http.annotation.RequestParam;
 import me.xiaopan.easy.network.http.annotation.Path;
 import me.xiaopan.easy.network.http.annotation.ResponseCache;
 import me.xiaopan.easy.network.http.annotation.True;
@@ -36,9 +36,9 @@ public class RequestParser {
     	this.request = request;
     }
 
-    public String getName(){
-        Name name = request.getClass().getAnnotation(Name.class);
-        return (name != null && GeneralUtils.isNotEmpty(name.value()))?name.value():null;
+    public String getRequestName(){
+        RequestName requestName = request.getClass().getAnnotation(RequestName.class);
+        return (requestName != null && GeneralUtils.isNotEmpty(requestName.value()))?requestName.value():null;
     }
 
     /**
@@ -55,7 +55,7 @@ public class RequestParser {
      * @return
      */
     @SuppressWarnings("unchecked")
-	public RequestParams getParams(RequestParams requestParams){
+	public RequestParams getRequestParams(RequestParams requestParams){
         if(requestParams == null){
         	requestParams = new RequestParams();
         }
@@ -63,7 +63,7 @@ public class RequestParser {
         String paramValue;
         Object paramValueObject;
         for(Field field : GeneralUtils.getFields(request.getClass(), true, true, true)){
-            if(field.getAnnotation(Param.class) != null){	//如果当前字段被标记为需要序列化
+            if(field.getAnnotation(RequestParam.class) != null){	//如果当前字段被标记为需要序列化
                 try {
                     field.setAccessible(true);
                     if((paramValueObject = field.get(request)) != null){
@@ -75,37 +75,37 @@ public class RequestParser {
                                 }
                             }
                         }else if(paramValueObject instanceof File){	//如果当前字段是一个文件，就将其作为一个文件添加到请求参水集中
-                            requestParams.put(getParamKey(field), (File) paramValueObject);
+                            requestParams.put(getRequestParamKey(field), (File) paramValueObject);
                         }else if(paramValueObject instanceof ArrayList){	//如果当前字段是ArrayList，就将其作为一个ArrayList添加到请求参水集中
-                            requestParams.put(getParamKey(field), (ArrayList<String>) paramValueObject);
+                            requestParams.put(getRequestParamKey(field), (ArrayList<String>) paramValueObject);
                         }else if(paramValueObject instanceof Boolean){	//如果当前字段是boolean
                             if((Boolean) paramValueObject){
                                 True true1 = field.getAnnotation(True.class);
                                 if(true1 != null && GeneralUtils.isNotEmpty(true1.value())){
-                                    requestParams.put(getParamKey(field), true1.value());
+                                    requestParams.put(getRequestParamKey(field), true1.value());
                                 }else{
-                                    requestParams.put(getParamKey(field), paramValueObject.toString());
+                                    requestParams.put(getRequestParamKey(field), paramValueObject.toString());
                                 }
                             }else{
                                 False false1 = field.getAnnotation(False.class);
                                 if(false1 != null && GeneralUtils.isNotEmpty(false1.value())){
-                                    requestParams.put(getParamKey(field), false1.value());
+                                    requestParams.put(getRequestParamKey(field), false1.value());
                                 }else{
-                                    requestParams.put(getParamKey(field), paramValueObject.toString());
+                                    requestParams.put(getRequestParamKey(field), paramValueObject.toString());
                                 }
                             }
                         }else if(paramValueObject instanceof Enum){	//如果当前字段是枚举
                             Enum<?> enumObject = (Enum<?>) paramValueObject;
                             SerializedName serializedName = GeneralUtils.getAnnotationFromEnum(enumObject, SerializedName.class);
                             if(serializedName != null && GeneralUtils.isNotEmpty(serializedName.value())){
-                                requestParams.put(getParamKey(field), serializedName.value());
+                                requestParams.put(getRequestParamKey(field), serializedName.value());
                             }else{
-                                requestParams.put(getParamKey(field), enumObject.name());
+                                requestParams.put(getRequestParamKey(field), enumObject.name());
                             }
                         }else{	//如果以上几种情况都不是就直接转为字符串添加到请求参数集中
                             paramValue = paramValueObject.toString();
                             if(GeneralUtils.isNotEmpty(paramValue)){
-                                requestParams.put(getParamKey(field), paramValue);
+                                requestParams.put(getRequestParamKey(field), paramValue);
                             }
                         }
                     }
@@ -122,8 +122,8 @@ public class RequestParser {
      * 获取参数集
      * @return
      */
-    public RequestParams getParams(){
-        return getParams(null);
+    public RequestParams getRequestParams(){
+        return getRequestParams(null);
     }
     
     /**
@@ -131,11 +131,11 @@ public class RequestParser {
      * @return
      */
     @SuppressWarnings("unchecked")
-	public Header[] getHeaders(){
+	public Header[] getRequestHeaders(){
     	List<Header> finalHeaders = new LinkedList<Header>();
     	for(Field field : GeneralUtils.getFields(request.getClass(), true, true, true)){
     		field.setAccessible(true);
-    		if(field.getAnnotation(Headers.class) != null){	//如果当前字段被标记为需要序列化
+    		if(field.getAnnotation(RequestHeader.class) != null){	//如果当前字段被标记为需要序列化
             	if(Header.class.isAssignableFrom(field.getType())){	//如果是单个
             		try {
 						finalHeaders.add((Header) field.get(request));
@@ -183,7 +183,7 @@ public class RequestParser {
     public me.xiaopan.easy.network.http.ResponseCache getResponseCache(){
         ResponseCache responseCacheAnnotation = request.getClass().getAnnotation(ResponseCache.class);
         if(responseCacheAnnotation != null){
-            return new me.xiaopan.easy.network.http.ResponseCache.Builder().setRefreshCache(responseCacheAnnotation.isRefreshCache()).setPeriodOfValidity(responseCacheAnnotation.periodOfValidity()).setRefreshCallback(responseCacheAnnotation.isRefreshCallback()).create();
+            return new me.xiaopan.easy.network.http.ResponseCache.Builder().setRefreshCache(responseCacheAnnotation.isRefreshCache()).setPeriodOfValidity(responseCacheAnnotation.periodOfValidity()).setRefreshCallback(responseCacheAnnotation.isRefreshCallback()).setCacheDirectory(responseCacheAnnotation.cacheDirectory()).create();
         }else{
             return null;
         }
@@ -194,8 +194,8 @@ public class RequestParser {
      * @param field
      * @return
      */
-    public static final String getParamKey(Field field){
-        Param param = field.getAnnotation(Param.class);
+    public static final String getRequestParamKey(Field field){
+        RequestParam param = field.getAnnotation(RequestParam.class);
         if(param != null && GeneralUtils.isNotEmpty(param.value())){
             return param.value();
         }else{

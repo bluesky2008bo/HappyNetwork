@@ -15,14 +15,14 @@
  */
 package me.xiaopan.easy.network.smaple.beans;
 
-import me.xiaopan.easy.network.http.annotation.ResponseBodyKey;
+import me.xiaopan.easy.network.http.annotation.ResponseBody;
 
 import com.google.gson.annotations.Expose;
 
 /**
  * 天气
  */
-@ResponseBodyKey("weatherinfo")
+@ResponseBody("weatherinfo")
 public class Weather{
 	@Expose
 	private String city;

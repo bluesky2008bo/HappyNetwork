@@ -17,7 +17,7 @@ package me.xiaopan.easy.network.http;
 
 import java.lang.reflect.Type;
 
-import me.xiaopan.easy.network.http.annotation.ResponseBodyKey;
+import me.xiaopan.easy.network.http.annotation.ResponseBody;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -64,7 +64,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 				String jsonString = EntityUtils.toString(new BufferedHttpEntity(httpEntity), HttpUtils.getResponseCharset(httpResponse));
 				if(jsonString != null && !"".equals(jsonString)){
 					if(responseClass != null){	//如果是要转换成一个对象
-                        ResponseBodyKey responseBodyKey = responseClass.getAnnotation(ResponseBodyKey.class);
+                        ResponseBody responseBodyKey = responseClass.getAnnotation(ResponseBody.class);
 						if(responseBodyKey != null && responseBodyKey.value() != null && !"".equals(responseBodyKey.value())){
                             final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey.value()), responseClass);
                             handler.post(new Runnable() {

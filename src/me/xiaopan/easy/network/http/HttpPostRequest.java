@@ -242,7 +242,7 @@ public class HttpPostRequest {
 
         public Builder setRequest(Request request){
         	RequestParser requestParser = new RequestParser(request);
-            String requestName = requestParser.getName();
+            String requestName = requestParser.getRequestName();
             if(GeneralUtils.isNotEmpty(requestName)){
                 httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
             }
@@ -251,8 +251,8 @@ public class HttpPostRequest {
                 throw new IllegalArgumentException("你必须在Request上使用Url注解或者Host加Path注解指定请求地址");
             }
             httpRequest.setUrl(url);
-            httpRequest.setParams(requestParser.getParams(httpRequest.getParams()));
-            httpRequest.addHeaders(requestParser.getHeaders());
+            httpRequest.setParams(requestParser.getRequestParams(httpRequest.getParams()));
+            httpRequest.addHeaders(requestParser.getRequestHeaders());
             ResponseCache responseCache = requestParser.getResponseCache();
             if(responseCache != null){
                 httpRequest.setResponseCache(responseCache);
