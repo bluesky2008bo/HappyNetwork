@@ -7,11 +7,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 被此注解修饰的字段将被解析成请求头，同时被修饰的字段必须是Header类型或者Header类型的集合（Collection）以及Header类型的数组才能解析成功
+ * 请求名称，当激活Debug模式的时候会在Log中显示此Name用来区分Log到底属于哪个请求
  * Created by XIAOPAN on 13-11-24.
  */
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface RequestHeader {
+public @interface Name {
+    public String value();
 }

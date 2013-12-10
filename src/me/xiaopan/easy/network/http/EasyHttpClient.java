@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.Future;
 
-import me.xiaopan.easy.network.http.annotation.RequestMethod;
+import me.xiaopan.easy.network.http.annotation.Method;
 import me.xiaopan.easy.network.http.enums.MethodType;
 
 import org.apache.http.HttpEntity;
@@ -33,6 +33,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 
 import android.content.Context;
+import android.util.Log;
 
 /**
  * Http客户端，所有的Http操作都将由此类来异步完成，同时此类提供一个单例模式来方便直接使用
@@ -96,9 +97,9 @@ public class EasyHttpClient {
         if(request != null){
             /* 解析请求方式 */
             MethodType methodType = null;
-            RequestMethod requestMethod = request.getClass().getAnnotation(RequestMethod.class);
-            if(requestMethod != null){
-                methodType = requestMethod.value();
+            Method method = request.getClass().getAnnotation(Method.class);
+            if(method != null){
+                methodType = method.value();
             }else{
                 methodType = MethodType.GET;
             }
@@ -176,7 +177,9 @@ public class EasyHttpClient {
 
             HttpEntity httpEntity = httpRequest.getHttpEntity();
             if(httpEntity == null && httpRequest.getParams() != null){
-                getConfiguration().log(httpRequest.getName() + " 请求实体：" + httpRequest.getParams().toString());
+                if(getConfiguration().isDebugMode()){
+                    Log.d(getConfiguration().getLogTag(), httpRequest.getName() + " 请求实体：" + httpRequest.getParams().toString());
+                }
                 httpEntity = httpRequest.getParams().getEntity();
             }
             if(httpEntity != null){
@@ -227,7 +230,9 @@ public class EasyHttpClient {
 
             HttpEntity httpEntity = httpRequest.getHttpEntity();
             if(httpEntity == null && httpRequest.getParams() != null){
-            	getConfiguration().log(httpRequest.getName() + " 请求实体：" + httpRequest.getParams().toString());
+                if(getConfiguration().isDebugMode()){
+                    Log.d(getConfiguration().getLogTag(), httpRequest.getName() + " 请求实体：" + httpRequest.getParams().toString());
+                }
                 httpEntity = httpRequest.getParams().getEntity();
             }
             if(httpEntity != null){
@@ -309,7 +314,10 @@ public class EasyHttpClient {
      * @return
      */
 	public Configuration getConfiguration() {
-		return configuration;
+		if(configuration == null){
+            configuration = new Configuration.Builder().create();
+        }
+        return configuration;
 	}
 
 	/**

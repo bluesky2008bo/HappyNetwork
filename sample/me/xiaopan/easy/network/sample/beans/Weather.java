@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package me.xiaopan.easy.network.smaple.beans;
+package me.xiaopan.easy.network.sample.beans;
 
 import me.xiaopan.easy.network.http.annotation.ResponseBody;
 

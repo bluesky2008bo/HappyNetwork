@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.xiaopan.easy.network.smaple.util;
+package me.xiaopan.easy.network.sample.util;
 
 import android.annotation.SuppressLint;
 import android.webkit.WebSettings;

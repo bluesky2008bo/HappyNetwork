@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package me.xiaopan.easy.network.smaple.net;
+package me.xiaopan.easy.network.sample.net;
 
 import me.xiaopan.easy.network.http.Request;
-import me.xiaopan.easy.network.http.annotation.RequestMethod;
+import me.xiaopan.easy.network.http.annotation.Method;
 import me.xiaopan.easy.network.http.enums.MethodType;
 
 /**
  * 基本请求，可以将一些每个请求都必须有的参数定义在此
  */
-@RequestMethod(MethodType.GET)
+@Method(MethodType.GET)
 public class BaseRequest implements Request {
 
 }

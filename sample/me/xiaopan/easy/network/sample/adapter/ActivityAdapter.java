@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package me.xiaopan.easy.network.smaple.adapter;
+package me.xiaopan.easy.network.sample.adapter;
 
-import me.xiaopan.easy.network.R;
-import me.xiaopan.easy.network.smaple.beans.ActivityItem;
+import me.xiaopan.easy.network.example.R;
+import me.xiaopan.easy.network.sample.beans.ActivityItem;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;

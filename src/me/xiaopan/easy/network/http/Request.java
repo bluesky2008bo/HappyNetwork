@@ -15,9 +15,13 @@
  */
 package me.xiaopan.easy.network.http;
 
+import me.xiaopan.easy.network.http.annotation.Method;
+import me.xiaopan.easy.network.http.enums.MethodType;
+
 /**
- * 请求
+ * 请求，默认请求方式为GET
  */
+@Method(MethodType.GET)
 public interface Request {
 
 }

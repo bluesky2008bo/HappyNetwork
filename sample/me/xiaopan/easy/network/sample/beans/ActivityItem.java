@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.xiaopan.easy.network.smaple.beans;
+package me.xiaopan.easy.network.sample.beans;
 
 public class ActivityItem {
 	private String title;

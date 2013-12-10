@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package me.xiaopan.easy.network.smaple.activity;
+package me.xiaopan.easy.network.sample.activity;
 
-import me.xiaopan.easy.network.R;
+import me.xiaopan.easy.network.example.R;
 import me.xiaopan.easy.network.http.EasyHttpClient;
 import me.xiaopan.easy.network.http.StringHttpResponseHandler;
-import me.xiaopan.easy.network.smaple.net.request.BaiduSearchRequest;
-import me.xiaopan.easy.network.smaple.util.Utils;
-import me.xiaopan.easy.network.smaple.util.WebViewManager;
+import me.xiaopan.easy.network.sample.net.request.BaiduSearchRequest;
+import me.xiaopan.easy.network.sample.util.Utils;
+import me.xiaopan.easy.network.sample.util.WebViewManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
@@ -77,7 +77,7 @@ public class RequestObjectActivity extends Activity {
 			
 			@Override
 			public void onFailure(Throwable throwable) {
-				Toast.makeText(getBaseContext(), "失败了，信息："+throwable.getMessage(), Toast.LENGTH_LONG).show();
+				Toast.makeText(getBaseContext(), "失败了，信息："+(throwable.getMessage()!=null?throwable.getMessage():""), Toast.LENGTH_LONG).show();
 				finish();
 			}
 		});

@@ -378,16 +378,6 @@ public class Configuration {
 	}
     
 	/**
-	 * 输出LOG
-	 * @param logContent LOG内容
-	 */
-	public void log(String logContent){
-		if(debugMode){
-			Log.d(getLogTag(), logContent);
-		}
-	}
-
-	/**
 	 * 判断是否开启调试模式
 	 * @return 
 	 */

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package me.xiaopan.easy.network.smaple.activity;
+package me.xiaopan.easy.network.sample.activity;
 
-import me.xiaopan.easy.network.R;
+import me.xiaopan.easy.network.example.R;
 import me.xiaopan.easy.network.http.BinaryHttpResponseHandler;
 import me.xiaopan.easy.network.http.EasyHttpClient;
 import android.annotation.SuppressLint;

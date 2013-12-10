@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.xiaopan.easy.network.smaple.util;
+package me.xiaopan.easy.network.sample.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,7 +25,6 @@ public class Utils {
 	
 	/**
 	 * 关闭软键盘
-	 * @param context
 	 */
 	public static void closeSoftKeyboard(Activity activity){
 		InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.xiaopan.easy.network.smaple.net.request;
+package me.xiaopan.easy.network.sample.net.request;
 
 import me.xiaopan.easy.network.http.annotation.Path;
 

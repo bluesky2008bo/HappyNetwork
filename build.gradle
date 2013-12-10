@@ -41,28 +41,28 @@ android {
         release.setRoot('build-types/release')
     }
 
-    signingConfigs{
-        myConfig{
-            storeFile file("docs/EasyNetworkForAndroid.jks")
-            storePassword "fajPWWxiFNIk87XA"
-            keyAlias "easy_network_for_android"
-            keyPassword "fajPWWxiFNIk87XA"
-        }
-    }
-
-    buildTypes{
-        release{
-            signingConfig signingConfigs.myConfig
-        }
-    }
-
-    productFlavors {
-        playstore {
-            packageName='com.youxiachai.androidgradle.playstore'
-        }
-
-        hiapk {
-            packageName='com.youxiachai.androidgradle.amazonappstore'
-        }
-    }
+//    signingConfigs{
+//        myConfig{
+//            storeFile file("docs/EasyNetworkForAndroid.jks")
+//            storePassword "fajPWWxiFNIk87XA"
+//            keyAlias "easy_network_for_android"
+//            keyPassword "fajPWWxiFNIk87XA"
+//        }
+//    }
+//
+//    buildTypes{
+//        release{
+//            signingConfig signingConfigs.myConfig
+//        }
+//    }
+//
+//    productFlavors {
+//        playstore {
+//            packageName='com.youxiachai.androidgradle.playstore'
+//        }
+//
+//        hiapk {
+//            packageName='com.youxiachai.androidgradle.amazonappstore'
+//        }
+//    }
 }

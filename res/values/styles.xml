@@ -67,7 +67,7 @@
    	<!-- 列表 -->
 	<style name="list" parent="@style/base_match_wrap">
 	    <item name="android:id">@android:id/list</item>
-	    <item name="android:divider">@drawable/list_divider</item>
+	    <!--<item name="android:divider">@drawable/list_divider</item>-->
 	    <item name="android:cacheColorHint">@android:color/transparent</item>
 	    <item name="android:fastScrollEnabled">true</item>
 	</style>

@@ -14,49 +14,47 @@
  * limitations under the License.
  */
 
-package me.xiaopan.easy.network.smaple.net.request;
+package me.xiaopan.easy.network.sample.net.request;
 
-import me.xiaopan.easy.network.http.annotation.RequestName;
-import me.xiaopan.easy.network.http.annotation.RequestParam;
+import me.xiaopan.easy.network.http.annotation.Name;
+import me.xiaopan.easy.network.http.annotation.Param;
 import me.xiaopan.easy.network.http.annotation.Url;
-import me.xiaopan.easy.network.smaple.net.BaseRequest;
-
-import com.google.gson.annotations.Expose;
+import me.xiaopan.easy.network.sample.net.BaseRequest;
 
 /**
  * 百度搜索请求
  */
 @Url("http://www.baidu.com/s")
-@RequestName("百度搜索")
+@Name("百度搜索")
 public class BaiduSearchRequest extends BaseRequest {
-	@RequestParam
+	@Param
 	public String rsv_spt = "1";
-	
-	@RequestParam
+
+	@Param
 	public String issp = "1";
-	
-	@Expose
+
+	@Param
 	public String rsv_bp = "0";
-	
-	@RequestParam
+
+	@Param
 	public String ie = "utf-8";
-	
-	@RequestParam
+
+	@Param
 	public String tn = "98012088_3_dg";
-	
-	@RequestParam
+
+	@Param
 	public String rsv_sug3 = "4";
-	
-	@RequestParam
+
+	@Param
 	public String rsv_sug = "0";
-	
-	@RequestParam
+
+	@Param
 	public String rsv_sug1 = "3";
-	
-	@RequestParam
+
+	@Param
 	public String rsv_sug4 = "481";
-	
-	@RequestParam("wd")
+
+	@Param("wd")
 	public String keyword;
 	
 	/**
@@ -64,6 +62,6 @@ public class BaiduSearchRequest extends BaseRequest {
 	 * @param keyword 搜索关键字
 	 */
 	public BaiduSearchRequest(String keyword){
-		this.keyword = keyword;
+//		this.keyword = keyword;
 	}
 }

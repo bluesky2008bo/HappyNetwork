@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package me.xiaopan.easy.network.smaple.activity;
+package me.xiaopan.easy.network.sample.activity;
 
-import me.xiaopan.easy.network.R;
+import me.xiaopan.easy.network.example.R;
 import me.xiaopan.easy.network.http.EasyHttpClient;
 import me.xiaopan.easy.network.http.JsonHttpResponseHandler;
-import me.xiaopan.easy.network.smaple.beans.Weather;
-import me.xiaopan.easy.network.smaple.net.request.BeijingWeatherRequest;
+import me.xiaopan.easy.network.sample.beans.Weather;
+import me.xiaopan.easy.network.sample.net.request.BeijingWeatherRequest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;

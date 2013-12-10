@@ -9,16 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 import me.xiaopan.easy.network.http.annotation.False;
+import me.xiaopan.easy.network.http.annotation.Header;
 import me.xiaopan.easy.network.http.annotation.Host;
+import me.xiaopan.easy.network.http.annotation.Name;
+import me.xiaopan.easy.network.http.annotation.Param;
 import me.xiaopan.easy.network.http.annotation.Path;
-import me.xiaopan.easy.network.http.annotation.RequestHeader;
-import me.xiaopan.easy.network.http.annotation.RequestName;
-import me.xiaopan.easy.network.http.annotation.RequestParam;
 import me.xiaopan.easy.network.http.annotation.ResponseCache;
 import me.xiaopan.easy.network.http.annotation.True;
 import me.xiaopan.easy.network.http.annotation.Url;
-
-import org.apache.http.Header;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -37,8 +35,8 @@ public class RequestParser {
     }
 
     public String getRequestName(){
-        RequestName requestName = request.getClass().getAnnotation(RequestName.class);
-        return (requestName != null && GeneralUtils.isNotEmpty(requestName.value()))?requestName.value():null;
+        Name name = request.getClass().getAnnotation(Name.class);
+        return (name != null && GeneralUtils.isNotEmpty(name.value()))? name.value():null;
     }
 
     /**
@@ -63,7 +61,7 @@ public class RequestParser {
         String paramValue;
         Object paramValueObject;
         for(Field field : GeneralUtils.getFields(request.getClass(), true, true, true)){
-            if(field.getAnnotation(RequestParam.class) != null){	//如果当前字段被标记为需要序列化
+            if(field.getAnnotation(Param.class) != null){	//如果当前字段被标记为需要序列化
                 try {
                     field.setAccessible(true);
                     if((paramValueObject = field.get(request)) != null){
@@ -131,23 +129,23 @@ public class RequestParser {
      * @return
      */
     @SuppressWarnings("unchecked")
-	public Header[] getRequestHeaders(){
-    	List<Header> finalHeaders = new LinkedList<Header>();
+	public org.apache.http.Header[] getRequestHeaders(){
+    	List<org.apache.http.Header> finalHeaders = new LinkedList<org.apache.http.Header>();
     	for(Field field : GeneralUtils.getFields(request.getClass(), true, true, true)){
     		field.setAccessible(true);
-    		if(field.getAnnotation(RequestHeader.class) != null){	//如果当前字段被标记为需要序列化
-            	if(Header.class.isAssignableFrom(field.getType())){	//如果是单个
+    		if(field.getAnnotation(Header.class) != null){	//如果当前字段被标记为需要序列化
+            	if(org.apache.http.Header.class.isAssignableFrom(field.getType())){	//如果是单个
             		try {
-						finalHeaders.add((Header) field.get(request));
+						finalHeaders.add((org.apache.http.Header) field.get(request));
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 					} catch (IllegalArgumentException e) {
 						e.printStackTrace();
 					}
-                }else if(GeneralUtils.isArrayByType(field, Header.class)){	//如果Header数组
+                }else if(GeneralUtils.isArrayByType(field, org.apache.http.Header.class)){	//如果Header数组
             	   try {
-						Header[] headers = (Header[]) field.get(request);
-						for(Header header : headers){
+						org.apache.http.Header[] headers = (org.apache.http.Header[]) field.get(request);
+						for(org.apache.http.Header header : headers){
 							finalHeaders.add(header);
 						}
 					} catch (IllegalAccessException e) {
@@ -155,9 +153,9 @@ public class RequestParser {
 					} catch (IllegalArgumentException e) {
 						e.printStackTrace();
 					}
-               }else if(GeneralUtils.isCollectionByType(field, Collection.class, Header.class)){	//如果是Header集合
+               }else if(GeneralUtils.isCollectionByType(field, Collection.class, org.apache.http.Header.class)){	//如果是Header集合
             	   try {
-						finalHeaders.addAll((Collection<Header>) field.get(request));
+						finalHeaders.addAll((Collection<org.apache.http.Header>) field.get(request));
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 					} catch (IllegalArgumentException e) {
@@ -168,7 +166,7 @@ public class RequestParser {
         }
     	
     	if(finalHeaders.size() > 0){
-    		Header[] heades = new Header[finalHeaders.size()];
+    		org.apache.http.Header[] heades = new org.apache.http.Header[finalHeaders.size()];
     		finalHeaders.toArray(heades);
     		return heades;
     	}else{
@@ -195,7 +193,7 @@ public class RequestParser {
      * @return
      */
     public static final String getRequestParamKey(Field field){
-        RequestParam param = field.getAnnotation(RequestParam.class);
+        Param param = field.getAnnotation(Param.class);
         if(param != null && GeneralUtils.isNotEmpty(param.value())){
             return param.value();
         }else{

@@ -15,6 +15,6 @@ import me.xiaopan.easy.network.http.enums.MethodType;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface RequestMethod {
+public @interface Method {
     public MethodType value();
 }
