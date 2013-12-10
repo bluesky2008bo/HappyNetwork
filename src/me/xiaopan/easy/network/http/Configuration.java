@@ -46,7 +46,6 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.SyncBasicHttpContext;
 
 import android.os.Handler;
-import android.util.Log;
 
 /**
  * 配置

@@ -16,11 +16,11 @@
 package me.xiaopan.easy.network.example.activity;
 
 import me.xiaopan.easy.network.example.R;
+import me.xiaopan.easy.network.example.util.WebViewManager;
 import me.xiaopan.easy.network.http.EasyHttpClient;
 import me.xiaopan.easy.network.http.HttpGetRequest;
 import me.xiaopan.easy.network.http.ResponseCache;
 import me.xiaopan.easy.network.http.StringHttpResponseHandler;
-import me.xiaopan.easy.network.example.util.WebViewManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;

@@ -16,8 +16,8 @@
 
 package me.xiaopan.easy.network.example.net.request;
 
-import me.xiaopan.easy.network.http.annotation.Host;
 import me.xiaopan.easy.network.example.net.BaseRequest;
+import me.xiaopan.easy.network.http.annotation.Host;
 
 /**
  * 天气请求
