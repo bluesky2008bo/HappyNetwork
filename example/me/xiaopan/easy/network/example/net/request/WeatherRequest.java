@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package me.xiaopan.easy.network.sample.net;
+package me.xiaopan.easy.network.example.net.request;
 
-import me.xiaopan.easy.network.http.Request;
-import me.xiaopan.easy.network.http.annotation.Method;
-import me.xiaopan.easy.network.http.enums.MethodType;
+import me.xiaopan.easy.network.http.annotation.Host;
+import me.xiaopan.easy.network.example.net.BaseRequest;
 
 /**
- * 基本请求，可以将一些每个请求都必须有的参数定义在此
+ * 天气请求
  */
-@Method(MethodType.GET)
-public class BaseRequest implements Request {
-
+@Host("http://m.weather.com.cn")
+public class WeatherRequest extends BaseRequest{
+	
 }

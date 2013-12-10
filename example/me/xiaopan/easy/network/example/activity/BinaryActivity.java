@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package me.xiaopan.easy.network.sample.activity;
+package me.xiaopan.easy.network.example.activity;
 
 import me.xiaopan.easy.network.example.R;
 import me.xiaopan.easy.network.http.BinaryHttpResponseHandler;

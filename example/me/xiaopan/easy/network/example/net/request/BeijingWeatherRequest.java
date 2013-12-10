@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package me.xiaopan.easy.network.sample.util;
+package me.xiaopan.easy.network.example.net.request;
 
-import android.app.Activity;
-import android.content.Context;
-import android.view.inputmethod.InputMethodManager;
+import me.xiaopan.easy.network.http.annotation.Path;
 
-public class Utils {
+/**
+ * 北京天气请求
+ */
+@Path("data/101010100.html")
+public class BeijingWeatherRequest extends WeatherRequest {
 
-	
-	/**
-	 * 关闭软键盘
-	 */
-	public static void closeSoftKeyboard(Activity activity){
-		InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-		//如果软键盘已经开启
-		if(inputMethodManager.isActive()){
-			inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-		}
-	}
 }

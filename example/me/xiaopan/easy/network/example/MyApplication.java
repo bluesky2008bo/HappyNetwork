@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package me.xiaopan.easy.network.example;
 
-package me.xiaopan.easy.network.sample.net.request;
+import me.xiaopan.easy.network.http.EasyHttpClient;
+import android.app.Application;
 
-import me.xiaopan.easy.network.http.annotation.Path;
-
-/**
- * 北京天气请求
- */
-@Path("data/101010100.html")
-public class BeijingWeatherRequest extends WeatherRequest {
-
+public class MyApplication extends Application {
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		EasyHttpClient.getInstance().getConfiguration().setDebugMode(true);
+	}
 }

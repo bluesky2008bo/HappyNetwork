@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package me.xiaopan.easy.network.sample.activity;
+package me.xiaopan.easy.network.example.activity;
 
 import me.xiaopan.easy.network.example.R;
-import me.xiaopan.easy.network.sample.adapter.ActivityAdapter;
-import me.xiaopan.easy.network.sample.beans.ActivityItem;
+import me.xiaopan.easy.network.example.adapter.ActivityAdapter;
+import me.xiaopan.easy.network.example.beans.ActivityItem;
 import android.app.ListActivity;
 import android.os.Bundle;
 

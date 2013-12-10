@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package me.xiaopan.easy.network.sample.net.request;
+package me.xiaopan.easy.network.example.net.request;
 
 import me.xiaopan.easy.network.http.annotation.Name;
 import me.xiaopan.easy.network.http.annotation.Param;
 import me.xiaopan.easy.network.http.annotation.Url;
-import me.xiaopan.easy.network.sample.net.BaseRequest;
+import me.xiaopan.easy.network.example.net.BaseRequest;
 
 /**
  * 百度搜索请求

@@ -13,49 +13,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package me.xiaopan.easy.network.sample.activity;
+
+package me.xiaopan.easy.network.example.activity;
 
 import me.xiaopan.easy.network.example.R;
 import me.xiaopan.easy.network.http.EasyHttpClient;
-import me.xiaopan.easy.network.http.HttpGetRequest;
-import me.xiaopan.easy.network.http.ResponseCache;
 import me.xiaopan.easy.network.http.StringHttpResponseHandler;
-import me.xiaopan.easy.network.sample.util.WebViewManager;
+import me.xiaopan.easy.network.example.net.request.BaiduSearchRequest;
+import me.xiaopan.easy.network.example.util.Utils;
+import me.xiaopan.easy.network.example.util.WebViewManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.WebView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 /**
- * 字符串
+ * 请求对象演示Demo
  */
-public class StringActivity extends Activity {
+public class RequestObjectActivity extends Activity {
 	private WebViewManager webViewManager;
+	private EditText keywordEdit;
+	private Button searchButton;
 	
-	@SuppressLint("HandlerLeak")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_web);
+		setContentView(R.layout.activity_request_object);
+		keywordEdit = (EditText) findViewById(R.id.edit_requestObject_keyword);
+		searchButton = (Button) findViewById(R.id.button_requestObject_search);
+		searchButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Utils.closeSoftKeyboard(RequestObjectActivity.this);
+				search(keywordEdit.getEditableText().toString().trim());
+			}
+		});
 		webViewManager = new WebViewManager((WebView) findViewById(R.id.web1));
 		
-		EasyHttpClient.getInstance().get(getBaseContext(), new HttpGetRequest.Builder("http://www.miui.com/forum.php").setResponseCache(new ResponseCache.Builder(20 * 1000).create()).create(), new StringHttpResponseHandler(){
+		keywordEdit.setText("王力宏");
+		search(keywordEdit.getEditableText().toString().trim());
+	}
+	
+	@SuppressLint("HandlerLeak")
+	private void search(String keyword){
+		EasyHttpClient.getInstance().execute(getBaseContext(), new BaiduSearchRequest(keyword), new StringHttpResponseHandler(){
 			@Override
 			public void onStart() {
+				searchButton.setEnabled(false);
 				findViewById(R.id.loading).setVisibility(View.VISIBLE);
 			}
 
 			@Override
 			public void onSuccess(String responseContent, boolean isCache, boolean isRefreshCacheAndCallback) {
 				webViewManager.getWebView().loadData(responseContent, "text/html;charset=utf-8", null);
+				searchButton.setEnabled(true);
 				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 			
 			@Override
 			public void onFailure(Throwable throwable) {
-				Toast.makeText(getBaseContext(), "失败了，信息："+throwable.getMessage(), Toast.LENGTH_LONG).show();
+				Toast.makeText(getBaseContext(), "失败了，信息："+(throwable.getMessage()!=null?throwable.getMessage():""), Toast.LENGTH_LONG).show();
 				finish();
 			}
 		});
