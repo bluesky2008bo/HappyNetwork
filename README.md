@@ -2,68 +2,43 @@
 
 这是一个参考了android-async-http项目的Android网络访问库，旨在用最简单、最快捷的方式来访问网络！
 
-###特征
->* 支持响应缓存功能，
->* 通过注解加反射来解析对象获取请求地址以及请求参数；
->* 优化HttpResponseHandler的处理流程，具体的BinaryHttpResponseHandler、StringHttpResponseHandler以及JsonHttpResponseHandler的使用方式请参考演示程序中的StringActivity、BinaryActivity以及JsonActivity。
+##Features
+>* 重新封装了HttpRequest，使用更方便；
+>* 支持以请求对象的方式来发送Http请求；
+>* 支持缓存Http Response，缓存信息还可以配置过期时间；
+>* 默认提供单例模式；
 
-###请求对象配置以及使用详解：
+##Usage Guide
 
-####配置示例：
+###重新封装的HttpRequest
+包含``HttpGetRequest``、``HttpPostRequest``、``HttpPutRequest``、``HttpDeleteRequest``等四种请求。
 
-```java
-/**
- * 百度搜索请求
- */
-@Url("http://www.baidu.com/s")
-public class BaiduSearchRequest extends BaseRequest {
-    @Expose
-    public String rsv_spt = "1";
-    @Expose
-	public String issp = "1";
-	@Expose
-	public String rsv_bp = "0";
-	@Expose
-	public String ie = "utf-8";
-	@Expose
-	public String tn = "98012088_3_dg";
-	@Expose
-	public String rsv_sug3 = "4";
-	@Expose
-	public String rsv_sug = "0";
-	@Expose
-	public String rsv_sug1 = "3";
-	@Expose
-	public String rsv_sug4 = "481";
-	@Expose
-	@SerializedName("wd")
-	public String keyword;
-	
-	/**
-	 * 创建一个百度搜索请求
-	 * @param keyword 搜索关键字
-	 */
-	public BaiduSearchRequest(String keyword){
-		this.keyword = keyword;
-	}
-}
-```
-
+###使用请求对象
+当你调用``EasyHttpClient``的``execute(Context context, Request request, HttpResponseHandler httpResponseHandler)``方法去执行一个请求的时候，会要求你传一个实现了``Request``接口的对象，此对象被称作请求对象，``EasyHttpClient``将通过此请求对象解析出请求方式、请求地址、请求头、请求参数等信息。
 ####配置详解：
+>* 请求名称的配置：
+    1.在请求对象上加上Name注解即可，请求名称将用于在log中区分不同的请求。
 
->* 请求地址的配置。通过``@Url``、``@Host``以及``@Path``三个注解来完成（都是加在类上的）：
-    1. 使用``@Url``注解来指定完整的请求地址。例如：``@Url("http://www.baidu.com/s")``；
-    2. 使用``@Host``注解来指定请求地址的主机部分，例如：``@Host("http://m.weather.com.cn")``；
-    3. 使用``@Path``注解来指定请求地址的路径部分，例如：``@Path("data/101010100.html")``；
-    4. ``@Host``+``"/"``+``@Path``==``@Url``;
-    5. 以上``@Url``、``@Host``以及``@Path``注解都是可以继承的，因此你可以弄一个BaseRequest然后把请求地址的主机部分用``@Host``注解加在BaseRequest上，然后其他的请求都继承BaseRequest，这样一来其它的请求就只需添加``@Path``注解即可，同时也可以保证主机地址只会在一个地方定义；
-    6. 在解析请求地址的时候会先检测``@Url``注解，如果有``@Url``注解并且值不为空就直接使用``@Url``注解的值作为请求地址，不会再考虑``@Host``和``@Path``注解；
-    7. 在使用``@Host``和``@Path``注解来组织请求地址的时候会直接用“/”来拼接，所以请不要在``@Host``末尾或者``@Path``的开头加“/”。
+>* 请求方式的配置：
+    1. 在请求对象上加上``Method``注解即可，``Method``的值是枚举``MethodType``
+    2. 默认值是``MethodType.GET``
+
+>* 请求地址的配置：
+    1. 通过``@Url``、``@Host``以及``@Path``三个注解来完成（都是加在类上的）：
+    2. 使用``@Url``注解来指定完整的请求地址。例如：``@Url("http://www.baidu.com/s")``；
+    3. 使用``@Host``注解来指定请求地址的主机部分，例如：``@Host("http://m.weather.com.cn")``；
+    4. 使用``@Path``注解来指定请求地址的路径部分，例如：``@Path("data/101010100.html")``；
+    5. ``@Host``+``"/"``+``@Path``==``@Url``;
+    6. 以上``@Url``、``@Host``以及``@Path``注解都是可以继承的，因此你可以弄一个BaseRequest然后把请求地址的主机部分用``@Host``注解加在BaseRequest上，然后其他的请求都继承BaseRequest，这样一来其它的请求就只需添加``@Path``注解即可，同时也可以保证主机地址只会在一个地方定义；
+    7. 在解析请求地址的时候会先检测``@Url``注解，如果有``@Url``注解并且值不为空就直接使用``@Url``注解的值作为请求地址，不会再考虑``@Host``和``@Path``注解；
+    8. 在使用``@Host``和``@Path``注解来组织请求地址的时候会直接用“/”来拼接，所以请不要在``@Host``末尾或者``@Path``的开头加“/”。
+
+>* 请求头的配置：
 
 >* 请求参数的配置：
-    1. 加了``@Expose``注解的字段才会被转换成请求参数，因此请不要忘记给字段加上``@Expose``注解。另``外@Expose``注解是google gson开源项目中的因此需要依赖于gson jar包；
-    2. 你还可以使用``@SerializedName``注解来指定参数名称，如果不加此注解的话，将会使用字段名称来作为参数名称。同样的``@SerializedName``注解也是google gson包中的；
-    3. 默认使用请求字段的toString()方法来获取请求参数值，但以下几种类型的字段将会被特殊处理：
+    1. 将请求参数中需要转换成请求参数的字段加上``@Param``注解即可；
+    2. 默认参数名称是字段的名称，如果你想自定义名称就给``@Param``注解附上值，例如：``@Param("wd")``
+    3. 默认使用字段的toString()方法来获取请求参数值，但以下几种类型的字段将会被特殊处理：
         * Map
             对于``Map``类型的字段``EasyHttpClient``会将其每一对键值对都转换成请求参数，而每一对键值对的键将作为参数名，键值对的值将作为参数值；
         * File
@@ -75,87 +50,60 @@ public class BaiduSearchRequest extends BaseRequest {
         * Enum
             对于``Enum``类型的参数你可以使用``@SerializedName``注解来指定其参数值，如果没有``@SerizlizedName``注解将使用Enum对象的name来作为参数值。
 
->* 请求方式的配置。
-    1. 如果要用get方式请求就在请求对象上加上``@Get``注解；
-    2. 如果要用post方式请求就在请求对象上加上``@post``注解；
-    3. 默认是get方式。
+>* HttpResponse缓存的配置：
 
-####使用示例：
-
+####示例如下：
 ```java
 /**
- * 请求对象演示Demo
+ * 百度搜索请求
  */
-public class RequestObjectActivity extends Activity {
-    private WebViewManager webViewManager;
-	private EditText keywordEdit;
-	private Button searchButton;
+@Url("http://www.baidu.com/s")
+@Name("百度搜索")
+public class BaiduSearchRequest implements Request {
+    @Param
+	public String rsv_spt = "1";
+
+	@Param
+	public String issp = "1";
+
+	@Param
+	public String rsv_bp = "0";
+
+	@Param
+	public String ie = "utf-8";
+
+	@Param
+	public String tn = "98012088_3_dg";
+
+	@Param
+	public String rsv_sug3 = "4";
+
+	@Param
+	public String rsv_sug = "0";
+
+	@Param
+	public String rsv_sug1 = "3";
+
+	@Param
+	public String rsv_sug4 = "481";
+
+	@Param("wd")
+	public String keyword;
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_request_object);
-		keywordEdit = (EditText) findViewById(R.id.edit_requestObject_keyword);
-		searchButton = (Button) findViewById(R.id.button_requestObject_search);
-		searchButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Utils.closeSoftKeyboard(RequestObjectActivity.this);
-				search(keywordEdit.getEditableText().toString().trim());
-			}
-		});
-		webViewManager = new WebViewManager((WebView) findViewById(R.id.web1));
-		
-		keywordEdit.setText("王力宏");
-		search(keywordEdit.getEditableText().toString().trim());
-	}
-	
-	private void search(String keyword){
-		EasyHttpClient.getInstance().get(new BaiduSearchRequest(keyword), new StringHttpResponseHandler(){
-			@Override
-			public void onStart() {
-				searchButton.setEnabled(false);
-				findViewById(R.id.loading).setVisibility(View.VISIBLE);
-			}
-
-			@Override
-			public void onSuccess(String responseContent) {
-				webViewManager.getWebView().loadData(responseContent, "text/html;charset=utf-8", null);
-			}
-
-			@Override
-			public void onFailure(HttpResponse httpResponse) {
-				Toast.makeText(getBaseContext(), "失败了，状态码："+httpResponse.getStatusLine().getStatusCode(), Toast.LENGTH_LONG).show();
-				finish();
-			}
-
-			@Override
-			public void onException(Throwable e) {
-				e.printStackTrace();
-				Toast.makeText(getBaseContext(), "异常了："+e.getMessage(), Toast.LENGTH_LONG).show();
-				finish();
-			}
-
-			@Override
-			public void onEnd() {
-				searchButton.setEnabled(true);
-				findViewById(R.id.loading).setVisibility(View.GONE);
-			}
-		});
-	}
-
-	@Override
-	public void onBackPressed() {
-		if(webViewManager.getWebView().canGoBack()){
-			webViewManager.getWebView().goBack();
-		}else{
-			super.onBackPressed();
-		}
+	/**
+	 * 创建一个百度搜索请求
+	 * @param keyword 搜索关键字
+	 */
+	public BaiduSearchRequest(String keyword){
+		this.keyword = keyword;
 	}
 }
 ```
+完整使用方式请参考示例程序。
 
-完整使用方式请参考演示程序中的RequestObjectActivity。
+###缓存Http Response
+
+###单例模式
 
 ##License
 ```java

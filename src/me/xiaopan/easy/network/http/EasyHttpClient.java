@@ -91,17 +91,15 @@ public class EasyHttpClient {
      * 执行请求
      * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param request 请求对象，将通过请求对象来解析出一个Http请求
-     * @param httpResponseHandler
+     * @param httpResponseHandler http响应处理器
      */
     public void execute(Context context, Request request, HttpResponseHandler httpResponseHandler){
         if(request != null){
             /* 解析请求方式 */
-            MethodType methodType = null;
+            MethodType methodType = MethodType.GET;
             Method method = request.getClass().getAnnotation(Method.class);
             if(method != null){
                 methodType = method.value();
-            }else{
-                methodType = MethodType.GET;
             }
 
             //根据不同的请求方式选择不同的方法执行

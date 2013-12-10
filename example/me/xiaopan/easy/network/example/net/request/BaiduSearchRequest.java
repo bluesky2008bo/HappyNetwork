@@ -62,6 +62,6 @@ public class BaiduSearchRequest extends BaseRequest {
 	 * @param keyword 搜索关键字
 	 */
 	public BaiduSearchRequest(String keyword){
-//		this.keyword = keyword;
+		this.keyword = keyword;
 	}
 }
