@@ -129,7 +129,7 @@ public class BeijingWeatherRequest extends WeatherRequest {
  * 上海天气请求
  */
 @Path("data/101020100.html")
-public class BeijingWeatherRequest extends WeatherRequest {
+public class ShanghaiWeatherRequest extends WeatherRequest {
 
 }
 ```
