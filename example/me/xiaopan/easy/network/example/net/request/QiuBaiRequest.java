@@ -1,12 +1,9 @@
 package me.xiaopan.easy.network.example.net.request;
 
 import me.xiaopan.easy.network.example.net.BaseRequest;
-import me.xiaopan.easy.network.http.annotation.Header;
 import me.xiaopan.easy.network.http.annotation.Param;
 import me.xiaopan.easy.network.http.annotation.ResponseCache;
 import me.xiaopan.easy.network.http.annotation.Url;
-
-import org.apache.http.message.BasicHeader;
 
 /**
  * Created by xiaopan on 13-11-27.

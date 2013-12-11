@@ -53,7 +53,7 @@ public class EasyHttpClient {
 	 * 获取实例
 	 * @return 实例
 	 */
-	public static final EasyHttpClient getInstance(){
+	public static EasyHttpClient getInstance(){
 		return EasyHttpClientInstanceHolder.instance;
 	}
 
@@ -289,6 +289,16 @@ public class EasyHttpClient {
     }
 
     /**
+     * 执行一个Delete请求
+     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param httpResponseHandler Http响应处理器
+     */
+    public void delete(Context context, String url, HttpResponseHandler httpResponseHandler) {
+        delete(context, new HttpDeleteRequest.Builder(url).create(), httpResponseHandler);
+    }
+
+    /**
      * 取消所有的请求，请求如果尚未开始就不再执行，如果已经开始就尝试中断
      * <br>你可以在Activity Destory的时候调用此方法来抛弃跟当前Activity相关的所有请求
      * @param context 上下文
@@ -309,7 +319,7 @@ public class EasyHttpClient {
 
     /**
      * 获取配置
-     * @return
+     * @return 配置
      */
 	public Configuration getConfiguration() {
 		if(configuration == null){
@@ -320,7 +330,7 @@ public class EasyHttpClient {
 
 	/**
 	 * 设置配置
-	 * @param configuration
+	 * @param configuration 配置
 	 */
 	public void setConfiguration(Configuration configuration) {
 		this.configuration = configuration;

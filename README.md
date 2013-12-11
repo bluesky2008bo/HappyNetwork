@@ -8,15 +8,21 @@
 >* 支持缓存Http Response，缓存信息还可以配置过期时间；
 >* 默认提供单例模式；
 
+##Change Log
+###2.0.0
+
+**[easy-network-2.0.0.jar](https://github.com/ixiaopan/EasyNetwork/raw/master/downloads/easy-network-2.0.0.jar)**
+
 ##Usage Guide
 
-###Send Request
+###发送请求
 
-####使用普通方式发送请求重新封装的HttpRequest
-包含``HttpGetRequest``、``HttpPostRequest``、``HttpPutRequest``、``HttpDeleteRequest``等四种请求。
+####使用普通方式发送请求
+>* 调用``EasyHttpClient.execute(Context, String, HttpUriRequest, ResponseCache, HttpResponseHandler)``方法；
+>* 使用重新封装的HttpRequest（包括``HttpGetRequest``、``HttpPostRequest``、``HttpPutRequest``、``HttpDeleteRequest``）调用``EasyHttpClient.get(Context, HttpGetRequest, HttpResponseHandler)``、``EasyHttpClient.post(Context, HttpPostRequest, HttpResponseHandler)``、``EasyHttpClient.put(Context, HttpPutRequest, HttpResponseHandler)``、``EasyHttpClient.delete(Context, HttpDeleteRequest, HttpResponseHandler)``等方法。
 
 ####使用请求对象发送请求
-当你调用``EasyHttpClient``的``execute(Context context, Request request, HttpResponseHandler httpResponseHandler)``方法去执行一个请求的时候，会要求你传一个实现了``Request``接口的对象，此对象被称作请求对象，``EasyHttpClient``将通过此请求对象解析出请求方式、请求地址、请求头、请求参数等信息。
+当你调用EasyHttpClient的``execute(Context, Request, HttpResponseHandler)``方法去执行一个请求的时候，会要求你传一个实现了``Request``接口的对象，此对象被称作请求对象，``EasyHttpClient``将通过此请求对象解析出请求方式、请求地址、请求头、请求参数等信息。具体配置如下：
 >* 请求名称的配置：
     1. 在请求对象上加上``@Name``注解即可，例如：``@Name("百度搜索")``。请求名称将用于在log中区分不同的请求。
 
@@ -55,18 +61,26 @@
     4. isRefreshCallback：boolean型，指定当刷新本地缓存完成的时候是否再次回调HttpResponseHandler.handleResponse()，默认值为false；
     5. cacheDirectory：String型，指定缓存目录，默认值为``""``。
 
-更加详细的使用方式请参考示例程序。
+更加详细的配置方式请参考示例程序。
 
 ####缓存Http Response
+>* 在使用普通方式发送请求的时候你可以传一个ResponseCache类型的参数来定义缓存配置;
+>* 使用请求对象的时候你可以在请求对象上加上@ResponseCache注解来定义缓存配置。
 
 ###处理响应
+不管你用何种方式发送请求，都会要求传一个HttpResponseHandler，因此你需要继承HttpResponseHandler抽象类来处理Http响应，HttpResponseHandler的三个抽象方法说明如下：
+>* ``start(Handler)``：开始发送请求的时候会回调此方法；
+>* ``handleResponse(Handler, HttpResponse, boolean, boolean)``：当请求发送成功需要处理响应的时候会回调此方法；
+>* ``exception(Handler, Throwable )``：当在整个过程发生异常的话会回调此方法。
 
-###单例模式
-你只需调用EasyHttpClient.getInstance()即可获取EasyHttpClient的实例。
+另外
+>* HttpResponseHandler还有一个方法isCanCache(Handler, HttpResponse)用来判定是否可以缓存，默认是当状态码大于等于200小于300就允许缓存，你可以重写此方法来改变缓存判定策略。
+>* HttpResponseHandler的每一个方法都有Handler，因此你可以借助Handler在主线程更新视图，具体使用可以参考JsonHttpResponseHandler；
+>* 已经提供了BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler三种实现，可以满足大部分需求了。
 
-####示例：
+###示例：
 
-#####请求方式配置示例：
+####请求方式配置示例：
 ```java
 /**
  * 基本请求，可以将一些每个请求都必须有的参数定义在此
@@ -78,9 +92,9 @@ public class BaseRequest implements Request {
 ```
 你可以定义一个BaseRequest，其它所有请求都继承于BaseRequest，然后在BaseRequest上定义所有请求的请求方式
 
-#####请求地址配置示例：
+####请求地址配置示例：
 
-######@Url使用示例：
+#####@Url使用示例：
 ```java
 /**
  * 北京天气请求
@@ -120,7 +134,7 @@ public class BeijingWeatherRequest extends WeatherRequest {
 }
 ```
 
-#####请求头配置示例：
+####请求头配置示例：
 ```java
 /**
  * 基本请求
@@ -145,7 +159,7 @@ public class BaseRequest implements Request {
 ```
 示例中的三种方式任意一种都可以。
 
-#####请求参数配置示例：
+####请求参数配置示例：
 ```java
 /**
  * 百度搜索请求
@@ -160,7 +174,7 @@ public class BaiduSearchRequest implements Request {
     public String issp = "1";
 
     @Param
-	public String rsv_bp = "0";
+    public String rsv_bp = "0";
 
 	@Param
 	public String ie = "utf-8";
@@ -193,7 +207,7 @@ public class BaiduSearchRequest implements Request {
 }
 ```
 
-#####HttpResponse缓存配置示例：
+####HttpResponse缓存配置示例：
 ```java
 @Url("http://www.qiushibaike.com/article/52638010")
 @ResponseCache(periodOfValidity = 1000 * 60 * 60 * 24, isRefreshCache = true)
@@ -206,7 +220,7 @@ public class QiuBaiRequest extends BaseRequest{
 }
 ```
 
-###一个完整的发送请求并处理响应的示例：
+####一个完整的发送请求并处理响应的示例：
 ```java
 EasyHttpClient.getInstance().execute(getBaseContext(), new BeijingWeatherRequest(), new JsonHttpResponseHandler<Weather>(Weather.class) {
     @Override
@@ -241,6 +255,9 @@ EasyHttpClient.getInstance().execute(getBaseContext(), new BeijingWeatherRequest
     }
 });
 ```
+
+###单例模式
+你只需调用``EasyHttpClient.getInstance()``即可获取EasyHttpClient的实例。
 
 ##License
 ```java
