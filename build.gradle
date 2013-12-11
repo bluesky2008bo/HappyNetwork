@@ -20,10 +20,10 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src','sample']
-            resources.srcDirs = ['src','sample']
-            aidl.srcDirs = ['src','sample']
-            renderscript.srcDirs = ['src','sample']
+            java.srcDirs = ['src','example']
+            resources.srcDirs = ['src','example']
+            aidl.srcDirs = ['src','example']
+            renderscript.srcDirs = ['src','example']
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }

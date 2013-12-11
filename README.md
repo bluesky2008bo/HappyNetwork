@@ -17,21 +17,17 @@
 当你调用``EasyHttpClient``的``execute(Context context, Request request, HttpResponseHandler httpResponseHandler)``方法去执行一个请求的时候，会要求你传一个实现了``Request``接口的对象，此对象被称作请求对象，``EasyHttpClient``将通过此请求对象解析出请求方式、请求地址、请求头、请求参数等信息。
 ####配置详解：
 >* 请求名称的配置：
-    1.在请求对象上加上Name注解即可，请求名称将用于在log中区分不同的请求。
+    1. 在请求对象上加上``@Name``注解即可，例如：``@Name("百度搜索")``。请求名称将用于在log中区分不同的请求。
 
 >* 请求方式的配置：
-    1. 在请求对象上加上``Method``注解即可，``Method``的值是枚举``MethodType``
-    2. 默认值是``MethodType.GET``
+    1. 在请求对象上加上``@Method``注解即可，例如：``@Method(MethodType.POST)``；
+    2. 目前支持GET、POST、PUT、DELETE四种请求，缺省值是``MethodType.GET``。
 
 >* 请求地址的配置：
-    1. 通过``@Url``、``@Host``以及``@Path``三个注解来完成（都是加在类上的）：
-    2. 使用``@Url``注解来指定完整的请求地址。例如：``@Url("http://www.baidu.com/s")``；
-    3. 使用``@Host``注解来指定请求地址的主机部分，例如：``@Host("http://m.weather.com.cn")``；
-    4. 使用``@Path``注解来指定请求地址的路径部分，例如：``@Path("data/101010100.html")``；
-    5. ``@Host``+``"/"``+``@Path``==``@Url``;
-    6. 以上``@Url``、``@Host``以及``@Path``注解都是可以继承的，因此你可以弄一个BaseRequest然后把请求地址的主机部分用``@Host``注解加在BaseRequest上，然后其他的请求都继承BaseRequest，这样一来其它的请求就只需添加``@Path``注解即可，同时也可以保证主机地址只会在一个地方定义；
-    7. 在解析请求地址的时候会先检测``@Url``注解，如果有``@Url``注解并且值不为空就直接使用``@Url``注解的值作为请求地址，不会再考虑``@Host``和``@Path``注解；
-    8. 在使用``@Host``和``@Path``注解来组织请求地址的时候会直接用“/”来拼接，所以请不要在``@Host``末尾或者``@Path``的开头加“/”。
+    1. 使用``@Url``注解来指定完整的请求地址。例如：``@Url("http://m.weather.com.cn/data/101010100.html")``；
+    2. 你还可以选择使用``@Host``加``@Path``注解来指定完整的请求地址，其中``@Host``负责不可变部分（例如``http://m.weather.com.cn``）；``@Path``负责变化部分（例如：``data/101010100.html``）；值得注意的是请不要在``@Host``的末尾或者``@Path``的开头加``/``，因为在解析的时候会自动加上；
+    3. 以上``@Url``、``@Host``以及``@Path``注解都是可以继承的，因此你可以弄一个BaseRequest然后把请求地址的不可变部分用``@Host``注解加在BaseRequest上，然后其他的请求都继承BaseRequest，这样一来其它的请求就只需添加``@Path``注解即可，同时也可以保证主机地址只会在一个地方定义；
+    4. ``@Url``的优先级高于``@Host``加``@Path``。
 
 >* 请求头的配置：
 
@@ -61,9 +57,9 @@
 @Name("百度搜索")
 public class BaiduSearchRequest implements Request {
     @Param
-	public String rsv_spt = "1";
+    public String rsv_spt = "1";
 
-	@Param
+    @Param
 	public String issp = "1";
 
 	@Param
