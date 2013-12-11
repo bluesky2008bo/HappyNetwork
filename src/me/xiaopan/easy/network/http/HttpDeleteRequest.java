@@ -181,7 +181,7 @@ public class HttpDeleteRequest {
          */
         public Builder setRequest(Request request){
         	RequestParser requestParser = new RequestParser(request);
-            String requestName = requestParser.getRequestName();
+            String requestName = requestParser.getName();
             if(GeneralUtils.isNotEmpty(requestName)){
                 httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
             }

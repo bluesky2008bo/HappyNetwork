@@ -19,12 +19,4 @@ public class QiuBaiRequest extends BaseRequest{
 
     @Param
     private String s = "4618412";
-
-    @Header
-    private org.apache.http.Header[] heades;
-
-    public QiuBaiRequest() {
-        BasicHeader basicHeader = new BasicHeader("range", "100, 500");
-        heades = new org.apache.http.Header[]{basicHeader};
-    }
 }
