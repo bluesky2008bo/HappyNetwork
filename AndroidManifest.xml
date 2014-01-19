@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.xiaopan.easy.network.example"
-    android:versionCode="200"
-    android:versionName="2.0.0" >
+    package="me.xiaopan.android.easynetwork"
+    android:versionCode="210"
+    android:versionName="2.1.0" >
 
     <!-- 声明兼容的系统版本 -->
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="19" />
@@ -12,17 +12,17 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <!-- 声明应用需要的各种组件 -->
-    <application android:name=".MyApplication" android:allowBackup="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity" android:label="@string/app_name" >
+    <application android:name="me.xiaopan.android.easynetwork.sample.MyApplication" android:allowBackup="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/AppTheme">
+        <activity android:name="me.xiaopan.android.easynetwork.sample.activity.MainActivity" android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.BinaryActivity" android:label="@string/activityTitle_binary"/>
-        <activity android:name=".activity.StringActivity" android:label="@string/activityTitle_string"/>
-        <activity android:name=".activity.JsonActivity" android:label="@string/activityTitle_json"/>
-        <activity android:name=".activity.RequestObjectActivity" android:label="@string/activityTitle_requestObject"/>
+        <activity android:name="me.xiaopan.android.easynetwork.sample.activity.BinaryActivity" android:label="@string/activityTitle_binary"/>
+        <activity android:name="me.xiaopan.android.easynetwork.sample.activity.StringActivity" android:label="@string/activityTitle_string"/>
+        <activity android:name="me.xiaopan.android.easynetwork.sample.activity.JsonActivity" android:label="@string/activityTitle_json"/>
+        <activity android:name="me.xiaopan.android.easynetwork.sample.activity.RequestObjectActivity" android:label="@string/activityTitle_requestObject"/>
     </application>
 	
 </manifest>

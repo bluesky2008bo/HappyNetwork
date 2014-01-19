@@ -1,4 +1,4 @@
-# ![Logo](https://github.com/ixiaopan/EasyNetwork/raw/master/res/drawable-mdpi/ic_launcher.png) EasyNetwork
+# ![Logo](https://github.com/xiaopansky/EasyNetwork/raw/master/res/drawable-mdpi/ic_launcher.png) EasyNetwork
 
 这是一个参考了android-async-http项目的Android网络访问库，旨在用最简单、最快捷的方式来访问网络！
 
@@ -8,10 +8,11 @@
 >* 支持缓存Http Response，缓存信息还可以配置过期时间；
 >* 默认提供单例模式；
 
-##Change Log
-###2.0.0
+##Downloads
+**[android-easy-network-2.1.0.jar](https://github.com/xiaopansky/EasyNetwork/raw/master/releases/android-easy-network-2.1.0.jar)**
 
-**[easy-network-2.0.0.jar](https://github.com/ixiaopan/EasyNetwork/raw/master/downloads/easy-network-2.0.0.jar)**
+##Depend
+>* **[gson-2.2.2.jar](https://github.com/xiaopansky/EasyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler的话就必须引入此类库 
 
 ##Usage Guide
 
