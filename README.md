@@ -10,12 +10,14 @@
 
 ##Downloads
 **[android-easy-network-2.1.1.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.1.jar)**
+
 **[android-easy-network-2.1.1-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.1-src.jar)**
+
 **[android-easy-network-2.1.0.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.0.jar)**
 
 ##Change Log
 ###2.1.1
->* 修改注解的序列化名称注解由SerializedName替换为Param
+>* 注解的序列化名称注解由SerializedName替换为Param
 
 ###2.1.0
 
@@ -61,7 +63,7 @@
         * Boolean 
             对于``Boolean``类型的字段你可以通过``@True``和``@False``注解来指定当字段值是``true``或``false``的时候其对应的转换成请求参数时的参数值；
         * Enum
-            对于``Enum``类型的参数你可以使用``@SerializedName``注解来指定其参数值，如果没有``@SerizlizedName``注解将使用Enum对象的name来作为参数值。
+            对于``Enum``类型的参数你可以使用``@Param``注解来指定其参数值，如果没有```@Param``注解将使用Enum对象的name来作为参数值。
 
 >* HttpResponse缓存的配置：
     1. 使用``@ResponseCache``注解来配置响应缓存，``@ResponseCache``有四个参数
@@ -185,7 +187,7 @@ public class BaiduSearchRequest implements Request {
     @Param
     public String rsv_bp = "0";
 
-	@Param
+    @Param
 	public String ie = "utf-8";
 
 	@Param
