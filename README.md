@@ -9,10 +9,18 @@
 >* 默认提供单例模式；
 
 ##Downloads
+**[android-easy-network-2.1.1.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.1.jar)**
+**[android-easy-network-2.1.1-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.1-src.jar)**
 **[android-easy-network-2.1.0.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.0.jar)**
 
+##Change Log
+###2.1.1
+>* 修改注解的序列化名称注解由SerializedName替换为Param
+
+###2.1.0
+
 ##Depend
->* **[gson-2.2.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler的话就必须引入此类库 
+>* **[gson-2.2.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
 
 ##Usage Guide
 

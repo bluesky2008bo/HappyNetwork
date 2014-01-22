@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.xiaopan.android.easynetwork"
-    android:versionCode="210"
-    android:versionName="2.1.0" >
+    android:versionCode="211"
+    android:versionName="2.1.1" >
 
     <!-- 声明兼容的系统版本 -->
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="19" />
@@ -24,5 +24,4 @@
         <activity android:name="me.xiaopan.android.easynetwork.sample.activity.JsonActivity" android:label="@string/activityTitle_json"/>
         <activity android:name="me.xiaopan.android.easynetwork.sample.activity.RequestObjectActivity" android:label="@string/activityTitle_requestObject"/>
     </application>
-	
 </manifest>

@@ -18,8 +18,6 @@ import me.xiaopan.android.easynetwork.http.annotation.ResponseCache;
 import me.xiaopan.android.easynetwork.http.annotation.True;
 import me.xiaopan.android.easynetwork.http.annotation.Url;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * 请求解析器，用于解析继承于Request的请求对象
  * Created by XIAOPAN on 13-11-24.
@@ -185,9 +183,9 @@ public class RequestParser {
                             }
                         }else if(paramValueObject instanceof Enum){	//如果当前字段是枚举
                             Enum<?> enumObject = (Enum<?>) paramValueObject;
-                            SerializedName serializedName = GeneralUtils.getAnnotationFromEnum(enumObject, SerializedName.class);
-                            if(serializedName != null && GeneralUtils.isNotEmpty(serializedName.value())){
-                                requestParams.put(parseRequestParamKey(field), serializedName.value());
+                            Param paramName = GeneralUtils.getAnnotationFromEnum(enumObject, Param.class);
+                            if(paramName != null && GeneralUtils.isNotEmpty(paramName.value())){
+                                requestParams.put(parseRequestParamKey(field), paramName.value());
                             }else{
                                 requestParams.put(parseRequestParamKey(field), enumObject.name());
                             }
