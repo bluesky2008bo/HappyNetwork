@@ -9,13 +9,14 @@
 >* 默认提供单例模式；
 
 ##Downloads
-**[android-easy-network-2.1.1.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.1.jar)**
+**[android-easy-network-2.1.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.2.jar)**
 
-**[android-easy-network-2.1.1-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.1-src.jar)**
-
-**[android-easy-network-2.1.0.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.0.jar)**
+**[android-easy-network-2.1.2-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.2-with-src.jar)**
 
 ##Change Log
+###2.1.2
+>* 修复ResponseCache注解没有加运行时标记的BUG
+
 ###2.1.1
 >* 注解的序列化名称注解由SerializedName替换为Param
 
