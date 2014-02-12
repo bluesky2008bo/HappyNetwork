@@ -26,7 +26,7 @@ import org.apache.http.protocol.HttpContext;
 /**
  * 添加请求头的请求拦截器
  */
-public class AddRequestHeaderRequestInterceptor implements HttpRequestInterceptor, GzipProcess {
+public class AddRequestHeaderRequestInterceptor implements HttpRequestInterceptor{
 	private Map<String, String> requestHeaderMap;
 	
 	public AddRequestHeaderRequestInterceptor(Map<String, String> clientHeaderMap){

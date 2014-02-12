@@ -22,8 +22,17 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.protocol.HttpContext;
 
-public class GzipProcessRequestInterceptor implements HttpRequestInterceptor, GzipProcess {
-
+public class GzipProcessRequestInterceptor implements HttpRequestInterceptor{
+	/**
+	 * 头字段 - 接受的编码
+	 */
+	public static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
+	
+	/**
+	 * 编码 - gzip
+	 */
+	public static final String ENCODING_GZIP = "gzip";
+	
 	@Override
 	public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
 		//如果请求头中没有HEADER_ACCEPT_ENCODING属性就添加进去

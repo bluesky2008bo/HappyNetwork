@@ -24,7 +24,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.protocol.HttpContext;
 
-public class GzipProcessResponseInterceptor implements HttpResponseInterceptor, GzipProcess {
+public class GzipProcessResponseInterceptor implements HttpResponseInterceptor{
     
 	@Override
     public void process(HttpResponse response, HttpContext context) {
@@ -33,8 +33,8 @@ public class GzipProcessResponseInterceptor implements HttpResponseInterceptor, 
         	final Header encoding = entity.getContentEncoding();
         	if (encoding != null) {
         		for (HeaderElement element : encoding.getElements()) {
-        			if (element.getName().equalsIgnoreCase(ENCODING_GZIP)) {
-        				response.setEntity(new InflatingEntity(response.getEntity()));
+        			if (element.getName().equalsIgnoreCase(GzipProcessRequestInterceptor.ENCODING_GZIP)) {
+        				response.setEntity(new InflatingEntity(entity));
         				break;
         			}
         		}

@@ -3,17 +3,23 @@
 这是一个参考了android-async-http项目的Android网络访问库，旨在用最简单、最快捷的方式来访问网络！
 
 ##Features
+>* 异步发送Http请求，并用ThreadPool来维护每一个请求
+>* 默认采用Gzip超高速传输
 >* 重新封装了HttpRequest，使用更方便；
 >* 支持以请求对象的方式来发送Http请求；
->* 支持缓存Http Response，缓存信息还可以配置过期时间；
+>* 内置多种BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler等响应处理器
+>* 支持缓存HttpResponse，还可以配置过期时间、刷新缓存等功能；
 >* 默认提供单例模式；
 
 ##Downloads
-**[android-easy-network-2.1.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.2.jar)**
+**[android-easy-network-2.1.3.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.3.jar)**
 
-**[android-easy-network-2.1.2-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.2-with-src.jar)**
+**[android-easy-network-2.1.3-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.3-with-src.jar)**
 
 ##Change Log
+###2.1.3
+>* 修复GzipProcessResponseInterceptor引发的请求失败的BUG
+
 ###2.1.2
 >* 修复ResponseCache注解没有加运行时标记的BUG
 
