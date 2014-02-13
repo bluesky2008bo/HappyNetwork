@@ -166,7 +166,7 @@ public class HttpRequestRunnable implements Runnable {
             Log.d(easyHttpClient.getConfiguration().getLogTag(), name + "（网络）请求地址："+uri);
         }
         try{
-            HttpResponse httpResponse = easyHttpClient.getConfiguration().getHttpClient().execute(httpUriRequest, easyHttpClient.getConfiguration().getHttpContext());
+            HttpResponse httpResponse = easyHttpClient.getConfiguration().getDefaultHttpClient().execute(httpUriRequest, easyHttpClient.getConfiguration().getHttpContext());
 
             /* 如果需要缓存 */
             if(responseCache != null && httpResponseHandler.isCanCache(easyHttpClient.getConfiguration().getHandler(), httpResponse)){

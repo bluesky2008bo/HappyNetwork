@@ -30,7 +30,6 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -55,21 +54,23 @@ public class Configuration {
 	private int connectionTimeout = 20000;	//连接超时时间
 	private int maxConnections = 10;	//最大连接数
 	private int socketBufferSize = 8192;	//Socket缓存池大小
-	private boolean debugMode;
+	private boolean debugMode;	//调试模式
 	private String logTag = "EasyHttpClient";	//Log Tag
-	private String userAgent;
+	private String userAgent;	//代理
 	private String defaultCacheDirerctory;	//默认缓存目录
-	private Handler handler = new Handler();
-	private CookieStore cookieStore;
+	private Handler handler;	//异步处理器
+	private CookieStore cookieStore;	//Cookie池
 	private HttpContext httpContext;	//Http上下文
-	private SSLSocketFactory sslSocketFactory;
-	private DefaultHttpClient httpClient;
-    private Map<String, String> headerMap = new HashMap<String, String>();	//请求头Map
+	private SSLSocketFactory sslSocketFactory;	//SSL加密Socket工厂
+	private DefaultHttpClient defaultHttpClient;
+    private Map<String, String> headerMap;	//请求头Map
 	private ThreadPoolExecutor threadPool;	//线程池
     private AuthScope authScope;
     private Credentials credentials;
 	
     private Configuration(){
+    	handler = new Handler();
+    	headerMap = new HashMap<String, String>();
 	}
 	
 	/**
@@ -98,8 +99,8 @@ public class Configuration {
 	 * 获取Http客户端
 	 * @return
 	 */
-	public final HttpClient getHttpClient() {
-		if(httpClient == null){
+	public final DefaultHttpClient getDefaultHttpClient() {
+		if(defaultHttpClient == null){
 	        BasicHttpParams httpParams = new BasicHttpParams();
 	        GeneralUtils.setConnectionTimeout(httpParams, connectionTimeout);
 			GeneralUtils.setMaxConnections(httpParams, maxConnections);
@@ -112,27 +113,27 @@ public class Configuration {
 	        SchemeRegistry schemeRegistry = new SchemeRegistry();
 	        schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
 	        schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
-	        httpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams, schemeRegistry), httpParams);
-	        httpClient.addRequestInterceptor(new GzipProcessRequestInterceptor());
-	        httpClient.addRequestInterceptor(new AddRequestHeaderRequestInterceptor(getHeaderMap()));
-	        httpClient.addResponseInterceptor(new GzipProcessResponseInterceptor());
-	        httpClient.setHttpRequestRetryHandler(new RetryHandler(maxRetries));
+	        defaultHttpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams, schemeRegistry), httpParams);
+	        defaultHttpClient.addRequestInterceptor(new GzipProcessRequestInterceptor());
+	        defaultHttpClient.addRequestInterceptor(new AddRequestHeaderRequestInterceptor(getHeaderMap()));
+	        defaultHttpClient.addResponseInterceptor(new GzipProcessResponseInterceptor());
+	        defaultHttpClient.setHttpRequestRetryHandler(new RetryHandler(maxRetries));
 	        if(sslSocketFactory != null){
-	    		httpClient.getConnectionManager().getSchemeRegistry().register(new Scheme("https", sslSocketFactory, 443));
+	    		defaultHttpClient.getConnectionManager().getSchemeRegistry().register(new Scheme("https", sslSocketFactory, 443));
 	    	}
 	        if(authScope != null && credentials != null){
-	    		httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
+	    		defaultHttpClient.getCredentialsProvider().setCredentials(authScope, credentials);
 	    	}
 		}
-		return httpClient;
+		return defaultHttpClient;
 	}
 
 	/**
 	 * 设置Http客户端
 	 * @param httpClient
 	 */
-	public void setHttpClient(DefaultHttpClient httpClient) {
-		this.httpClient = httpClient;
+	public void setDefaultHttpClient(DefaultHttpClient httpClient) {
+		this.defaultHttpClient = httpClient;
 	}
     
     /**
@@ -206,8 +207,8 @@ public class Configuration {
 	 */
 	public void setMaxRetries(int maxRetries) {
 		this.maxRetries = maxRetries;
-		if(httpClient != null){
-			httpClient.setHttpRequestRetryHandler(new RetryHandler(this.maxRetries));
+		if(defaultHttpClient != null){
+			defaultHttpClient.setHttpRequestRetryHandler(new RetryHandler(this.maxRetries));
 		}
 	}
 
@@ -225,7 +226,7 @@ public class Configuration {
 	 */
 	public void setConnectionTimeout(int connectionTimeout) {
 		this.connectionTimeout = connectionTimeout;
-		GeneralUtils.setConnectionTimeout(httpClient, this.connectionTimeout);
+		GeneralUtils.setConnectionTimeout(defaultHttpClient, this.connectionTimeout);
 	}
 
 	/**
@@ -242,7 +243,7 @@ public class Configuration {
 	 */
 	public void setMaxConnections(int maxConnections) {
 		this.maxConnections = maxConnections;
-		GeneralUtils.setMaxConnections(httpClient, this.maxConnections);
+		GeneralUtils.setMaxConnections(defaultHttpClient, this.maxConnections);
 	}
 
 	/**
@@ -259,7 +260,7 @@ public class Configuration {
 	 */
 	public void setSocketBufferSize(int socketBufferSize) {
 		this.socketBufferSize = socketBufferSize;
-		GeneralUtils.setSocketBufferSize(httpClient, this.socketBufferSize);
+		GeneralUtils.setSocketBufferSize(defaultHttpClient, this.socketBufferSize);
 	}
 	
 	/**
@@ -294,8 +295,8 @@ public class Configuration {
      */
     public void setUserAgent(String userAgent) {
     	this.userAgent = userAgent;
-        if(httpClient != null){
-        	HttpProtocolParams.setUserAgent(httpClient.getParams(), this.userAgent);
+        if(defaultHttpClient != null){
+        	HttpProtocolParams.setUserAgent(defaultHttpClient.getParams(), this.userAgent);
         }
     }
     
@@ -313,8 +314,8 @@ public class Configuration {
      */
     public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
     	this.sslSocketFactory = sslSocketFactory;
-    	if(httpClient != null){
-    		httpClient.getConnectionManager().getSchemeRegistry().register(new Scheme("https", this.sslSocketFactory, 443));
+    	if(defaultHttpClient != null){
+    		defaultHttpClient.getConnectionManager().getSchemeRegistry().register(new Scheme("https", this.sslSocketFactory, 443));
     	}
     }
     
@@ -327,8 +328,8 @@ public class Configuration {
     public void setBasicAuth(String user, String pass, AuthScope scope){
     	authScope = scope;
     	credentials = new UsernamePasswordCredentials(user,pass);
-    	if(httpClient != null){
-    		httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
+    	if(defaultHttpClient != null){
+    		defaultHttpClient.getCredentialsProvider().setCredentials(authScope, credentials);
     	}
     }
 
@@ -413,7 +414,7 @@ public class Configuration {
 		 * @param httpClient
 		 */
 		public Builder setHttpClient(DefaultHttpClient httpClient) {
-			configuration.setHttpClient(httpClient);
+			configuration.setDefaultHttpClient(httpClient);
 			return this;
 		}
 	    
