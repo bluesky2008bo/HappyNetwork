@@ -2,6 +2,7 @@ package me.xiaopan.android.easynetwork.http;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -11,12 +12,14 @@ import java.util.Map;
 import me.xiaopan.android.easynetwork.http.annotation.False;
 import me.xiaopan.android.easynetwork.http.annotation.Header;
 import me.xiaopan.android.easynetwork.http.annotation.Host;
+import me.xiaopan.android.easynetwork.http.annotation.Method;
 import me.xiaopan.android.easynetwork.http.annotation.Name;
 import me.xiaopan.android.easynetwork.http.annotation.Param;
 import me.xiaopan.android.easynetwork.http.annotation.Path;
 import me.xiaopan.android.easynetwork.http.annotation.ResponseCache;
 import me.xiaopan.android.easynetwork.http.annotation.True;
 import me.xiaopan.android.easynetwork.http.annotation.Url;
+import me.xiaopan.android.easynetwork.http.enums.MethodType;
 
 /**
  * 请求解析器，用于解析继承于Request的请求对象
@@ -24,70 +27,163 @@ import me.xiaopan.android.easynetwork.http.annotation.Url;
  */
 public class RequestParser {
     /**
-     * 请求对象
-     */
-    private  Request request;
-
-    /**
-     * 创建一个请求解析器
-     * @param request 请求对象
-     */
-    public RequestParser(Request request) {
-        if(request == null){
-        	throw new NullPointerException("request 不能为null");
-        }
-    	this.request = request;
-    }
-
-    /**
-     * 获取请求名称
-     * @return 请求名称
-     */
-    public String getName(){
-        return RequestParser.parseName(request);
-    }
-
-    /**
-     * 获取请求地址
-     * @return 请求地址
-     */
-    public String getUrl(){
-        return RequestParser.parseUrl(request);
-    }
-
-    /**
-     * 获取请求参数集
-     * @param requestParams 请求参数集，如果不为null的话，会将解析到的请求参数放入此请求参数集中，然后再返回否则就会创建新的请求参数集对象
-     * @return 请求参数集
-     */
-    public RequestParams getRequestParams(RequestParams requestParams){
-        return RequestParser.parseRequestParams(request, requestParams);
-    }
-
-    /**
-     * 获取请求头
-     * @return 请求头
-     */
-    public org.apache.http.Header[] getRequestHeaders(){
-        return RequestParser.parseRequestHeaders(request);
-    }
-
-    /**
-     * 获取响应缓存配置信息
-     * @return 响应缓存配置信息
-     */
-    public me.xiaopan.android.easynetwork.http.ResponseCache getResponseCache(){
-        return RequestParser.parseResponseCache(request);
-    }
-
-    /**
      * 解析请求名称
-     * @param request 请求对象
+     * @param requestClass 请求对象
      * @return 请求名称
      */
-    public static String parseName(Request request){
-        Name name = request.getClass().getAnnotation(Name.class);
+    public static String parseName(Class<? extends Request> requestClass){
+        Name name = requestClass.getAnnotation(Name.class);
         return (name != null && GeneralUtils.isNotEmpty(name.value()))? name.value():null;
+    }
+    
+    /**
+     * 解析基本的请求地址，值得注意的是此方法返回的请求地址不包含请求参数（即使请求方式是GET或者DELETE）
+     * @param requestClass 请求对象
+     * @return 请求地址，null：requestClass为null或请求对象上既没有Url注解（或者值为空）也没有Host注解（或者值为空）
+     */
+    public static String parseBaseUrl(Class<? extends Request> requestClass){
+        StringBuffer stringBuffer = new StringBuffer();
+    	
+        /* 优先解析Url注解 */
+        Url url = requestClass.getAnnotation(Url.class);
+        String urlValue = url != null ? url.value().trim() : null;
+        if(GeneralUtils.isNotEmpty(urlValue)){
+        	stringBuffer.append(urlValue);
+        }else{
+        	/* 其次解析Host注解 */
+        	if(stringBuffer.length() == 0){
+        		Host host = requestClass.getAnnotation(Host.class);
+        		String hostValue = host != null ? host.value().trim() : null;
+        		if(GeneralUtils.isNotEmpty(hostValue)){
+        			stringBuffer.append(hostValue);
+        		}
+        	}
+        	
+        	/* 最后解析Path注解 */
+        	if(stringBuffer.length() > 0){
+        		Path path = requestClass.getAnnotation(Path.class);
+        		String pathValue = path != null ? path.value().trim() : null;
+        		if(GeneralUtils.isNotEmpty(pathValue)){
+        			stringBuffer.append("/");
+        			stringBuffer.append(pathValue);
+        		}
+        	}
+        }
+        
+        if(stringBuffer.length() > 0){
+        	return stringBuffer.toString();
+    	}else{
+    		return null;
+    	}
+    }
+
+    /**
+     * 解析请求地址，值得注意的是只有此请求对象中静态字段才会被处理
+     * @param requestClass 请求对象
+     * @param extraRequestParams 额外的请求参数，如果此请求对象的请求方式是GET或者DELETE的话，此参数集就会被处理
+     * @return 请求地址，null：requestClass为null或请求对象上既没有Url注解（或者值为空）也没有Host注解（或者值为空）
+     */
+    public static String parseUrl(Class<? extends Request> requestClass, RequestParams extraRequestParams){
+        StringBuffer stringBuffer = new StringBuffer();
+    	
+        /* 优先解析Url注解 */
+        Url url = requestClass.getAnnotation(Url.class);
+        String urlValue = url != null ? url.value().trim() : null;
+        if(GeneralUtils.isNotEmpty(urlValue)){
+        	stringBuffer.append(urlValue);
+        }else{
+        	/* 其次解析Host注解 */
+        	if(stringBuffer.length() == 0){
+        		Host host = requestClass.getAnnotation(Host.class);
+        		String hostValue = host != null ? host.value().trim() : null;
+        		if(GeneralUtils.isNotEmpty(hostValue)){
+        			stringBuffer.append(hostValue);
+        		}
+        	}
+        	
+        	/* 最后解析Path注解 */
+        	if(stringBuffer.length() > 0){
+        		Path path = requestClass.getAnnotation(Path.class);
+        		String pathValue = path != null ? path.value().trim() : null;
+        		if(GeneralUtils.isNotEmpty(pathValue)){
+        			stringBuffer.append("/");
+        			stringBuffer.append(pathValue);
+        		}
+        	}
+        }
+        
+        if(stringBuffer.length() > 0){
+        	Method method = requestClass.getAnnotation(Method.class);
+        	if(method == null || method.value() == MethodType.GET || method.value() == MethodType.DELETE){
+        		RequestParams newParams = parseRequestParams(requestClass, extraRequestParams);
+        		String paramString = newParams.getParamString();
+        		if(GeneralUtils.isNotEmpty(paramString)){
+        			stringBuffer.append(stringBuffer.indexOf("?") == -1?"?":"&");
+        			stringBuffer.append(paramString);
+        		}
+    		}
+        	return stringBuffer.toString();
+    	}else{
+    		return null;
+    	}
+    }
+
+    /**
+     * 解析请求地址，值得注意的是只有此请求对象中静态字段才会被处理
+     * @param requestClass 请求对象
+     * @return 请求地址，null：requestClass为null或请求对象上既没有Url注解（或者值为空）也没有Host注解（或者值为空）
+     */
+    public static String parseUrl(Class<? extends Request> requestClass){
+    	return parseUrl(requestClass, null);
+    }
+
+    /**
+     * 解析请求地址
+     * @param request 请求对象
+     * @param extraRequestParams 额外的请求参数，如果此请求对象的请求方式是GET或者DELETE的话，此参数集就会被处理
+     * @return 请求地址，null：requestClass为null或请求对象上既没有Url注解（或者值为空）也没有Host注解（或者值为空）
+     */
+    public static String parseUrl(Request request, RequestParams extraRequestParams){
+    	StringBuffer stringBuffer = new StringBuffer();
+    	
+        /* 优先解析Url注解 */
+        Url url = request.getClass().getAnnotation(Url.class);
+        String urlValue = url != null ? url.value().trim() : null;
+        if(GeneralUtils.isNotEmpty(urlValue)){
+        	stringBuffer.append(urlValue);
+        }else{
+        	/* 其次解析Host注解 */
+    		Host host = request.getClass().getAnnotation(Host.class);
+    		String hostValue = host != null ? host.value().trim() : null;
+    		if(GeneralUtils.isNotEmpty(hostValue)){
+    			stringBuffer.append(hostValue);
+    		}
+        	
+        	/* 最后解析Path注解 */
+        	if(stringBuffer.length() > 0){
+        		Path path = request.getClass().getAnnotation(Path.class);
+        		String pathValue = path != null ? path.value().trim() : null;
+        		if(GeneralUtils.isNotEmpty(pathValue)){
+        			stringBuffer.append("/");
+        			stringBuffer.append(pathValue);
+        		}
+        	}
+        }
+        
+        if(stringBuffer.length() > 0){
+        	Method method = request.getClass().getAnnotation(Method.class);
+        	if(method == null || method.value() == MethodType.GET || method.value() == MethodType.DELETE){
+        		RequestParams newParams = parseRequestParams(request, extraRequestParams);
+        		String paramString = newParams.getParamString();
+        		if(GeneralUtils.isNotEmpty(paramString)){
+        			stringBuffer.append(stringBuffer.indexOf("?") == -1?"?":"&");
+        			stringBuffer.append(paramString);
+        		}
+    		}
+        	return stringBuffer.toString();
+    	}else{
+    		return null;
+    	}
     }
 
     /**
@@ -96,29 +192,7 @@ public class RequestParser {
      * @return 请求地址，null：requestClass为null或请求对象上既没有Url注解（或者值为空）也没有Host注解（或者值为空）
      */
     public static String parseUrl(Request request){
-        Class<?> requestClass = request.getClass();
-        /* 优先使用Url注解的值作为请求地址，如果没有Url注解再去用Host和Path注解来组合请求地址 */
-        Url url = requestClass.getAnnotation(Url.class);
-        String urlValue = url != null ? url.value().trim() : null;
-        if(GeneralUtils.isNotEmpty(urlValue)){
-            return urlValue;
-        }else{
-            /* 如果有Host注解就继续，否则抛异常 */
-            Host host = requestClass.getAnnotation(Host.class);
-            String hostValue = host != null ? host.value().trim() : null;
-            if(GeneralUtils.isNotEmpty(hostValue)){
-                /* 如果有Path注解就用Host注解的值拼接上Path注解的值作为请求地址，否则就只使用Host注解的值来作为请求地址 */
-                Path path = requestClass.getAnnotation(Path.class);
-                String pathValue = path != null ? path.value().trim() : null;
-                if(GeneralUtils.isNotEmpty(pathValue)){
-                    return hostValue + "/" + pathValue;
-                }else{
-                    return hostValue;
-                }
-            }else{
-                return null;
-            }
-        }
+    	return parseUrl(request, null);
     }
 
     /**
@@ -137,23 +211,24 @@ public class RequestParser {
 
     /**
      * 解析请求参数集
-     * @param request 请求对象集
+     * @param requestClass 请求对象
      * @param requestParams 请求参数集，如果不为null的话，会将解析到的请求参数放入此请求参数集中，然后再返回否则就会创建新的请求参数集对象
      * @return 请求参数集
      */
     @SuppressWarnings("unchecked")
-    public static RequestParams parseRequestParams(Request request, RequestParams requestParams){
+    public static RequestParams parseRequestParams(Class<? extends Request> requestClass, RequestParams requestParams){
         if(requestParams == null){
             requestParams = new RequestParams();
         }
 
         String paramValue;
         Object paramValueObject;
-        for(Field field : GeneralUtils.getFields(request.getClass(), true, true, true)){
-            if(field.getAnnotation(Param.class) != null){	//如果当前字段被标记为需要序列化
+        for(Field field : GeneralUtils.getFields(requestClass, true, true, true)){
+            if(field.getAnnotation(Param.class) != null && Modifier.isStatic(field.getModifiers())){	//如果当前字段被标记为需要序列化并且是静态的
                 try {
                     field.setAccessible(true);
-                    if((paramValueObject = field.get(request)) != null){
+                    paramValueObject = field.get(null);
+                    if(paramValueObject != null){
                         if(paramValueObject instanceof Map){	//如果当前字段是一个MAP，就取出其中的每一项添加到请求参数集中
                             Map<Object, Object> map = (Map<Object, Object>)paramValueObject;
                             for(java.util.Map.Entry<Object, Object> entry : map.entrySet()){
@@ -203,6 +278,95 @@ public class RequestParser {
         }
 
         return requestParams;
+    }
+    
+    /**
+     * 解析请求参数集
+     * @param requestClass
+     * @return 请求参数集
+     */
+    public static RequestParams parseRequestParams(Class<? extends Request> requestClass){
+        return parseRequestParams(requestClass, null);
+    }
+
+    /**
+     * 解析请求参数集
+     * @param request 请求对象
+     * @param requestParams 请求参数集，如果不为null的话，会将解析到的请求参数放入此请求参数集中，然后再返回否则就会创建新的请求参数集对象
+     * @return 请求参数集
+     */
+    @SuppressWarnings("unchecked")
+    public static RequestParams parseRequestParams(Request request, RequestParams requestParams){
+        if(requestParams == null){
+            requestParams = new RequestParams();
+        }
+
+        String paramValue;
+        Object paramValueObject;
+        for(Field field : GeneralUtils.getFields(request.getClass(), true, true, true)){
+            if(field.getAnnotation(Param.class) != null){	//如果当前字段被标记为需要序列化
+                try {
+                    field.setAccessible(true);
+                    paramValueObject = field.get(request);
+                    if(paramValueObject != null){
+                        if(paramValueObject instanceof Map){	//如果当前字段是一个MAP，就取出其中的每一项添加到请求参数集中
+                            Map<Object, Object> map = (Map<Object, Object>)paramValueObject;
+                            for(java.util.Map.Entry<Object, Object> entry : map.entrySet()){
+                                if(entry.getKey() != null && entry.getValue() != null && GeneralUtils.isNotEmpty(entry.getKey().toString(), entry.getValue().toString())){
+                                    requestParams.put(entry.getKey().toString(), entry.getValue().toString());
+                                }
+                            }
+                        }else if(paramValueObject instanceof File){	//如果当前字段是一个文件，就将其作为一个文件添加到请求参水集中
+                            requestParams.put(parseRequestParamKey(field), (File) paramValueObject);
+                        }else if(paramValueObject instanceof ArrayList){	//如果当前字段是ArrayList，就将其作为一个ArrayList添加到请求参水集中
+                            requestParams.put(parseRequestParamKey(field), (ArrayList<String>) paramValueObject);
+                        }else if(paramValueObject instanceof Boolean){	//如果当前字段是boolean
+                            if((Boolean) paramValueObject){
+                                True trueAnnotation = field.getAnnotation(True.class);
+                                if(trueAnnotation != null && GeneralUtils.isNotEmpty(trueAnnotation.value())){
+                                    requestParams.put(parseRequestParamKey(field), trueAnnotation.value());
+                                }else{
+                                    requestParams.put(parseRequestParamKey(field), "true");
+                                }
+                            }else{
+                                False falseAnnotation = field.getAnnotation(False.class);
+                                if(falseAnnotation != null && GeneralUtils.isNotEmpty(falseAnnotation.value())){
+                                    requestParams.put(parseRequestParamKey(field), falseAnnotation.value());
+                                }else{
+                                    requestParams.put(parseRequestParamKey(field), "false");
+                                }
+                            }
+                        }else if(paramValueObject instanceof Enum){	//如果当前字段是枚举
+                            Enum<?> enumObject = (Enum<?>) paramValueObject;
+                            Param paramName = GeneralUtils.getAnnotationFromEnum(enumObject, Param.class);
+                            if(paramName != null && GeneralUtils.isNotEmpty(paramName.value())){
+                                requestParams.put(parseRequestParamKey(field), paramName.value());
+                            }else{
+                                requestParams.put(parseRequestParamKey(field), enumObject.name());
+                            }
+                        }else{	//如果以上几种情况都不是就直接转为字符串添加到请求参数集中
+                            paramValue = paramValueObject.toString();
+                            if(GeneralUtils.isNotEmpty(paramValue)){
+                                requestParams.put(parseRequestParamKey(field), paramValue);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return requestParams;
+    }
+    
+    /**
+     * 解析请求参数集
+     * @param request 请求对象
+     * @return 请求参数集
+     */
+    public static RequestParams parseRequestParams(Request request){
+        return parseRequestParams(request, null);
     }
 
     /**
@@ -258,11 +422,11 @@ public class RequestParser {
 
     /**
      * 解析响应缓存配置信息
-     * @param request 请求对象
+     * @param requestClass 请求对象
      * @return
      */
-    public static me.xiaopan.android.easynetwork.http.ResponseCache parseResponseCache(Request request){
-        ResponseCache responseCacheAnnotation = request.getClass().getAnnotation(ResponseCache.class);
+    public static me.xiaopan.android.easynetwork.http.ResponseCache parseResponseCache(Class<? extends Request> requestClass){
+        ResponseCache responseCacheAnnotation = requestClass.getAnnotation(ResponseCache.class);
         if(responseCacheAnnotation != null){
             return new me.xiaopan.android.easynetwork.http.ResponseCache.Builder().setRefreshCache(responseCacheAnnotation.isRefreshCache()).setPeriodOfValidity(responseCacheAnnotation.periodOfValidity()).setRefreshCallback(responseCacheAnnotation.isRefreshCallback()).setCacheDirectory(responseCacheAnnotation.cacheDirectory()).create();
         }else{

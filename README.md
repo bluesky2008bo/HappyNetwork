@@ -12,11 +12,14 @@
 >* 默认提供单例模式；
 
 ##Downloads
-**[android-easy-network-2.1.3.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.3.jar)**
+**[android-easy-network-2.1.4.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.4.jar)**
 
-**[android-easy-network-2.1.3-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.3-with-src.jar)**
+**[android-easy-network-2.1.4-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.4-with-src.jar)**
 
 ##Change Log
+###2.1.4
+>* 优化RequestPaser
+
 ###2.1.3
 >* 修复GzipProcessResponseInterceptor引发的请求失败的BUG
 

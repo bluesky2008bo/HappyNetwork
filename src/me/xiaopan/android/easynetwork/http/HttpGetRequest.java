@@ -370,19 +370,20 @@ public class HttpGetRequest {
          * @return
          */
         public Builder setRequest(Request request){
-        	RequestParser requestParser = new RequestParser(request);
-        	String requestName = requestParser.getName();
+        	String requestName = RequestParser.parseName(request.getClass());
             if(GeneralUtils.isNotEmpty(requestName)){
                 httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
             }
-            String url = requestParser.getUrl();
-            if(GeneralUtils.isEmpty(url)){
+            
+            String baseUrl = RequestParser.parseBaseUrl(request.getClass());
+            if(GeneralUtils.isEmpty(baseUrl)){
                 throw new IllegalArgumentException("你必须在Request上使用Url注解或者Host加Path注解指定请求地址");
             }
-            httpRequest.setUrl(url);
-            httpRequest.setParams(requestParser.getRequestParams(httpRequest.getParams()));
-            httpRequest.addHeader(requestParser.getRequestHeaders());
-            ResponseCache responseCache = requestParser.getResponseCache();
+            httpRequest.setUrl(baseUrl);
+            
+            httpRequest.setParams(RequestParser.parseRequestParams(request, httpRequest.getParams()));
+            httpRequest.addHeader(RequestParser.parseRequestHeaders(request));
+            ResponseCache responseCache = RequestParser.parseResponseCache(request.getClass());
             if(responseCache != null){
                 httpRequest.setResponseCache(responseCache);
             }

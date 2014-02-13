@@ -180,18 +180,19 @@ public class HttpDeleteRequest {
          * @return
          */
         public Builder setRequest(Request request){
-        	RequestParser requestParser = new RequestParser(request);
-            String requestName = requestParser.getName();
+            String requestName = RequestParser.parseName(request.getClass());
             if(GeneralUtils.isNotEmpty(requestName)){
                 httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
             }
-        	String url = requestParser.getUrl();
+            
+        	String url = RequestParser.parseBaseUrl(request.getClass());
             if(GeneralUtils.isEmpty(url)){
                 throw new IllegalArgumentException("你必须在Request上使有Url注解或者Host加Path注解指定请求地址");
             }
             httpRequest.setUrl(url);
-            httpRequest.addHeader(requestParser.getRequestHeaders());
-            ResponseCache responseCache = requestParser.getResponseCache();
+            
+            httpRequest.addHeader(RequestParser.parseRequestHeaders(request));
+            ResponseCache responseCache = RequestParser.parseResponseCache(request.getClass());
             if(responseCache != null){
                 httpRequest.setResponseCache(responseCache);
             }

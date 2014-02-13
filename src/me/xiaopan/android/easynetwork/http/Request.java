@@ -15,9 +15,13 @@
  */
 package me.xiaopan.android.easynetwork.http;
 
+import me.xiaopan.android.easynetwork.http.annotation.Method;
+import me.xiaopan.android.easynetwork.http.enums.MethodType;
+
 /**
  * 请求
  */
+@Method(MethodType.GET)
 public interface Request {
 
 }
