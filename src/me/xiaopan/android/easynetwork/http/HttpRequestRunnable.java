@@ -198,7 +198,6 @@ public class HttpRequestRunnable implements Runnable {
                         //将响应实体替换为本地文件
                         httpResponse.setEntity(new FileEntity(responseEntityCacheFile, "text/plan"));
                     }catch(IOException exception){
-                        exception.printStackTrace();
                         if(inputStream != null){ try{inputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
                         if(fileOutputStream != null){try{fileOutputStream.flush();fileOutputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
                         if(responseEntityCacheFile.delete() || responseHeadersCacheFile.delete()){
@@ -224,7 +223,6 @@ public class HttpRequestRunnable implements Runnable {
                 httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), httpResponse, false, false);
             }
         }catch(Throwable throwable){
-            throwable.printStackTrace();
             if(easyHttpClient.getConfiguration().isDebugMode()){
                 Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "（网络）加载失败："+throwable.toString());
             }
