@@ -22,8 +22,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import me.xiaopan.android.easynetwork.http.interceptor.AddRequestHeaderRequestInterceptor;
-import me.xiaopan.android.easynetwork.http.interceptor.GzipProcessRequestInterceptor;
-import me.xiaopan.android.easynetwork.http.interceptor.GzipProcessResponseInterceptor;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.auth.AuthScope;
@@ -114,9 +112,9 @@ public class Configuration {
 	        schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
 	        schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
 	        defaultHttpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams, schemeRegistry), httpParams);
-	        defaultHttpClient.addRequestInterceptor(new GzipProcessRequestInterceptor());
+//	        defaultHttpClient.addRequestInterceptor(new GzipProcessRequestInterceptor());
 	        defaultHttpClient.addRequestInterceptor(new AddRequestHeaderRequestInterceptor(getHeaderMap()));
-	        defaultHttpClient.addResponseInterceptor(new GzipProcessResponseInterceptor());
+//	        defaultHttpClient.addResponseInterceptor(new GzipProcessResponseInterceptor());
 	        defaultHttpClient.setHttpRequestRetryHandler(new RetryHandler(maxRetries));
 	        if(sslSocketFactory != null){
 	    		defaultHttpClient.getConnectionManager().getSchemeRegistry().register(new Scheme("https", sslSocketFactory, 443));
