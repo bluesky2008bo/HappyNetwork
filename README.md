@@ -4,7 +4,6 @@
 
 ##Features
 >* 异步发送Http请求，并用ThreadPool来维护每一个请求
->* 默认采用Gzip超高速传输
 >* 重新封装了HttpRequest，使用更方便；
 >* 支持以请求对象的方式来发送Http请求；
 >* 内置多种BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler等响应处理器
@@ -18,7 +17,11 @@
 
 ##Change Log
 ###2.1.5
->* 不再默认支持Gzip超高速传输，因为在实际使用中由于使用了Gzip超高速传输出现了java.io.IOException: unknown format (magic number 227b)异常，此异常出现频率大概20%，并且到现在位置我尚未发现其规律，所以目前无法解决
+>* 不再默认支持Gzip超高速传输，因为在实际使用中由于使用了Gzip超高速传输出现了java.io.IOException: unknown format (magic number 227b)异常，此异常出现频率大概20%，并且到现在位置我尚未发现其规律，所以目前无法解决。如果你想开启Gzip超高速传输可通过下面代码实现
+```java
+EasyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addRequestInterceptor(new GzipProcessRequestInterceptor());
+EasyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addResponseInterceptor(new GzipProcessResponseInterceptor());
+```
 
 ###2.1.4
 >* 优化RequestPaser
