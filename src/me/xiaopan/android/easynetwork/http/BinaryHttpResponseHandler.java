@@ -15,9 +15,6 @@
  */
 package me.xiaopan.android.easynetwork.http;
 
-import me.xiaopan.android.easynetwork.http.enums.FailureType;
-import me.xiaopan.android.easynetwork.http.enums.ResponseType;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
@@ -42,7 +39,7 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
 	}
 
 	@Override
-	public void handleResponse(final Handler handler, final ResponseType responseType, final HttpResponse httpResponse) throws Throwable {
+	public void handleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isOver) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			HttpEntity httpEntity = httpResponse.getEntity();
             if(httpEntity != null){
@@ -50,7 +47,7 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        onSuccess(responseType, httpResponse, data);
+                        onSuccess(httpResponse, data, isOver);
                     }
                 });
             }else{
@@ -62,16 +59,32 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
 	}
 
 	@Override
-	public void exception(final Handler handler, final FailureType failureType, final Throwable e) {
+	public void exception(final Handler handler, final Throwable e, final boolean isRefresh) {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                onFailure(failureType, e);
+                onFailure(e, isRefresh);
             }
         });
 	}
 	
+	/**
+	 * 请求开始
+	 */
 	public abstract void onStart();
-	public abstract void onSuccess(ResponseType responseType, HttpResponse httpResponse, byte[] binaryData);
-	public abstract void onFailure(FailureType failureType, Throwable throwable);
+	
+	/**
+	 * 请求成功
+	 * @param httpResponse  Http响应
+	 * @param binaryData 响应内容
+	 * @param isOver 本次执行是否是最后一次
+	 */
+	public abstract void onSuccess(HttpResponse httpResponse, byte[] binaryData, boolean isOver);
+	
+	/**
+	 * 请求失败
+	 * @param throwable 异常
+	 * @param isRefresh 本次异常是否是在刷新缓存数据的时候发生的
+	 */
+	public abstract void onFailure(Throwable throwable, boolean isRefresh);
 }

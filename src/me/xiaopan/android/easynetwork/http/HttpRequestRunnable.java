@@ -22,9 +22,6 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import me.xiaopan.android.easynetwork.http.enums.FailureType;
-import me.xiaopan.android.easynetwork.http.enums.ResponseType;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -129,7 +126,7 @@ public class HttpRequestRunnable implements Runnable {
         }
 		try{
             /* 回调处理响应 */
-            httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), ResponseType.CACHE, readHttpResponseFromCacheFile(statusLineCacheFile, responseHeadersCacheFile, responseEntityCacheFile));
+            httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), readHttpResponseFromCacheFile(statusLineCacheFile, responseHeadersCacheFile, responseEntityCacheFile), !(responseCache != null && responseCache.isRefreshCache() && responseCache.isRefreshCache()));
 
             /* 如果需要刷新本地缓存 */
             if(responseCache != null && responseCache.isRefreshCache()){
@@ -163,7 +160,7 @@ public class HttpRequestRunnable implements Runnable {
             }
             //回调处理响应
             if(!isRefresh || (responseCache != null && responseCache.isRefreshCallback())){
-                httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), isRefresh?ResponseType.REFRESH_CACHE:ResponseType.ONLY, httpResponse);
+                httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), httpResponse, true);
             }
         }catch(Throwable throwable){
             if(easyHttpClient.getConfiguration().isDebugMode()){
@@ -171,7 +168,7 @@ public class HttpRequestRunnable implements Runnable {
             }
             httpUriRequest.abort();
             if(!isRefresh || (responseCache != null && responseCache.isRefreshCallback())){
-            	httpResponseHandler.exception(easyHttpClient.getConfiguration().getHandler(), isRefresh?FailureType.REFRESH:FailureType.ONLY, throwable);
+            	httpResponseHandler.exception(easyHttpClient.getConfiguration().getHandler(), throwable, isRefresh);
             }
         }
     }

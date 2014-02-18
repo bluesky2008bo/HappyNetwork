@@ -20,8 +20,6 @@ import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.http.HttpGetRequest;
 import me.xiaopan.android.easynetwork.http.ResponseCache;
 import me.xiaopan.android.easynetwork.http.StringHttpResponseHandler;
-import me.xiaopan.android.easynetwork.http.enums.FailureType;
-import me.xiaopan.android.easynetwork.http.enums.ResponseType;
 import me.xiaopan.android.easynetwork.sample.util.WebViewManager;
 
 import org.apache.http.Header;
@@ -54,14 +52,14 @@ public class StringActivity extends Activity {
 			}
 
 			@Override
-			public void onSuccess(ResponseType responseType, HttpResponse httpResponse, String responseContent) {
+			public void onSuccess(HttpResponse httpResponse, String responseContent, boolean isOver) {
 				Header contentTypeHeader = httpResponse.getEntity().getContentType();
 				webViewManager.getWebView().loadData(responseContent, contentTypeHeader != null?contentTypeHeader.getValue():"text/html;charset=utf-8", null);
 				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 			
 			@Override
-			public void onFailure(FailureType failureType, Throwable throwable) {
+			public void onFailure(Throwable throwable, boolean isRefresh) {
 				Toast.makeText(getBaseContext(), "失败了，信息："+throwable.getMessage(), Toast.LENGTH_LONG).show();
 				finish();
 			}

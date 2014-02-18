@@ -18,8 +18,6 @@ package me.xiaopan.android.easynetwork.http;
 import java.lang.reflect.Type;
 
 import me.xiaopan.android.easynetwork.http.annotation.ResponseBody;
-import me.xiaopan.android.easynetwork.http.enums.FailureType;
-import me.xiaopan.android.easynetwork.http.enums.ResponseType;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -37,14 +35,14 @@ import com.google.gson.GsonBuilder;
  */
 public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	private Class<?> responseClass;
-	private Type type;
+	private Type responseType;
 
 	public JsonHttpResponseHandler(Class<?> responseClass){
 		this.responseClass = responseClass;
 	}
 	
 	public JsonHttpResponseHandler(Type responseType){
-		this.type = responseType;
+		this.responseType = responseType;
 	}
 	
 	@Override
@@ -58,7 +56,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 
 	@Override
-	public void handleResponse(final Handler handler, final ResponseType responseType, final HttpResponse httpResponse) throws Throwable {
+	public void handleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isOver) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
@@ -73,7 +71,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
                                 @SuppressWarnings("unchecked")
 								@Override
                                 public void run() {
-                                    onSuccess(responseType, httpResponse, (T) object);
+                                    onSuccess(httpResponse, (T) object, isOver);
                                 }
                             });
 						}else{
@@ -82,17 +80,17 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
                                 @SuppressWarnings("unchecked")
 								@Override
                                 public void run() {
-                                    onSuccess(responseType, httpResponse, (T) object);
+                                    onSuccess(httpResponse, (T) object, isOver);
                                 }
                             });
 						}
 					}else if(responseType != null){	//如果是要转换成一个集合
-                        final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, type);
+                        final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseType);
                         handler.post(new Runnable() {
                             @SuppressWarnings("unchecked")
 							@Override
                             public void run() {
-                                onSuccess(responseType, httpResponse, (T) object);
+                                onSuccess(httpResponse, (T) object, isOver);
                             }
                         });
 					}else{
@@ -110,16 +108,32 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 	
 	@Override
-	public void exception(final Handler handler, final FailureType failureType, final Throwable e) {
+	public void exception(final Handler handler, final Throwable e, final boolean isRefresh) {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                onFailure(failureType, e);
+                onFailure(e, isRefresh);
             }
         });
 	}
 	
+	/**
+	 * 请求开始
+	 */
 	public abstract void onStart();
-	public abstract void onSuccess(ResponseType responseType, HttpResponse httpResponse, T responseObject);
-	public abstract void onFailure(FailureType failureType, Throwable throwable);
+	
+	/**
+	 * 请求成功
+	 * @param httpResponse  Http响应
+	 * @param responseObject 响应内容
+	 * @param isOver 本次执行是否是最后一次
+	 */
+	public abstract void onSuccess(HttpResponse httpResponse, T responseObject, boolean isOver);
+	
+	/**
+	 * 请求失败
+	 * @param throwable 异常
+	 * @param isRefresh 本次异常是否是在刷新缓存数据的时候发生的
+	 */
+	public abstract void onFailure(Throwable throwable, boolean isRefresh);
 }

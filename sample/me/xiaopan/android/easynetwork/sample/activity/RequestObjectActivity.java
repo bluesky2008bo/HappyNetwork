@@ -19,8 +19,6 @@ package me.xiaopan.android.easynetwork.sample.activity;
 import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.http.StringHttpResponseHandler;
-import me.xiaopan.android.easynetwork.http.enums.FailureType;
-import me.xiaopan.android.easynetwork.http.enums.ResponseType;
 import me.xiaopan.android.easynetwork.sample.net.request.BaiduSearchRequest;
 import me.xiaopan.android.easynetwork.sample.util.Utils;
 import me.xiaopan.android.easynetwork.sample.util.WebViewManager;
@@ -75,19 +73,20 @@ public class RequestObjectActivity extends Activity {
 			}
 
 			@Override
-			public void onSuccess(ResponseType responseType, HttpResponse httpResponse, String responseContent) {
+			public void onSuccess(HttpResponse httpResponse, String responseContent, boolean isOver) {
 				Header contentTypeHeader = httpResponse.getEntity().getContentType();
 				webViewManager.getWebView().loadData(responseContent, contentTypeHeader != null?contentTypeHeader.getValue():"text/html;charset=utf-8", null);
 				searchButton.setEnabled(true);
-				findViewById(R.id.loading).setVisibility(View.GONE);
+				if(isOver){	//如果已经结束了
+					findViewById(R.id.loading).setVisibility(View.GONE);
+				}
 			}
 			
 			@Override
-			public void onFailure(FailureType failureType, Throwable throwable) {
-//				if(failureType == FailureType.ONLY){
+			public void onFailure(Throwable throwable, boolean isRefresh) {
+				if(!isRefresh){
 					Toast.makeText(getBaseContext(), "失败了，信息："+(throwable.getMessage()!=null?throwable.getMessage():""), Toast.LENGTH_LONG).show();
-					finish();
-//				}
+				}
 			}
 		});
 	}

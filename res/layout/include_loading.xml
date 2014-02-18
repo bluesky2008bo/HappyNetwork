@@ -4,7 +4,6 @@
     style="@style/base_match_match_vertical"
     android:id="@+id/loading"
     android:gravity="center"
-    android:background="@color/body_backg"
     android:visibility="gone">
     
 	<ProgressBar style="@style/base_wrap_wrap"/>

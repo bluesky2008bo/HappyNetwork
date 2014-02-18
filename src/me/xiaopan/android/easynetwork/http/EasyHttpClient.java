@@ -23,7 +23,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.Future;
 
 import me.xiaopan.android.easynetwork.http.annotation.Method;
-import me.xiaopan.android.easynetwork.http.enums.FailureType;
 import me.xiaopan.android.easynetwork.http.enums.MethodType;
 
 import org.apache.http.HttpEntity;
@@ -117,7 +116,7 @@ public class EasyHttpClient {
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("request 不能为null");
             illegalArgumentException.printStackTrace();
             if(httpResponseHandler != null){
-                httpResponseHandler.exception(getConfiguration().getHandler(), FailureType.ONLY, illegalArgumentException);
+                httpResponseHandler.exception(getConfiguration().getHandler(), illegalArgumentException, false);
             }
         }
     }
@@ -137,7 +136,7 @@ public class EasyHttpClient {
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
             if(httpResponseHandler != null){
-                httpResponseHandler.exception(getConfiguration().getHandler(), FailureType.ONLY, illegalArgumentException);
+            	httpResponseHandler.exception(getConfiguration().getHandler(), illegalArgumentException, false);
             }
         }
     }
@@ -190,7 +189,7 @@ public class EasyHttpClient {
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
             if(httpResponseHandler != null){
-                httpResponseHandler.exception(getConfiguration().getHandler(), FailureType.ONLY, illegalArgumentException);
+            	httpResponseHandler.exception(getConfiguration().getHandler(), illegalArgumentException, false);
             }
         }
     }
@@ -243,7 +242,7 @@ public class EasyHttpClient {
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
             if(httpResponseHandler != null){
-                httpResponseHandler.exception(getConfiguration().getHandler(), FailureType.ONLY, illegalArgumentException);
+            	httpResponseHandler.exception(getConfiguration().getHandler(), illegalArgumentException, false);
             }
         }
     }
@@ -284,7 +283,7 @@ public class EasyHttpClient {
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("你必须指定url。你有两种方式来指定url，一是使用HttpGetRequest.Builder.setUrl()，而是在Request上使有Url注解或者Host加Path注解");
             illegalArgumentException.printStackTrace();
             if(httpResponseHandler != null){
-                httpResponseHandler.exception(getConfiguration().getHandler(), FailureType.ONLY, illegalArgumentException);
+            	httpResponseHandler.exception(getConfiguration().getHandler(), illegalArgumentException, false);
             }
         }
     }
