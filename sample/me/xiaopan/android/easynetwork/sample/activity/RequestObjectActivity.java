@@ -96,7 +96,7 @@ public class RequestObjectActivity extends Activity {
 			@Override
 			public void onFailure(Throwable throwable) {
 				Toast.makeText(getBaseContext(), "失败了，信息："+(throwable.getMessage()!=null?throwable.getMessage():""), Toast.LENGTH_LONG).show();
-				finish();
+//				finish();
 			}
 		});
 	}

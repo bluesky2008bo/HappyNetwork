@@ -18,6 +18,7 @@ package me.xiaopan.android.easynetwork.sample.net.request;
 
 import me.xiaopan.android.easynetwork.http.annotation.Name;
 import me.xiaopan.android.easynetwork.http.annotation.Param;
+import me.xiaopan.android.easynetwork.http.annotation.ResponseCache;
 import me.xiaopan.android.easynetwork.http.annotation.Url;
 import me.xiaopan.android.easynetwork.sample.net.BaseRequest;
 
@@ -26,6 +27,7 @@ import me.xiaopan.android.easynetwork.sample.net.BaseRequest;
  */
 @Url("http://www.baidu.com/s")
 @Name("百度搜索")
+@ResponseCache(isRefreshCache = true)
 public class BaiduSearchRequest extends BaseRequest {
 	@Param
 	public String rsv_spt = "1";
