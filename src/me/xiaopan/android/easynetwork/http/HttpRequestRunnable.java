@@ -28,11 +28,9 @@ import me.xiaopan.android.easynetwork.http.enums.ResponseType;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolVersion;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicStatusLine;
 import org.apache.http.message.BufferedHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.CharArrayBuffer;
@@ -50,6 +48,7 @@ public class HttpRequestRunnable implements Runnable {
     private HttpUriRequest httpUriRequest;  //HttpUri请求
     private HttpResponseHandler httpResponseHandler;    //Http响应处理器
     private ResponseCache responseCache;    //响应缓存配置
+    private File statusLineCacheFile;
     private File responseEntityCacheFile;
     private File responseHeadersCacheFile;
     private String uri;
@@ -93,24 +92,31 @@ public class HttpRequestRunnable implements Runnable {
     		boolean isAvailable = false;
     		if(responseCache != null){
     			String id = GeneralUtils.MD5(uri);
-    			responseEntityCacheFile = new File(GeneralUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".entity");
+    			statusLineCacheFile = new File(GeneralUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".status_line");
     			responseHeadersCacheFile = new File(GeneralUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".headers");
-    			isAvailable = responseEntityCacheFile.exists() && responseHeadersCacheFile.exists();
-    			if(isAvailable && responseCache.getPeriodOfValidity() > 0){
-    				Calendar calendar = new GregorianCalendar();
-    				calendar.add(Calendar.MILLISECOND, -responseCache.getPeriodOfValidity());
-    				isAvailable = calendar.getTimeInMillis() < responseEntityCacheFile.lastModified();
-    				if(!isAvailable){
-    					if(responseEntityCacheFile.delete() || responseHeadersCacheFile.delete()){
-    						if(easyHttpClient.getConfiguration().isDebugMode()){
-    							Log.w(easyHttpClient.getConfiguration().getLogTag(), name + "緩存過期，已刪除");
-    						}
-    					}else{
-    						if(easyHttpClient.getConfiguration().isDebugMode()){
-    							Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "緩存過期，刪除失敗");
+    			responseEntityCacheFile = new File(GeneralUtils.getDynamicCacheDir(context).getPath() + File.separator + "easy_http_client" + File.separator  + id + ".entity");
+    			isAvailable = statusLineCacheFile.exists() && responseHeadersCacheFile.exists() && responseEntityCacheFile.exists();
+    			if(isAvailable){
+    				if(responseCache.getPeriodOfValidity() > 0){
+    					Calendar calendar = new GregorianCalendar();
+    					calendar.add(Calendar.MILLISECOND, -responseCache.getPeriodOfValidity());
+    					isAvailable = calendar.getTimeInMillis() < responseEntityCacheFile.lastModified();
+    					if(!isAvailable){
+    						if(responseEntityCacheFile.delete() || responseHeadersCacheFile.delete() || statusLineCacheFile.delete()){
+    							if(easyHttpClient.getConfiguration().isDebugMode()){
+    								Log.w(easyHttpClient.getConfiguration().getLogTag(), name + "緩存過期，已刪除");
+    							}
+    						}else{
+    							if(easyHttpClient.getConfiguration().isDebugMode()){
+    								Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "緩存過期，刪除失敗");
+    							}
     						}
     					}
     				}
+    			}else{
+    				statusLineCacheFile.delete();
+    				responseHeadersCacheFile.delete();
+    				responseEntityCacheFile.delete();
     			}
     		}
     		return isAvailable;
@@ -129,7 +135,8 @@ public class HttpRequestRunnable implements Runnable {
             Log.d(easyHttpClient.getConfiguration().getLogTag(), name + "（本地）请求地址："+uri);
         }
 		try{
-			HttpResponse httpResponse = new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "success"));
+			/* 读取状态行 */
+			HttpResponse httpResponse = new BasicHttpResponse(new Gson().fromJson(GeneralUtils.readString(statusLineCacheFile), SaveStatusLine.class).toStatusLine());
 
 			/* 读取响应头 */
             String[] headerStrings = new Gson().fromJson(GeneralUtils.readString(responseHeadersCacheFile), new TypeToken<String[]>(){}.getType());
@@ -186,10 +193,14 @@ public class HttpRequestRunnable implements Runnable {
             if(responseCache != null && httpResponseHandler.isCanCache(easyHttpClient.getConfiguration().getHandler(), httpResponse)){
                 HttpEntity httpEntity = httpResponse.getEntity();
                 if(httpEntity != null){
-                	if(GeneralUtils.createFile(responseHeadersCacheFile) != null && GeneralUtils.createFile(responseEntityCacheFile) != null){
+                	if(GeneralUtils.createFile(statusLineCacheFile) != null && GeneralUtils.createFile(responseHeadersCacheFile) != null && GeneralUtils.createFile(responseEntityCacheFile) != null){
                 		InputStream inputStream = null;
                 		FileOutputStream fileOutputStream = null;
                 		try{
+                			/* 保存状态行 */
+                			SaveStatusLine saveStatusLine = new SaveStatusLine(httpResponse.getStatusLine());
+                			GeneralUtils.writeString(statusLineCacheFile, new Gson().toJson(saveStatusLine), false);
+                			
                 			/* 保存响应头 */
                 			Header[] headers = httpResponse.getAllHeaders();
                 			String[] heaerStrings = new String[headers.length];
