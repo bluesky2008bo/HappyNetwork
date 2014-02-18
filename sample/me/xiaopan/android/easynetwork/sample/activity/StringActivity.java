@@ -59,7 +59,7 @@ public class StringActivity extends Activity {
 			}
 			
 			@Override
-			public void onFailure(Throwable throwable, boolean isRefresh) {
+			public void onFailure(Throwable throwable, boolean isNotRefresh) {
 				Toast.makeText(getBaseContext(), "失败了，信息："+throwable.getMessage(), Toast.LENGTH_LONG).show();
 				finish();
 			}

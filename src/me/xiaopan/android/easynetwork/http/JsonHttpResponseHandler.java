@@ -108,11 +108,11 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 	
 	@Override
-	public void exception(final Handler handler, final Throwable e, final boolean isRefresh) {
+	public void exception(final Handler handler, final Throwable e, final boolean isNotRefresh) {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                onFailure(e, isRefresh);
+                onFailure(e, isNotRefresh);
             }
         });
 	}
@@ -133,7 +133,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	/**
 	 * 请求失败
 	 * @param throwable 异常
-	 * @param isRefresh 本次异常是否是在刷新缓存数据的时候发生的
+	 * @param isNotRefresh 本次异常不是在刷新缓存数据的时候发生的
 	 */
-	public abstract void onFailure(Throwable throwable, boolean isRefresh);
+	public abstract void onFailure(Throwable throwable, boolean isNotRefresh);
 }

@@ -17,7 +17,7 @@
 
 ##Change Log
 ###2.1.6
->* BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler等Handler的onSuccess()方法增加HttpResponse参数
+>* 优化缓存控制功能，并优化BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler等Handler相关回调方法的参数，使之表达更准确，更容易理解
 
 ###2.1.5
 >* 不再默认支持Gzip超高速传输，因为在实际使用中由于使用了Gzip超高速传输出现了java.io.IOException: unknown format (magic number 227b)异常，此异常出现频率大概20%，并且到现在位置我尚未发现其规律，所以目前无法解决。如果你想开启Gzip超高速传输可通过下面代码实现
@@ -100,8 +100,8 @@ EasyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addRespon
 ###处理响应
 不管你用何种方式发送请求，都会要求传一个HttpResponseHandler，因此你需要继承HttpResponseHandler抽象类来处理Http响应，HttpResponseHandler的三个抽象方法说明如下：
 >* ``start(Handler)``：开始发送请求的时候会回调此方法；
->* ``handleResponse(Handler, HttpResponse, boolean, boolean)``：当请求发送成功需要处理响应的时候会回调此方法；
->* ``exception(Handler, Throwable )``：当在整个过程发生异常的话会回调此方法。
+>* ``handleResponse(Handler, HttpResponse, boolean)``：当请求发送成功需要处理响应的时候会回调此方法；
+>* ``exception(Handler, Throwable, boolean)``：当在整个过程发生异常的话会回调此方法。
 
 另外
 >* HttpResponseHandler还有一个方法isCanCache(Handler, HttpResponse)用来判定是否可以缓存，默认是当状态码大于等于200小于300就允许缓存，你可以重写此方法来改变缓存判定策略。
@@ -259,7 +259,7 @@ EasyHttpClient.getInstance().execute(getBaseContext(), new BeijingWeatherRequest
     }
 
     @Override
-    public void onSuccess(Weather responseObject, boolean isCache, boolean isRefreshCacheAndCallback) {
+    public void onSuccess(HttpResponse httpResponse, Weather responseObject, boolean isOver) {
         text.setText(Html.fromHtml("<h2>" + responseObject.getCity() + "</h2>"
                 + "<br>" + responseObject.getDate_y() + " " + responseObject.getWeek()
                 + "<br>" + responseObject.getTemp1() + " " + responseObject.getWeather1()
@@ -279,7 +279,7 @@ EasyHttpClient.getInstance().execute(getBaseContext(), new BeijingWeatherRequest
     }
 
     @Override
-    public void onFailure(Throwable throwable) {
+    public void onFailure(Throwable throwable, boolean isNotRefresh) {
         text.setText(throwable.getMessage());
         findViewById(R.id.loading).setVisibility(View.GONE);
     }

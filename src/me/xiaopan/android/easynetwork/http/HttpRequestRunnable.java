@@ -126,7 +126,7 @@ public class HttpRequestRunnable implements Runnable {
         }
 		try{
             /* 回调处理响应 */
-            httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), readHttpResponseFromCacheFile(statusLineCacheFile, responseHeadersCacheFile, responseEntityCacheFile), !(responseCache != null && responseCache.isRefreshCache() && responseCache.isRefreshCache()));
+            httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), readHttpResponseFromCacheFile(statusLineCacheFile, responseHeadersCacheFile, responseEntityCacheFile), !(responseCache != null && responseCache.isRefreshCache() && responseCache.isRefreshCallback()));
 
             /* 如果需要刷新本地缓存 */
             if(responseCache != null && responseCache.isRefreshCache()){
@@ -168,7 +168,7 @@ public class HttpRequestRunnable implements Runnable {
             }
             httpUriRequest.abort();
             if(!isRefresh || (responseCache != null && responseCache.isRefreshCallback())){
-            	httpResponseHandler.exception(easyHttpClient.getConfiguration().getHandler(), throwable, isRefresh);
+            	httpResponseHandler.exception(easyHttpClient.getConfiguration().getHandler(), throwable, !isRefresh);
             }
         }
     }

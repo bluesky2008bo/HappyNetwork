@@ -83,10 +83,12 @@ public class RequestObjectActivity extends Activity {
 			}
 			
 			@Override
-			public void onFailure(Throwable throwable, boolean isRefresh) {
-				if(!isRefresh){
+			public void onFailure(Throwable throwable, boolean isNotRefresh) {
+				if(isNotRefresh){
 					Toast.makeText(getBaseContext(), "失败了，信息："+(throwable.getMessage()!=null?throwable.getMessage():""), Toast.LENGTH_LONG).show();
 				}
+				searchButton.setEnabled(true);
+				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 		});
 	}

@@ -51,8 +51,8 @@ public abstract class HttpResponseHandler{
     /**
      * 在请求的过程中发生异常，值得注意的是在读取本地缓存发生异常的话不会回调此方法，因为会自动改为从网络获取数据，所以一旦回调此方法就意味着整个请求已经结束了
      * @param handler 消息处理器
-     * @param isRefresh 本次异常是否是在刷新缓存数据的时候发生的
+     * @param isNotRefresh 本次异常不是在刷新缓存数据的时候发生的
      * @param e 异常
      */
-    public abstract void exception(Handler handler, Throwable e, boolean isRefresh);
+    public abstract void exception(Handler handler, Throwable e, boolean isNotRefresh);
 }

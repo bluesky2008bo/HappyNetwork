@@ -71,7 +71,7 @@ public class JsonActivity extends Activity {
             }
 
             @Override
-            public void onFailure(Throwable throwable, boolean isRefresh) {
+            public void onFailure(Throwable throwable, boolean isNotRefresh) {
                 text.setText(throwable.getMessage());
                 findViewById(R.id.loading).setVisibility(View.GONE);
             }
