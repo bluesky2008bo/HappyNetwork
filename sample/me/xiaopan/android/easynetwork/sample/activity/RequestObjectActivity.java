@@ -20,15 +20,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-
 import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.http.StringHttpResponseHandler;
+import me.xiaopan.android.easynetwork.http.enums.FailureType;
+import me.xiaopan.android.easynetwork.http.enums.ResponseType;
 import me.xiaopan.android.easynetwork.sample.net.request.BaiduSearchRequest;
 import me.xiaopan.android.easynetwork.sample.util.Utils;
 import me.xiaopan.android.easynetwork.sample.util.WebViewManager;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
@@ -76,7 +79,7 @@ public class RequestObjectActivity extends Activity {
 			}
 
 			@Override
-			public void onSuccess(HttpResponse httpResponse, String responseContent, boolean isCache, boolean isRefreshCacheAndCallback) {
+			public void onSuccess(ResponseType responseType, HttpResponse httpResponse, String responseContent) {
 				Header contentTypeHeader = httpResponse.getEntity().getContentType();
 				webViewManager.getWebView().loadData(responseContent, contentTypeHeader != null?contentTypeHeader.getValue():"text/html;charset=utf-8", null);
 				File file = new File(getExternalCacheDir().getPath() + File.separator + System.currentTimeMillis() +".txt");
@@ -94,9 +97,11 @@ public class RequestObjectActivity extends Activity {
 			}
 			
 			@Override
-			public void onFailure(Throwable throwable) {
-				Toast.makeText(getBaseContext(), "失败了，信息："+(throwable.getMessage()!=null?throwable.getMessage():""), Toast.LENGTH_LONG).show();
-//				finish();
+			public void onFailure(FailureType failureType, Throwable throwable) {
+				if(failureType == FailureType.ONLY){
+					Toast.makeText(getBaseContext(), "失败了，信息："+(throwable.getMessage()!=null?throwable.getMessage():""), Toast.LENGTH_LONG).show();
+					finish();
+				}
 			}
 		});
 	}

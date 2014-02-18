@@ -15,11 +15,14 @@
  */
 package me.xiaopan.android.easynetwork.sample.activity;
 
-import org.apache.http.HttpResponse;
-
 import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.BinaryHttpResponseHandler;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
+import me.xiaopan.android.easynetwork.http.enums.FailureType;
+import me.xiaopan.android.easynetwork.http.enums.ResponseType;
+
+import org.apache.http.HttpResponse;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.BitmapFactory;
@@ -45,13 +48,13 @@ public class BinaryActivity extends Activity {
 			}
 			
 			@Override
-			public void onSuccess(HttpResponse httpResponse, byte[] binaryData, boolean isCache, boolean isRefreshCacheAndCallback) {
+			public void onSuccess(ResponseType responseType, HttpResponse httpResponse, byte[] binaryData) {
 				((ImageView) findViewById(R.id.image1)).setImageBitmap(BitmapFactory.decodeByteArray(binaryData, 0, binaryData.length));
 				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 			
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(FailureType failureType, Throwable throwable) {
 				Toast.makeText(getBaseContext(), "失败了，信息："+throwable.getMessage(), Toast.LENGTH_LONG).show();
 				finish();
 			}

@@ -17,7 +17,7 @@
 
 ##Change Log
 ###2.1.6
->* BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler等Handler的onSuccess()方法增加HttpResponseHandler参数
+>* BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler等Handler的onSuccess()方法增加HttpResponse参数
 
 ###2.1.5
 >* 不再默认支持Gzip超高速传输，因为在实际使用中由于使用了Gzip超高速传输出现了java.io.IOException: unknown format (magic number 227b)异常，此异常出现频率大概20%，并且到现在位置我尚未发现其规律，所以目前无法解决。如果你想开启Gzip超高速传输可通过下面代码实现

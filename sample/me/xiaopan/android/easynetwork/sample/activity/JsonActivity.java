@@ -16,13 +16,16 @@
 
 package me.xiaopan.android.easynetwork.sample.activity;
 
-import org.apache.http.HttpResponse;
-
 import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.http.JsonHttpResponseHandler;
+import me.xiaopan.android.easynetwork.http.enums.FailureType;
+import me.xiaopan.android.easynetwork.http.enums.ResponseType;
 import me.xiaopan.android.easynetwork.sample.beans.Weather;
 import me.xiaopan.android.easynetwork.sample.net.request.BeijingWeatherRequest;
+
+import org.apache.http.HttpResponse;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
@@ -50,7 +53,7 @@ public class JsonActivity extends Activity {
             }
 
             @Override
-            public void onSuccess(HttpResponse httpResponse, Weather responseObject, boolean isCache, boolean isRefreshCacheAndCallback) {
+            public void onSuccess(ResponseType responseType, HttpResponse httpResponse, Weather responseObject) {
                 text.setText(Html.fromHtml("<h2>" + responseObject.getCity() + "</h2>"
                         + "<br>" + responseObject.getDate_y() + " " + responseObject.getWeek()
                         + "<br>" + responseObject.getTemp1() + " " + responseObject.getWeather1()
@@ -70,7 +73,7 @@ public class JsonActivity extends Activity {
             }
 
             @Override
-            public void onFailure(Throwable throwable) {
+            public void onFailure(FailureType failureType, Throwable throwable) {
                 text.setText(throwable.getMessage());
                 findViewById(R.id.loading).setVisibility(View.GONE);
             }

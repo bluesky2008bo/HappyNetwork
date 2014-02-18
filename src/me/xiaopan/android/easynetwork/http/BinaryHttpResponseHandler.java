@@ -15,6 +15,9 @@
  */
 package me.xiaopan.android.easynetwork.http;
 
+import me.xiaopan.android.easynetwork.http.enums.FailureType;
+import me.xiaopan.android.easynetwork.http.enums.ResponseType;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
@@ -39,7 +42,7 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
 	}
 
 	@Override
-	public void handleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isCache, final boolean isRefreshCacheAndCallback) throws Throwable {
+	public void handleResponse(final Handler handler, final ResponseType responseType, final HttpResponse httpResponse) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			HttpEntity httpEntity = httpResponse.getEntity();
             if(httpEntity != null){
@@ -47,7 +50,7 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        onSuccess(httpResponse, data, isCache, isRefreshCacheAndCallback);
+                        onSuccess(responseType, httpResponse, data);
                     }
                 });
             }else{
@@ -59,16 +62,16 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
 	}
 
 	@Override
-	public void exception(final Handler handler, final Throwable e) {
+	public void exception(final Handler handler, final FailureType failureType, final Throwable e) {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                onFailure(e);
+                onFailure(failureType, e);
             }
         });
 	}
 	
 	public abstract void onStart();
-	public abstract void onSuccess(HttpResponse httpResponse, byte[] binaryData, boolean isCache, boolean isRefreshCacheAndCallback);
-	public abstract void onFailure(Throwable throwable);
+	public abstract void onSuccess(ResponseType responseType, HttpResponse httpResponse, byte[] binaryData);
+	public abstract void onFailure(FailureType failureType, Throwable throwable);
 }

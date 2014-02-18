@@ -16,6 +16,9 @@
 package me.xiaopan.android.easynetwork.http;
 
 
+import me.xiaopan.android.easynetwork.http.enums.FailureType;
+import me.xiaopan.android.easynetwork.http.enums.ResponseType;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
@@ -40,7 +43,7 @@ public abstract class StringHttpResponseHandler extends HttpResponseHandler {
 	}
 
 	@Override
-	public void handleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isCache, final boolean isRefreshCacheAndCallback) throws Throwable {
+	public void handleResponse(final Handler handler, final ResponseType responseType, final HttpResponse httpResponse) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			/* 读取内容并转换成字符串 */
 			HttpEntity httpEntity = httpResponse.getEntity();
@@ -49,7 +52,7 @@ public abstract class StringHttpResponseHandler extends HttpResponseHandler {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        onSuccess(httpResponse, responseContent, isCache, isRefreshCacheAndCallback);
+                        onSuccess(responseType, httpResponse, responseContent);
                     }
                 });
 			}else{
@@ -61,16 +64,16 @@ public abstract class StringHttpResponseHandler extends HttpResponseHandler {
 	}
 
 	@Override
-	public void exception(final Handler handler, final Throwable e) {
+	public void exception(final Handler handler, final FailureType failureType, final Throwable e) {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                onFailure(e);
+                onFailure(failureType, e);
             }
         });
 	}
 
 	public abstract void onStart();
-	public abstract void onSuccess(HttpResponse httpResponse, String responseContent, boolean isCache, boolean isRefreshCacheAndCallback);
-	public abstract void onFailure(Throwable throwable);
+	public abstract void onSuccess(ResponseType responseType, HttpResponse httpResponse, String responseContent);
+	public abstract void onFailure(FailureType failureType, Throwable throwable);
 }

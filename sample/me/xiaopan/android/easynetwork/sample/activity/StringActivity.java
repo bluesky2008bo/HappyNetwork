@@ -15,15 +15,18 @@
  */
 package me.xiaopan.android.easynetwork.sample.activity;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-
 import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.http.HttpGetRequest;
 import me.xiaopan.android.easynetwork.http.ResponseCache;
 import me.xiaopan.android.easynetwork.http.StringHttpResponseHandler;
+import me.xiaopan.android.easynetwork.http.enums.FailureType;
+import me.xiaopan.android.easynetwork.http.enums.ResponseType;
 import me.xiaopan.android.easynetwork.sample.util.WebViewManager;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
@@ -51,14 +54,14 @@ public class StringActivity extends Activity {
 			}
 
 			@Override
-			public void onSuccess(HttpResponse httpResponse, String responseContent, boolean isCache, boolean isRefreshCacheAndCallback) {
+			public void onSuccess(ResponseType responseType, HttpResponse httpResponse, String responseContent) {
 				Header contentTypeHeader = httpResponse.getEntity().getContentType();
 				webViewManager.getWebView().loadData(responseContent, contentTypeHeader != null?contentTypeHeader.getValue():"text/html;charset=utf-8", null);
 				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 			
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(FailureType failureType, Throwable throwable) {
 				Toast.makeText(getBaseContext(), "失败了，信息："+throwable.getMessage(), Toast.LENGTH_LONG).show();
 				finish();
 			}
