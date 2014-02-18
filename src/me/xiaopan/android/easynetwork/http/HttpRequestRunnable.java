@@ -132,7 +132,7 @@ public class HttpRequestRunnable implements Runnable {
             httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), ResponseType.CACHE, readHttpResponseFromCacheFile(statusLineCacheFile, responseHeadersCacheFile, responseEntityCacheFile));
 
             /* 如果需要刷新本地缓存 */
-            if(responseCache.isRefreshCache()){
+            if(responseCache != null && responseCache.isRefreshCache()){
                 if(easyHttpClient.getConfiguration().isDebugMode()){
                     Log.w(easyHttpClient.getConfiguration().getLogTag(), name + "（本地）加载成功，重新从网络加载，刷新本地缓存");
                 }
@@ -170,7 +170,7 @@ public class HttpRequestRunnable implements Runnable {
                 Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "（网络）加载失败："+throwable.toString());
             }
             httpUriRequest.abort();
-            if(!isRefresh || responseCache.isRefreshCallback()){
+            if(!isRefresh || (responseCache != null && responseCache.isRefreshCallback())){
             	httpResponseHandler.exception(easyHttpClient.getConfiguration().getHandler(), isRefresh?FailureType.REFRESH:FailureType.ONLY, throwable);
             }
         }
