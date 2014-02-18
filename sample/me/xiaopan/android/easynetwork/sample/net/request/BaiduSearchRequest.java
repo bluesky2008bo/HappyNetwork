@@ -27,7 +27,7 @@ import me.xiaopan.android.easynetwork.sample.net.BaseRequest;
  */
 @Url("http://www.baidu.com/s")
 @Name("百度搜索")
-@ResponseCache(isRefreshCache = true)
+@ResponseCache(isRefreshCache=true)
 public class BaiduSearchRequest extends BaseRequest {
 	@Param
 	public String rsv_spt = "1";

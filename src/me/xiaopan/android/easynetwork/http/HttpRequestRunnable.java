@@ -39,6 +39,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 public class HttpRequestRunnable implements Runnable {
@@ -65,20 +66,12 @@ public class HttpRequestRunnable implements Runnable {
     @Override
     public void run() {
     	if(httpUriRequest != null && httpResponseHandler != null) {
-            try{
-                httpResponseHandler.start(easyHttpClient.getConfiguration().getHandler());
-                uri = httpUriRequest.getURI().toString();
-                if(isAvailableByCache()){
-                    fromLocalLoad();
-                }else{
-                    fromNetworkLoad(false);
-                }
-            }catch(Throwable throwable){
-                throwable.printStackTrace();
-                if(easyHttpClient.getConfiguration().isDebugMode()){
-                    Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "（总的）加载失败："+throwable.toString());
-                }
-                httpResponseHandler.exception(easyHttpClient.getConfiguration().getHandler(), FailureType.ONLY, throwable);
+            httpResponseHandler.start(easyHttpClient.getConfiguration().getHandler());
+            uri = httpUriRequest.getURI().toString();
+            if(isAvailableByCache()){
+                fromCacheLoad();
+            }else{
+                fromNetworkLoad(false);
             }
     	}
     }
@@ -128,39 +121,15 @@ public class HttpRequestRunnable implements Runnable {
     }
 
     /**
-     * 从本地加载
+     * 从缓存加载
      */
-    private void fromLocalLoad(){
+    private void fromCacheLoad(){
         if(easyHttpClient.getConfiguration().isDebugMode()){
             Log.d(easyHttpClient.getConfiguration().getLogTag(), name + "（本地）请求地址："+uri);
         }
 		try{
-			/* 读取状态行 */
-			HttpResponse httpResponse = new BasicHttpResponse(new Gson().fromJson(GeneralUtils.readString(statusLineCacheFile), SaveStatusLine.class).toStatusLine());
-
-			/* 读取响应头 */
-            String[] headerStrings = new Gson().fromJson(GeneralUtils.readString(responseHeadersCacheFile), new TypeToken<String[]>(){}.getType());
-            if(headerStrings != null && headerStrings.length > 0){
-                Header[] headers = new Header[headerStrings.length];
-                int w = 0;
-                for(String string : headerStrings){
-                    CharArrayBuffer charArrayBuffer = new CharArrayBuffer(string.length());
-                    charArrayBuffer.append(string);
-                    headers[w++] = new BufferedHeader(charArrayBuffer);
-                }
-                httpResponse.setHeaders(headers);
-            }
-
-			/* 设置响应体 */
-            Header contentTypeHeader = null;
-            Header[] contentTypes = httpResponse.getHeaders(HTTP.CONTENT_TYPE);
-            if(contentTypes != null && contentTypes.length > 0){
-            	contentTypeHeader = contentTypes[0];
-            }
-            httpResponse.setEntity(new FileEntity(responseEntityCacheFile, contentTypeHeader != null?contentTypeHeader.getValue():null));
-            
             /* 回调处理响应 */
-            httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), ResponseType.CACHE, httpResponse);
+            httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), ResponseType.CACHE, readHttpResponseFromCacheFile(statusLineCacheFile, responseHeadersCacheFile, responseEntityCacheFile));
 
             /* 如果需要刷新本地缓存 */
             if(responseCache.isRefreshCache()){
@@ -180,87 +149,133 @@ public class HttpRequestRunnable implements Runnable {
     
     /**
      * 从网络加载
-     * @param refreshCache 是否刷新缓存
+     * @param isRefresh 是否刷新缓存
      */
-    private void fromNetworkLoad(boolean refreshCache){
+    private void fromNetworkLoad(boolean isRefresh){
         if(easyHttpClient.getConfiguration().isDebugMode()){
             Log.d(easyHttpClient.getConfiguration().getLogTag(), name + "（网络）请求地址："+uri);
         }
         try{
             HttpResponse httpResponse = easyHttpClient.getConfiguration().getDefaultHttpClient().execute(httpUriRequest, easyHttpClient.getConfiguration().getHttpContext());
-
-            /* 如果需要缓存 */
+            //尝试缓存
             if(responseCache != null && httpResponseHandler.isCanCache(easyHttpClient.getConfiguration().getHandler(), httpResponse)){
-                HttpEntity httpEntity = httpResponse.getEntity();
-                if(httpEntity != null){
-                	if(GeneralUtils.createFile(statusLineCacheFile) != null && GeneralUtils.createFile(responseHeadersCacheFile) != null && GeneralUtils.createFile(responseEntityCacheFile) != null){
-                		InputStream inputStream = null;
-                		FileOutputStream fileOutputStream = null;
-                		try{
-                			/* 保存状态行 */
-                			SaveStatusLine saveStatusLine = new SaveStatusLine(httpResponse.getStatusLine());
-                			GeneralUtils.writeString(statusLineCacheFile, new Gson().toJson(saveStatusLine), false);
-                			
-                			/* 保存响应头 */
-                			Header[] headers = httpResponse.getAllHeaders();
-                			String[] heaerStrings = new String[headers.length];
-                			for(int w = 0; w < headers.length; w++){
-                				Header header = headers[w];
-                				if(header instanceof BufferedHeader){
-                					heaerStrings[w] = header.toString();
-                				}else{
-                					headers[w] = null;
-                				}
-                			}
-                			GeneralUtils.writeString(responseHeadersCacheFile, new Gson().toJson(heaerStrings), false);
-                			
-                			/* 保存响应体 */
-                			inputStream = httpEntity.getContent();
-                			fileOutputStream = new FileOutputStream(responseEntityCacheFile);
-                			GeneralUtils.outputFromInput(inputStream, fileOutputStream);
-                			inputStream.close();
-                			fileOutputStream.flush();
-                			fileOutputStream.close();
-                			
-                			//将响应实体替换为本地文件
-                			Header contentTypeHeader = httpEntity.getContentType();
-                			httpResponse.setEntity(new FileEntity(responseEntityCacheFile,contentTypeHeader != null?contentTypeHeader.getValue():null));
-                		}catch(IOException exception){
-                			if(inputStream != null){ try{inputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
-                			if(fileOutputStream != null){try{fileOutputStream.flush();fileOutputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
-                			if(responseEntityCacheFile.delete() || responseHeadersCacheFile.delete()){
-                				if(easyHttpClient.getConfiguration().isDebugMode()){
-                					Log.w(easyHttpClient.getConfiguration().getLogTag(), name + "保存响应失败，缓存文件已刪除");
-                				}
-                			}else{
-                				if(easyHttpClient.getConfiguration().isDebugMode()){
-                					Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "保存响应失败，缓存文件刪除失敗");
-                				}
-                			}
-                			throw exception;
-                		}
-                	}else{
-                		if(easyHttpClient.getConfiguration().isDebugMode()){
-                			Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "创建文件 "+responseHeadersCacheFile.getPath() + " 或 " + responseEntityCacheFile.getPath()+" 失败");
-                		}
-                	}
-                }else{
-                	if(easyHttpClient.getConfiguration().isDebugMode()){
-            			Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "缓存失败，原因：Http实体是null");
-            		}
-                }
+            	saveHttpResponseToCacheFile(httpResponse, statusLineCacheFile, responseHeadersCacheFile, responseEntityCacheFile);
             }
-
-            /* 回调处理响应 */
-            if(!refreshCache || (responseCache != null && responseCache.isRefreshCallback())){
-                httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), refreshCache?ResponseType.REFRESH_CACHE:ResponseType.ONLY, httpResponse);
+            //回调处理响应
+            if(!isRefresh || (responseCache != null && responseCache.isRefreshCallback())){
+                httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), isRefresh?ResponseType.REFRESH_CACHE:ResponseType.ONLY, httpResponse);
             }
         }catch(Throwable throwable){
             if(easyHttpClient.getConfiguration().isDebugMode()){
                 Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "（网络）加载失败："+throwable.toString());
             }
             httpUriRequest.abort();
-            httpResponseHandler.exception(easyHttpClient.getConfiguration().getHandler(), refreshCache?FailureType.REFRESH:FailureType.ONLY, throwable);
+            if(!isRefresh || responseCache.isRefreshCallback()){
+            	httpResponseHandler.exception(easyHttpClient.getConfiguration().getHandler(), isRefresh?FailureType.REFRESH:FailureType.ONLY, throwable);
+            }
         }
+    }
+    
+    /**
+     * 保存Http响应
+     * @param httpResponse
+     * @throws IOException
+     */
+    private void saveHttpResponseToCacheFile(HttpResponse httpResponse, File statusLineCacheFile, File responseHeadersCacheFile, File responseEntityCacheFile) throws IOException{
+    	HttpEntity httpEntity = httpResponse.getEntity();
+        if(httpEntity != null){
+        	if(GeneralUtils.createFile(statusLineCacheFile) != null && GeneralUtils.createFile(responseHeadersCacheFile) != null && GeneralUtils.createFile(responseEntityCacheFile) != null){
+        		InputStream inputStream = null;
+        		FileOutputStream fileOutputStream = null;
+        		try{
+        			/* 保存状态行 */
+        			SaveStatusLine saveStatusLine = new SaveStatusLine(httpResponse.getStatusLine());
+        			GeneralUtils.writeString(statusLineCacheFile, new Gson().toJson(saveStatusLine), false);
+        			
+        			/* 保存响应头 */
+        			Header[] headers = httpResponse.getAllHeaders();
+        			String[] heaerStrings = new String[headers.length];
+        			for(int w = 0; w < headers.length; w++){
+        				Header header = headers[w];
+        				if(header instanceof BufferedHeader){
+        					heaerStrings[w] = header.toString();
+        				}else{
+        					headers[w] = null;
+        				}
+        			}
+        			GeneralUtils.writeString(responseHeadersCacheFile, new Gson().toJson(heaerStrings), false);
+        			
+        			/* 保存响应体 */
+        			inputStream = httpEntity.getContent();
+        			fileOutputStream = new FileOutputStream(responseEntityCacheFile);
+        			GeneralUtils.outputFromInput(inputStream, fileOutputStream);
+        			inputStream.close();
+        			fileOutputStream.flush();
+        			fileOutputStream.close();
+        			
+        			//将响应实体替换为本地文件
+        			Header contentTypeHeader = httpEntity.getContentType();
+        			httpResponse.setEntity(new FileEntity(responseEntityCacheFile,contentTypeHeader != null?contentTypeHeader.getValue():null));
+        		}catch(IOException exception){
+        			if(inputStream != null){ try{inputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
+        			if(fileOutputStream != null){try{fileOutputStream.flush();fileOutputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
+        			if(responseEntityCacheFile.delete() || responseHeadersCacheFile.delete()){
+        				if(easyHttpClient.getConfiguration().isDebugMode()){
+        					Log.w(easyHttpClient.getConfiguration().getLogTag(), name + "保存响应失败，缓存文件已刪除");
+        				}
+        			}else{
+        				if(easyHttpClient.getConfiguration().isDebugMode()){
+        					Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "保存响应失败，缓存文件刪除失敗");
+        				}
+        			}
+        			throw exception;
+        		}
+        	}else{
+        		if(easyHttpClient.getConfiguration().isDebugMode()){
+        			Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "创建文件 "+responseHeadersCacheFile.getPath() + " 或 " + responseEntityCacheFile.getPath()+" 失败");
+        		}
+        	}
+        }else{
+        	if(easyHttpClient.getConfiguration().isDebugMode()){
+    			Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "缓存失败，原因：Http实体是null");
+    		}
+        }
+    }
+    
+    /**
+     * 读取Http响应
+     * @param statusLineCacheFile
+     * @param responseHeadersCacheFile
+     * @param responseEntityCacheFile
+     * @return
+     * @throws JsonSyntaxException
+     * @throws IOException
+     */
+    private HttpResponse readHttpResponseFromCacheFile(File statusLineCacheFile, File responseHeadersCacheFile, File responseEntityCacheFile) throws JsonSyntaxException, IOException{
+    	/* 读取状态行 */
+		HttpResponse httpResponse = new BasicHttpResponse(new Gson().fromJson(GeneralUtils.readString(statusLineCacheFile), SaveStatusLine.class).toStatusLine());
+
+		/* 读取响应头 */
+        String[] headerStrings = new Gson().fromJson(GeneralUtils.readString(responseHeadersCacheFile), new TypeToken<String[]>(){}.getType());
+        if(headerStrings != null && headerStrings.length > 0){
+            Header[] headers = new Header[headerStrings.length];
+            int w = 0;
+            for(String string : headerStrings){
+                CharArrayBuffer charArrayBuffer = new CharArrayBuffer(string.length());
+                charArrayBuffer.append(string);
+                headers[w++] = new BufferedHeader(charArrayBuffer);
+            }
+            httpResponse.setHeaders(headers);
+        }
+
+		/* 设置响应体 */
+        Header contentTypeHeader = null;
+        Header[] contentTypes = httpResponse.getHeaders(HTTP.CONTENT_TYPE);
+        if(contentTypes != null && contentTypes.length > 0){
+        	contentTypeHeader = contentTypes[0];
+        }
+        httpResponse.setEntity(new FileEntity(responseEntityCacheFile, contentTypeHeader != null?contentTypeHeader.getValue():null));
+        
+        return httpResponse;
     }
 }

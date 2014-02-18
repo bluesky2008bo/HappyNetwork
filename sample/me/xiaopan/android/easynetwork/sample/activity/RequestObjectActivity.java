@@ -84,10 +84,10 @@ public class RequestObjectActivity extends Activity {
 			
 			@Override
 			public void onFailure(FailureType failureType, Throwable throwable) {
-				if(failureType == FailureType.ONLY){
+//				if(failureType == FailureType.ONLY){
 					Toast.makeText(getBaseContext(), "失败了，信息："+(throwable.getMessage()!=null?throwable.getMessage():""), Toast.LENGTH_LONG).show();
 					finish();
-				}
+//				}
 			}
 		});
 	}
