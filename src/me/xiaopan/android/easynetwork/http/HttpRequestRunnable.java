@@ -149,7 +149,7 @@ public class HttpRequestRunnable implements Runnable {
     
     /**
      * 从网络加载
-     * @param isRefresh 是否刷新缓存
+     * @param isRefresh 本次从网络加载数据是否是为了刷新缓存
      */
     private void fromNetworkLoad(boolean isRefresh){
         if(easyHttpClient.getConfiguration().isDebugMode()){
