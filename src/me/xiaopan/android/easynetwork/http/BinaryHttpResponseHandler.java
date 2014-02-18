@@ -47,7 +47,7 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        onSuccess(data, isCache, isRefreshCacheAndCallback);
+                        onSuccess(httpResponse, data, isCache, isRefreshCacheAndCallback);
                     }
                 });
             }else{
@@ -69,6 +69,6 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
 	}
 	
 	public abstract void onStart();
-	public abstract void onSuccess(byte[] binaryData, boolean isCache, boolean isRefreshCacheAndCallback);
+	public abstract void onSuccess(HttpResponse httpResponse, byte[] binaryData, boolean isCache, boolean isRefreshCacheAndCallback);
 	public abstract void onFailure(Throwable throwable);
 }

@@ -15,6 +15,8 @@
  */
 package me.xiaopan.android.easynetwork.sample.activity;
 
+import org.apache.http.HttpResponse;
+
 import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.BinaryHttpResponseHandler;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
@@ -43,7 +45,7 @@ public class BinaryActivity extends Activity {
 			}
 			
 			@Override
-			public void onSuccess(byte[] binaryData, boolean isCache, boolean isRefreshCacheAndCallback) {
+			public void onSuccess(HttpResponse httpResponse, byte[] binaryData, boolean isCache, boolean isRefreshCacheAndCallback) {
 				((ImageView) findViewById(R.id.image1)).setImageBitmap(BitmapFactory.decodeByteArray(binaryData, 0, binaryData.length));
 				findViewById(R.id.loading).setVisibility(View.GONE);
 			}

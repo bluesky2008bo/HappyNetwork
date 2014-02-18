@@ -16,6 +16,13 @@
 
 package me.xiaopan.android.easynetwork.sample.activity;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+
 import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.http.StringHttpResponseHandler;
@@ -69,8 +76,19 @@ public class RequestObjectActivity extends Activity {
 			}
 
 			@Override
-			public void onSuccess(String responseContent, boolean isCache, boolean isRefreshCacheAndCallback) {
-				webViewManager.getWebView().loadData(responseContent, "text/html;charset=utf-8", null);
+			public void onSuccess(HttpResponse httpResponse, String responseContent, boolean isCache, boolean isRefreshCacheAndCallback) {
+				Header contentTypeHeader = httpResponse.getEntity().getContentType();
+				webViewManager.getWebView().loadData(responseContent, contentTypeHeader != null?contentTypeHeader.getValue():"text/html;charset=utf-8", null);
+				File file = new File(getExternalCacheDir().getPath() + File.separator + System.currentTimeMillis() +".txt");
+				try {
+					file.createNewFile();
+					FileOutputStream fileOutputStream = new FileOutputStream(file);
+					fileOutputStream.write(responseContent.getBytes());
+					fileOutputStream.flush();
+					fileOutputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				searchButton.setEnabled(true);
 				findViewById(R.id.loading).setVisibility(View.GONE);
 			}

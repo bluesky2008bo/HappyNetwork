@@ -16,6 +16,8 @@
 
 package me.xiaopan.android.easynetwork.sample.activity;
 
+import org.apache.http.HttpResponse;
+
 import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.http.JsonHttpResponseHandler;
@@ -48,7 +50,7 @@ public class JsonActivity extends Activity {
             }
 
             @Override
-            public void onSuccess(Weather responseObject, boolean isCache, boolean isRefreshCacheAndCallback) {
+            public void onSuccess(HttpResponse httpResponse, Weather responseObject, boolean isCache, boolean isRefreshCacheAndCallback) {
                 text.setText(Html.fromHtml("<h2>" + responseObject.getCity() + "</h2>"
                         + "<br>" + responseObject.getDate_y() + " " + responseObject.getWeek()
                         + "<br>" + responseObject.getTemp1() + " " + responseObject.getWeather1()

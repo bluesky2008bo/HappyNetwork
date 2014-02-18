@@ -71,7 +71,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
                                 @SuppressWarnings("unchecked")
 								@Override
                                 public void run() {
-                                    onSuccess((T) object, isCache, isRefreshCacheAndCallback);
+                                    onSuccess(httpResponse, (T) object, isCache, isRefreshCacheAndCallback);
                                 }
                             });
 						}else{
@@ -80,7 +80,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
                                 @SuppressWarnings("unchecked")
 								@Override
                                 public void run() {
-                                    onSuccess((T) object, isCache, isRefreshCacheAndCallback);
+                                    onSuccess(httpResponse, (T) object, isCache, isRefreshCacheAndCallback);
                                 }
                             });
 						}
@@ -90,7 +90,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
                             @SuppressWarnings("unchecked")
 							@Override
                             public void run() {
-                                onSuccess((T) object, isCache, isRefreshCacheAndCallback);
+                                onSuccess(httpResponse, (T) object, isCache, isRefreshCacheAndCallback);
                             }
                         });
 					}else{
@@ -118,6 +118,6 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 	
 	public abstract void onStart();
-	public abstract void onSuccess(T responseObject, boolean isCache, boolean isRefreshCacheAndCallback);
+	public abstract void onSuccess(HttpResponse httpResponse, T responseObject, boolean isCache, boolean isRefreshCacheAndCallback);
 	public abstract void onFailure(Throwable throwable);
 }

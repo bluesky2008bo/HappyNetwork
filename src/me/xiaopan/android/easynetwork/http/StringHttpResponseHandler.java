@@ -49,7 +49,7 @@ public abstract class StringHttpResponseHandler extends HttpResponseHandler {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        onSuccess(responseContent, isCache, isRefreshCacheAndCallback);
+                        onSuccess(httpResponse, responseContent, isCache, isRefreshCacheAndCallback);
                     }
                 });
 			}else{
@@ -71,6 +71,6 @@ public abstract class StringHttpResponseHandler extends HttpResponseHandler {
 	}
 
 	public abstract void onStart();
-	public abstract void onSuccess(String responseContent, boolean isCache, boolean isRefreshCacheAndCallback);
+	public abstract void onSuccess(HttpResponse httpResponse, String responseContent, boolean isCache, boolean isRefreshCacheAndCallback);
 	public abstract void onFailure(Throwable throwable);
 }
