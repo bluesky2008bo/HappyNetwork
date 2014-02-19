@@ -26,6 +26,7 @@ import java.util.Locale;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
@@ -533,6 +534,22 @@ class GeneralUtils {
 			return type.isAssignableFrom(first);
 		}else{
 			return false;
+		}
+	}
+	
+	static final String getCacheId(ResponseCache responseCache, String baseUrl, RequestParams requestParams, List<String> cacheIgnoreParams){
+		if(responseCache != null){
+			StringBuffer stringBuffer = new StringBuffer();
+			stringBuffer.append(baseUrl);
+			for(BasicNameValuePair basicNameValuePair : requestParams.getParamsList()){
+				if(cacheIgnoreParams == null || !cacheIgnoreParams.contains(basicNameValuePair.getName())){
+					stringBuffer.append(basicNameValuePair.getName());
+					stringBuffer.append(basicNameValuePair.getValue());
+				}
+			}
+			return GeneralUtils.MD5(stringBuffer.toString());
+		}else{
+			return null;
 		}
 	}
 }

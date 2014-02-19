@@ -16,11 +16,12 @@ import org.apache.http.HttpEntity;
  */
 public class HttpPutRequest {
     private String name;    //本次请求的名称，默认为当前时间，在输出log的时候会用此参数来作为标识，方便在log中区分具体的请求
-    private String url; //请求地址
+    private String baseUrl; //请求地址
     private List<Header> headers;   //请求头信息
     private RequestParams params;   //请求参数
     private ResponseCache responseCache;    //响应缓存配置
     private HttpEntity httpEntity;  //Http请求体
+    private List<String> cacheIgnoreParams;	//计算缓存ID时候忽略的参数集
 
     private HttpPutRequest(){
         setName(GeneralUtils.getCurrentDateTimeByDefultFormat() + " PUT ");
@@ -46,16 +47,16 @@ public class HttpPutRequest {
      * 获取请求地址
      * @return
      */
-    public String getUrl() {
-        return url;
+    public String getBaseUrl() {
+        return baseUrl;
     }
 
     /**
      * 设置请求地址
-     * @param url
+     * @param baseUrl
      */
-    public void setUrl(String url) {
-        this.url = url;
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     /**
@@ -229,6 +230,22 @@ public class HttpPutRequest {
     public void setHttpEntity(HttpEntity httpEntity) {
         this.httpEntity = httpEntity;
     }
+    
+    /**
+     * 获取计算缓存ID时候忽略的参数集
+     * @return
+     */
+    public List<String> getCacheIgnoreParams() {
+		return cacheIgnoreParams;
+	}
+
+	/**
+	 * 设置计算缓存ID时候忽略的参数集
+	 * @param cacheIgnoreParams
+	 */
+	public void setCacheIgnoreParams(List<String> cacheIgnoreParams) {
+		this.cacheIgnoreParams = cacheIgnoreParams;
+	}
 
     /**
      * Http Put请求构建器
@@ -238,11 +255,11 @@ public class HttpPutRequest {
 
         /**
          * 创建一个Http Put请求构建器，同时你必须指定请求地址
-         * @param url
+         * @param baseUrl
          */
-        public Builder(String url) {
+        public Builder(String baseUrl) {
             httpRequest = new HttpPutRequest();
-            setUrl(url);
+            setBaseUrl(baseUrl);
         }
 
         /**
@@ -265,11 +282,11 @@ public class HttpPutRequest {
 
         /**
          * 设置请求地址
-         * @param url
+         * @param baseUrl
          * @return
          */
-        public Builder setUrl(String url) {
-            httpRequest.setUrl(url);
+        public Builder setBaseUrl(String baseUrl) {
+            httpRequest.setBaseUrl(baseUrl);
             return this;
         }
 
@@ -381,6 +398,16 @@ public class HttpPutRequest {
             httpRequest.setResponseCache(responseCache);
             return this;
         }
+        
+    	/**
+    	 * 设置缓存忽略参数集
+    	 * @param cacheIgnoreParams
+    	 * @return
+    	 */
+    	public Builder setCacheIgnoreParams(List<String> cacheIgnoreParams) {
+    		httpRequest.setCacheIgnoreParams(cacheIgnoreParams);
+    		return this;
+    	}
 
         /**
          * 设置请求对象，会从此请求对象身上解析所需的信息
@@ -388,19 +415,21 @@ public class HttpPutRequest {
          * @return
          */
         public Builder setRequest(Request request){
-            String requestName = RequestParser.parseName(request.getClass());
+        	Class<? extends Request> requestClass = request.getClass();
+            String requestName = RequestParser.parseName(requestClass);
             if(GeneralUtils.isNotEmpty(requestName)){
                 httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
             }
-        	String url = RequestParser.parseBaseUrl(request.getClass());
+        	String url = RequestParser.parseBaseUrl(requestClass);
             if(GeneralUtils.isEmpty(url)){
                 throw new IllegalArgumentException("你必须在Request上使有Url注解或者Host加Path注解指定请求地址");
             }
-            httpRequest.setUrl(url);
+            httpRequest.setBaseUrl(url);
             
             httpRequest.setParams(RequestParser.parseRequestParams(request, httpRequest.getParams()));
+            httpRequest.setCacheIgnoreParams(RequestParser.parseCacheIgnoreParams(requestClass));
             httpRequest.addHeader(RequestParser.parseRequestHeaders(request));
-            ResponseCache responseCache = RequestParser.parseResponseCache(request.getClass());
+            ResponseCache responseCache = RequestParser.parseResponseCache(requestClass);
             if(responseCache != null){
                 httpRequest.setResponseCache(responseCache);
             }

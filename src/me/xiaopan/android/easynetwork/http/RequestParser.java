@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import me.xiaopan.android.easynetwork.http.annotation.CacheIgnore;
 import me.xiaopan.android.easynetwork.http.annotation.False;
 import me.xiaopan.android.easynetwork.http.annotation.Header;
 import me.xiaopan.android.easynetwork.http.annotation.Host;
@@ -376,42 +377,44 @@ public class RequestParser {
      */
     @SuppressWarnings("unchecked")
     public static org.apache.http.Header[] parseRequestHeaders(Request request){
-        List<org.apache.http.Header> finalHeaders = new LinkedList<org.apache.http.Header>();
+        List<org.apache.http.Header> finalHeaders = null;
         for(Field field : GeneralUtils.getFields(request.getClass(), true, true, true)){
             field.setAccessible(true);
             if(field.getAnnotation(Header.class) != null){	//如果当前字段被标记为需要序列化
-                if(org.apache.http.Header.class.isAssignableFrom(field.getType())){	//如果是单个
-                    try {
-                        finalHeaders.add((org.apache.http.Header) field.get(request));
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
-                    }
-                }else if(GeneralUtils.isArrayByType(field, org.apache.http.Header.class)){	//如果Header数组
-                    try {
-                        org.apache.http.Header[] headers = (org.apache.http.Header[]) field.get(request);
-                        for(org.apache.http.Header header : headers){
-                            finalHeaders.add(header);
-                        }
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
-                    }
-                }else if(GeneralUtils.isCollectionByType(field, Collection.class, org.apache.http.Header.class)){	//如果是Header集合
-                    try {
-                        finalHeaders.addAll((Collection<org.apache.http.Header>) field.get(request));
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
-                    }
-                }
+               try {
+					Object value = field.get(request);
+					if(value != null){
+						if(org.apache.http.Header.class.isAssignableFrom(field.getType())){	//如果是单个
+							if(finalHeaders == null){
+								finalHeaders = new LinkedList<org.apache.http.Header>();
+							}
+	                    	finalHeaders.add((org.apache.http.Header) value);
+		                }else if(GeneralUtils.isArrayByType(field, org.apache.http.Header.class)){	//如果Header数组
+	                        org.apache.http.Header[] headers = (org.apache.http.Header[]) value;
+	                        for(org.apache.http.Header header : headers){
+	                            if(header != null){
+	                            	if(finalHeaders == null){
+	                            		finalHeaders = new LinkedList<org.apache.http.Header>();
+	                            	}
+	                            	finalHeaders.add(header);
+	                            }
+	                        }
+		                }else if(GeneralUtils.isCollectionByType(field, Collection.class, org.apache.http.Header.class)){	//如果是Header集合
+		                	if(finalHeaders == null){
+		                		finalHeaders = new LinkedList<org.apache.http.Header>();
+		                	}
+	                        finalHeaders.addAll((Collection<org.apache.http.Header>) value);
+		                }
+					}
+				} catch (IllegalAccessException e1) {
+					e1.printStackTrace();
+				} catch (IllegalArgumentException e1) {
+					e1.printStackTrace();
+				}
             }
         }
 
-        if(finalHeaders.size() > 0){
+        if(finalHeaders != null && finalHeaders.size() > 0){
             org.apache.http.Header[] heades = new org.apache.http.Header[finalHeaders.size()];
             finalHeaders.toArray(heades);
             return heades;
@@ -432,5 +435,48 @@ public class RequestParser {
         }else{
             return null;
         }
+    }
+    
+    public static List<String> parseCacheIgnoreParams(Class<? extends Request> requestClass){
+    	List<String> finalHeaders = null;
+        for(Field field : GeneralUtils.getFields(requestClass, true, true, true)){
+            field.setAccessible(true);
+            if(field.getAnnotation(CacheIgnore.class) != null){	//如果当前字段被标记为在计算缓存ID的时候忽略
+            	if(finalHeaders == null){
+            		finalHeaders = new LinkedList<String>();
+            	}
+            	finalHeaders.add(parseRequestParamKey(field));
+            }
+        }
+       return finalHeaders;
+    }
+    
+    /**
+     * 解析缓存ID
+     * @param requestClass
+     * @return
+     */
+    public static String parseCacheId(Class<? extends Request> requestClass){
+       me.xiaopan.android.easynetwork.http.ResponseCache responseCache = parseResponseCache(requestClass);
+       if(responseCache != null){
+    	   return GeneralUtils.getCacheId(responseCache, parseBaseUrl(requestClass), parseRequestParams(requestClass), parseCacheIgnoreParams(requestClass));
+       }else{
+    	   return null;
+       }
+    }
+    
+    /**
+     * 解析缓存ID
+     * @param request
+     * @return
+     */
+    public static String parseCacheId(Request request){
+    	Class<? extends Request> requestClass = request.getClass();
+    	me.xiaopan.android.easynetwork.http.ResponseCache responseCache = parseResponseCache(requestClass);
+    	if(responseCache != null){
+    		return GeneralUtils.getCacheId(responseCache, parseBaseUrl(requestClass), parseRequestParams(request), parseCacheIgnoreParams(requestClass));
+    	}else{
+    		return null;
+    	}
     }
 }

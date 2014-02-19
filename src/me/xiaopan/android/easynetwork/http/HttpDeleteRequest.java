@@ -11,9 +11,8 @@ import org.apache.http.Header;
  */
 public class HttpDeleteRequest {
     private String name;    //本次请求的名称，默认为当前时间，在输出log的时候会用此参数来作为标识，方便在log中区分具体的请求
-    private String url; //请求地址
+    private String baseUrl; //请求地址
     private List<Header> headers;   //请求头信息
-    private ResponseCache responseCache;    //响应缓存配置
 
     private HttpDeleteRequest(){
         setName(GeneralUtils.getCurrentDateTimeByDefultFormat() + " DELETE ");
@@ -39,16 +38,16 @@ public class HttpDeleteRequest {
      * 获取请求地址
      * @return
      */
-    public String getUrl() {
-        return url;
+    public String getBaseUrl() {
+        return baseUrl;
     }
 
     /**
      * 设置请求地址
-     * @param url
+     * @param baseUrl
      */
-    public void setUrl(String url) {
-        this.url = url;
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     /**
@@ -85,22 +84,6 @@ public class HttpDeleteRequest {
     }
 
     /**
-     * 获取响应缓存配置
-     * @return
-     */
-    public ResponseCache getResponseCache() {
-        return responseCache;
-    }
-
-    /**
-     * 设置响应缓存配置
-     * @param responseCache
-     */
-    public void setResponseCache(ResponseCache responseCache) {
-        this.responseCache = responseCache;
-    }
-
-    /**
      * Http Delete 请求构建器
      */
     public static class Builder{
@@ -108,11 +91,11 @@ public class HttpDeleteRequest {
 
         /**
          * 创建一个Http Delete请求构建器，同时你必须指定请求地址
-         * @param url
+         * @param baseUrl
          */
-        public Builder(String url) {
+        public Builder(String baseUrl) {
             httpRequest = new HttpDeleteRequest();
-            setUrl(url);
+            setBaseUrl(baseUrl);
         }
 
         /**
@@ -136,11 +119,11 @@ public class HttpDeleteRequest {
 
         /**
          * 设置请求地址
-         * @param url
+         * @param baseUrl
          * @return
          */
-        public Builder setUrl(String url) {
-            httpRequest.setUrl(url);
+        public Builder setBaseUrl(String baseUrl) {
+            httpRequest.setBaseUrl(baseUrl);
             return this;
         }
 
@@ -165,37 +148,24 @@ public class HttpDeleteRequest {
         }
 
         /**
-         * 设置响应缓存配置
-         * @param responseCache
-         * @return
-         */
-        public Builder setResponseCache(ResponseCache responseCache) {
-            httpRequest.setResponseCache(responseCache);
-            return this;
-        }
-
-        /**
          * 设置请求对象，会从此请求对象身上解析所需的信息
          * @param request
          * @return
          */
         public Builder setRequest(Request request){
-            String requestName = RequestParser.parseName(request.getClass());
+        	Class<? extends Request> requestClass = request.getClass();
+            String requestName = RequestParser.parseName(requestClass);
             if(GeneralUtils.isNotEmpty(requestName)){
                 httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
             }
             
-        	String url = RequestParser.parseBaseUrl(request.getClass());
+        	String url = RequestParser.parseBaseUrl(requestClass);
             if(GeneralUtils.isEmpty(url)){
                 throw new IllegalArgumentException("你必须在Request上使有Url注解或者Host加Path注解指定请求地址");
             }
-            httpRequest.setUrl(url);
+            httpRequest.setBaseUrl(url);
             
             httpRequest.addHeader(RequestParser.parseRequestHeaders(request));
-            ResponseCache responseCache = RequestParser.parseResponseCache(request.getClass());
-            if(responseCache != null){
-                httpRequest.setResponseCache(responseCache);
-            }
             return this;
         }
 
