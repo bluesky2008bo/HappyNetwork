@@ -52,7 +52,7 @@ public class StringActivity extends Activity {
 			}
 
 			@Override
-			public void onSuccess(HttpResponse httpResponse, String responseContent, boolean isOver) {
+			public void onSuccess(HttpResponse httpResponse, String responseContent, boolean isNotRefresh, boolean isOver) {
 				Header contentTypeHeader = httpResponse.getEntity().getContentType();
 				webViewManager.getWebView().loadData(responseContent, contentTypeHeader != null?contentTypeHeader.getValue():"text/html;charset=utf-8", null);
 				findViewById(R.id.loading).setVisibility(View.GONE);

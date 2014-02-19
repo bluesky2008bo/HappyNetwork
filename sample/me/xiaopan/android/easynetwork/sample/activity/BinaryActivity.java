@@ -46,7 +46,7 @@ public class BinaryActivity extends Activity {
 			}
 			
 			@Override
-			public void onSuccess(HttpResponse httpResponse, byte[] binaryData, boolean isOver) {
+			public void onSuccess(HttpResponse httpResponse, byte[] binaryData, boolean isNotRefresh, boolean isOver) {
 				((ImageView) findViewById(R.id.image1)).setImageBitmap(BitmapFactory.decodeByteArray(binaryData, 0, binaryData.length));
 				findViewById(R.id.loading).setVisibility(View.GONE);
 			}

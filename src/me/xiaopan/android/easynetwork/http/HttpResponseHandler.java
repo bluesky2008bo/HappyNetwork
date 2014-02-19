@@ -43,10 +43,11 @@ public abstract class HttpResponseHandler{
      * 处理响应，值得注意的是此方法当在开启缓存模式并且开启刷新缓存以及开启了刷新后再次回调的时候总共会回调两次，你可以通过isCache、isRefreshCacheAndCallback参数来区分并做不同的处理
      * @param handler 消息处理器
      * @param httpResponse Http响应
+     * @param isNotRefresh 本次响应不是刷新
      * @param isOver 本次执行是否是最后一次
      * @throws Throwable 当发生异常时会进入exception()方法
      */
-    public abstract void handleResponse(Handler handler, HttpResponse httpResponse, boolean isOver) throws Throwable;
+    public abstract void handleResponse(Handler handler, HttpResponse httpResponse, boolean isNotRefresh, boolean isOver) throws Throwable;
 
     /**
      * 在请求的过程中发生异常，值得注意的是在读取本地缓存发生异常的话不会回调此方法，因为会自动改为从网络获取数据，所以一旦回调此方法就意味着整个请求已经结束了

@@ -56,7 +56,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 
 	@Override
-	public void handleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isOver) throws Throwable {
+	public void handleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
@@ -71,7 +71,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
                                 @SuppressWarnings("unchecked")
 								@Override
                                 public void run() {
-                                    onSuccess(httpResponse, (T) object, isOver);
+                                    onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
                                 }
                             });
 						}else{
@@ -80,7 +80,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
                                 @SuppressWarnings("unchecked")
 								@Override
                                 public void run() {
-                                    onSuccess(httpResponse, (T) object, isOver);
+                                    onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
                                 }
                             });
 						}
@@ -90,7 +90,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
                             @SuppressWarnings("unchecked")
 							@Override
                             public void run() {
-                                onSuccess(httpResponse, (T) object, isOver);
+                                onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
                             }
                         });
 					}else{
@@ -126,9 +126,10 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	 * 请求成功
 	 * @param httpResponse  Http响应
 	 * @param responseObject 响应内容
+     * @param isNotRefresh 本次响应不是刷新
 	 * @param isOver 本次执行是否是最后一次
 	 */
-	public abstract void onSuccess(HttpResponse httpResponse, T responseObject, boolean isOver);
+	public abstract void onSuccess(HttpResponse httpResponse, T responseObject, boolean isNotRefresh, boolean isOver);
 	
 	/**
 	 * 请求失败

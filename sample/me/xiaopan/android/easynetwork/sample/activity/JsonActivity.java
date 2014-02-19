@@ -51,7 +51,7 @@ public class JsonActivity extends Activity {
             }
 
             @Override
-            public void onSuccess(HttpResponse httpResponse, Weather responseObject, boolean isOver) {
+            public void onSuccess(HttpResponse httpResponse, Weather responseObject, boolean isNotRefresh, boolean isOver) {
                 text.setText(Html.fromHtml("<h2>" + responseObject.getCity() + "</h2>"
                         + "<br>" + responseObject.getDate_y() + " " + responseObject.getWeek()
                         + "<br>" + responseObject.getTemp1() + " " + responseObject.getWeather1()

@@ -40,7 +40,7 @@ public abstract class StringHttpResponseHandler extends HttpResponseHandler {
 	}
 
 	@Override
-	public void handleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isOver) throws Throwable {
+	public void handleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			/* 读取内容并转换成字符串 */
 			HttpEntity httpEntity = httpResponse.getEntity();
@@ -49,7 +49,7 @@ public abstract class StringHttpResponseHandler extends HttpResponseHandler {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        onSuccess(httpResponse, responseContent, isOver);
+                        onSuccess(httpResponse, responseContent, isNotRefresh, isOver);
                     }
                 });
 			}else{
@@ -79,9 +79,10 @@ public abstract class StringHttpResponseHandler extends HttpResponseHandler {
 	 * 请求成功
 	 * @param httpResponse Http响应
 	 * @param responseContent 响应内容
+     * @param isNotRefresh 本次响应不是刷新
 	 * @param isOver 本次执行是否是最后一次
 	 */
-	public abstract void onSuccess(HttpResponse httpResponse, String responseContent, boolean isOver);
+	public abstract void onSuccess(HttpResponse httpResponse, String responseContent, boolean isNotRefresh, boolean isOver);
 	
 	/**
 	 * 请求失败
