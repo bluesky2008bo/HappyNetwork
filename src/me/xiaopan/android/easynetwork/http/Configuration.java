@@ -42,18 +42,21 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.SyncBasicHttpContext;
 
+import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 
 /**
  * 配置
  */
 public class Configuration {
+	private Context context;
 	private int maxRetries = 5;	//最大重试次数
 	private int connectionTimeout = 20000;	//连接超时时间
 	private int maxConnections = 10;	//最大连接数
 	private int socketBufferSize = 8192;	//Socket缓存池大小
 	private boolean debugMode;	//调试模式
-	private String logTag = "EasyHttpClient";	//Log Tag
+	private String logTag;	//Log Tag
 	private String userAgent;	//代理
 	private String defaultCacheDirerctory;	//默认缓存目录
 	private Handler handler;	//异步处理器
@@ -66,9 +69,30 @@ public class Configuration {
     private AuthScope authScope;
     private Credentials credentials;
 	
-    private Configuration(){
+    public Configuration(Context context){
+    	if(Looper.myLooper() != Looper.getMainLooper()){
+			throw new IllegalStateException("你不能在异步线程中创建此对象");
+		}
+    	this.logTag = EasyHttpClient.class.getSimpleName();
+    	this.context = context;
     	handler = new Handler();
     	headerMap = new HashMap<String, String>();
+	}
+    
+	/**
+	 * 获取上下文
+	 * @return
+	 */
+	public Context getContext() {
+		return context;
+	}
+
+	/**
+	 * 设置上下文
+	 * @param context
+	 */
+	public void setContext(Context context) {
+		this.context = context;
 	}
 	
 	/**
@@ -389,188 +413,5 @@ public class Configuration {
 	 */
 	public void setDebugMode(boolean debugMode) {
 		this.debugMode = debugMode;
-	}
-	
-	public static class Builder{
-		private Configuration configuration;
-		
-		public Builder(){
-			configuration = new Configuration();
-		}
-		
-		/**
-		 * 设置Http上下文
-		 * @param httpContext the httpContext to set
-		 */
-		public Builder setHttpContext(HttpContext httpContext) {
-			configuration.setHttpContext(httpContext);
-			return this;
-		}
-
-		/**
-		 * 设置Http客户端
-		 * @param httpClient
-		 */
-		public Builder setHttpClient(DefaultHttpClient httpClient) {
-			configuration.setDefaultHttpClient(httpClient);
-			return this;
-		}
-	    
-	    /**
-	     * 添加一个请求头参数，这些参数都会在发送请求之前添加到请求体中
-	     * @param header 参数名
-	     * @param value 参数值
-	     */
-	    public Builder addHeader(String header, String value) {
-	    	configuration.addHeader(header, value);
-			return this;
-	    }
-
-		/**
-		 * 设置通用请求头集合
-		 * @param headerMap
-		 */
-		public Builder setHeaderMap(Map<String, String> headerMap) {
-			configuration.setHeaderMap(headerMap);
-			return this;
-		}
-		
-		/**
-		 * 设置Log Tag
-		 * @param logTag
-		 */
-		public Builder setLogTag(String logTag) {
-			configuration.setLogTag(logTag);
-			return this;
-		}
-		
-		/**
-		 * 设置默认缓存目录
-		 * @param defaultCacheDirerctory
-		 */
-		public Builder setDefaultCacheDirerctory(String defaultCacheDirerctory) {
-			configuration.setDefaultCacheDirerctory(defaultCacheDirerctory);
-			return this;
-		}
-
-		/**
-		 * 设置最大重置次数
-		 * @param maxRetries
-		 */
-		public Builder setMaxRetries(int maxRetries) {
-			configuration.setMaxRetries(maxRetries);
-			return this;
-		}
-
-		/**
-		 * 设置连接超时间，单位毫秒
-		 * @param connectionTimeout
-		 */
-		public Builder setConnectionTimeout(int connectionTimeout) {
-			configuration.setConnectionTimeout(connectionTimeout);
-			return this;
-		}
-
-		/**
-		 * 设置最大连接数
-		 * @param maxConnections
-		 */
-		public Builder setMaxConnections(int maxConnections) {
-			configuration.setMaxConnections(maxConnections);
-			return this;
-		}
-
-		/**
-		 * 设置Socket缓存池大小
-		 * @param socketBufferSize
-		 */
-		public Builder setSocketBufferSize(int socketBufferSize) {
-			configuration.setSocketBufferSize(socketBufferSize);
-			return this;
-		}
-		
-		/**
-	     * 设置Cookie仓库，将在发送请求时使用此Cookie仓库
-	     * @param cookieStore 另请参见 {@link PersistentCookieStore}
-	     */
-	    public Builder setCookieStore(CookieStore cookieStore) {
-	    	configuration.setCookieStore(cookieStore);
-			return this;
-	    }
-	    
-		/**
-	     * 设置代理，在之后的每一次请求都将使用此代理
-	     * @param userAgent 用户代理的信息将会添加在“User-Agent”请求头中
-	     */
-	    public Builder setUserAgent(String userAgent) {
-	    	configuration.setUserAgent(userAgent);
-			return this;
-	    }
-	    
-		/**
-	     * Sets the SSLSocketFactory to user when making requests. By default,
-	     * a new, default SSLSocketFactory is used.
-	     * @param sslSocketFactory the socket factory to use for https requests.
-	     */
-	    public Builder setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
-	    	configuration.setSSLSocketFactory(sslSocketFactory);
-			return this;
-	    }
-	    
-	   /**
-	     * 设置Http Auth认证
-	     * @param user 用户名
-	     * @param pass 密码
-	     * @param scope 
-	     */
-	    public Builder setBasicAuth(String user, String pass, AuthScope scope){
-	    	configuration.setBasicAuth(user, pass, scope);
-			return this;
-	    }
-
-	    /**
-	     * 设置Http Auth认证
-	     * @param user 用户名
-	     * @param pass 密码
-	     */
-	    public Builder setBasicAuth(String user, String pass){
-	    	configuration. setBasicAuth(user, pass);
-			return this;
-	    }
-
-	    /**
-	     * 设置Handler
-	     * @param handler
-	     */
-	    public Builder setHandler(Handler handler) {
-	    	configuration.setHandler(handler);
-			return this;
-	    }
-
-		/**
-		 * 设置线程池
-		 * @param threadPool
-		 */
-		public Builder setThreadPool(ThreadPoolExecutor threadPool) {
-			configuration.setThreadPool(threadPool);
-			return this;
-		}
-
-		/**
-		 * 设置是否开启调试模式，开启调试模式后会在控制台输出LOG
-		 * @param debugMode 
-		 */
-		public Builder setDebugMode(boolean debugMode) {
-			configuration.setDebugMode(debugMode);
-			return this;
-		}
-		
-		/**
-		 * 创建
-		 * @return
-		 */
-		public Configuration create(){
-			return configuration;
-		}
 	}
 }

@@ -10,40 +10,13 @@
 >* 支持缓存HttpResponse，还可以配置过期时间、刷新缓存等功能；
 >* 默认提供单例模式；
 
-##Downloads
-**[android-easy-network-2.1.6.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.6.jar)**
-
-**[android-easy-network-2.1.6-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.6-with-src.jar)**
-
-##Change Log
-###2.1.6
->* 优化缓存控制功能，并优化BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler等Handler相关回调方法的参数，使之表达更准确，更容易理解
-
-###2.1.5
->* 不再默认支持Gzip超高速传输，因为在实际使用中由于使用了Gzip超高速传输出现了java.io.IOException: unknown format (magic number 227b)异常，此异常出现频率大概20%，并且到现在位置我尚未发现其规律，所以目前无法解决。如果你想开启Gzip超高速传输可通过下面代码实现
-```java
-EasyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addRequestInterceptor(new GzipProcessRequestInterceptor());
-EasyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addResponseInterceptor(new GzipProcessResponseInterceptor());
-```
-
-###2.1.4
->* 优化RequestPaser
-
-###2.1.3
->* 修复GzipProcessResponseInterceptor引发的请求失败的BUG
-
-###2.1.2
->* 修复ResponseCache注解没有加运行时标记的BUG
-
-###2.1.1
->* 注解的序列化名称注解由SerializedName替换为Param
-
-###2.1.0
-
-##Depend
->* **[gson-2.2.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
-
 ##Usage Guide
+
+###初始化
+你必须在使用之前在主线程中调用如下代码执行初始化：
+```java
+EasyHttpClient.getInstance().init(getBaseContext());
+```
 
 ###发送请求
 
@@ -90,12 +63,14 @@ EasyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addRespon
     3. isRefreshCache：boolean型，指定当本地缓存可用的时候，是否依然从网络加载新的数据来刷新本地缓存，默认值为false；
     4. isRefreshCallback：boolean型，指定当刷新本地缓存完成的时候是否再次回调HttpResponseHandler.handleResponse()，默认值为false；
     5. cacheDirectory：String型，指定缓存目录，默认值为``""``。
+    6.使用``@CacheIgnore``来配置在组织缓存ID的时候需要忽略的参数（这个很重要）
 
 更加详细的配置方式请参考示例程序。
 
 ####缓存Http Response
 >* 在使用普通方式发送请求的时候你可以传一个ResponseCache类型的参数来定义缓存配置;
->* 使用请求对象的时候你可以在请求对象上加上@ResponseCache注解来定义缓存配置。
+>* 使用请求对象方式发送请求的时候你可以在请求对象上加上@ResponseCache注解来定义缓存配置。
+>* 另外你可以使用``@CacheIgnore``来配置在组织缓存ID的时候需要忽略的参数
 
 ###处理响应
 不管你用何种方式发送请求，都会要求传一个HttpResponseHandler，因此你需要继承HttpResponseHandler抽象类来处理Http响应，HttpResponseHandler的三个抽象方法说明如下：
@@ -288,6 +263,45 @@ EasyHttpClient.getInstance().execute(getBaseContext(), new BeijingWeatherRequest
 
 ###单例模式
 你只需调用``EasyHttpClient.getInstance()``即可获取EasyHttpClient的实例。
+
+##Downloads
+**[android-easy-network-2.1.8.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.8.jar)**
+
+**[android-easy-network-2.1.8-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.8-with-src.jar)**
+
+##Depend
+>* **[gson-2.2.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
+
+##Change Log
+###2.1.8
+>* 增加初始化功能，在使用之前必须调用init()方法初始化，并且初始化方法只能在主线程中调用
+
+###2.1.7
+>* 优化缓存功能，支持配置忽略请求参数
+
+###2.1.6
+>* 优化缓存控制功能，并优化BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler等Handler相关回调方法的参数，使之表达更准确，更容易理解
+
+###2.1.5
+>* 不再默认支持Gzip超高速传输，因为在实际使用中由于使用了Gzip超高速传输出现了java.io.IOException: unknown format (magic number 227b)异常，此异常出现频率大概20%，并且到现在位置我尚未发现其规律，所以目前无法解决。如果你想开启Gzip超高速传输可通过下面代码实现
+```java
+EasyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addRequestInterceptor(new GzipProcessRequestInterceptor());
+EasyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addResponseInterceptor(new GzipProcessResponseInterceptor());
+```
+
+###2.1.4
+>* 优化RequestPaser
+
+###2.1.3
+>* 修复GzipProcessResponseInterceptor引发的请求失败的BUG
+
+###2.1.2
+>* 修复ResponseCache注解没有加运行时标记的BUG
+
+###2.1.1
+>* 注解的序列化名称注解由SerializedName替换为Param
+
+###2.1.0
 
 ##License
 ```java

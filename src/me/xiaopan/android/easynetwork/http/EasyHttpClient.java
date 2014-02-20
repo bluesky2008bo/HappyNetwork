@@ -58,6 +58,16 @@ public class EasyHttpClient {
 	}
 
     /**
+     * 获取配置
+     * @param context
+     */
+	public void init(Context context) {
+		if(configuration == null){
+            configuration = new Configuration(context);
+        }
+	}
+
+    /**
      * 执行请求
      * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param name 请求名称，在后台输出log的时候会输出此名称方便区分请求
@@ -67,7 +77,7 @@ public class EasyHttpClient {
      * @param httpResponseHandler Http响应处理器
      */
     public void execute(Context context, String name, HttpUriRequest httpRequest, String cacheId, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
-        Future<?> request = getConfiguration().getThreadPool().submit(new HttpRequestRunnable(context, this, name, httpRequest, cacheId, responseCache, httpResponseHandler));
+        Future<?> request = getConfiguration().getThreadPool().submit(new HttpRequestRunnable(getConfiguration().getContext(), this, name, httpRequest, cacheId, responseCache, httpResponseHandler));
         if(context != null) {
             List<WeakReference<Future<?>>> requestList = getRequestMap().get(context);
             if(requestList == null) {
@@ -324,9 +334,9 @@ public class EasyHttpClient {
      */
 	public Configuration getConfiguration() {
 		if(configuration == null){
-            configuration = new Configuration.Builder().create();
-        }
-        return configuration;
+			throw new IllegalStateException("必须在使用EasyHttpClient之前调用init(Context)初始化，推荐在Application中调用");
+		}
+		return configuration;
 	}
 
 	/**
