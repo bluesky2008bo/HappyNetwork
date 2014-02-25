@@ -68,6 +68,11 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
         });
 	}
 	
+	@Override
+	public void cancel(Handler handler) {
+		
+	}
+	
 	/**
 	 * 请求开始
 	 */

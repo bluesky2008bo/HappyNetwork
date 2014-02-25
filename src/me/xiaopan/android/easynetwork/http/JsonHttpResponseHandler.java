@@ -117,6 +117,11 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
         });
 	}
 	
+	@Override
+	public void cancel(Handler handler) {
+		
+	}
+
 	/**
 	 * 请求开始
 	 */

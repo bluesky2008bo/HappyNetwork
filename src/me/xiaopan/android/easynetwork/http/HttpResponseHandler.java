@@ -56,4 +56,10 @@ public abstract class HttpResponseHandler{
      * @param e 异常
      */
     public abstract void exception(Handler handler, Throwable e, boolean isNotRefresh);
+    
+    /**
+     * 当请求取消
+     * @param handler 消息处理器
+     */
+    public abstract void cancel(final Handler handler);
 }

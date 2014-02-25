@@ -40,11 +40,15 @@ public class HttpUtils {
 	
 	/**
 	 * 拼接Url和参数
+	 * @param shouldEncodeUrl
 	 * @param url
 	 * @param params
 	 * @return
 	 */
-	public static final String getUrlByParams(String url, RequestParams params) {
+	public static final String getUrlByParams(boolean shouldEncodeUrl, String url, RequestParams params) {
+		if (shouldEncodeUrl){
+			url = url.replace(" ", "%20");
+		}
         if(params != null) {
             String paramString = params.getParamString();
             if(GeneralUtils.isNotEmpty(paramString)){

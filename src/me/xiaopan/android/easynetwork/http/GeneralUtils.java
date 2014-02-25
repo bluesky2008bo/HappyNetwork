@@ -35,23 +35,23 @@ import android.os.Environment;
 
 class GeneralUtils {
 	
-	/**
-	 * 设置连接超时
-	 * @param client
-	 * @param connectionTimeout
-	 * @return
-	 */
-	static boolean setConnectionTimeout(HttpClient client, int connectionTimeout){
-		if(client != null){
-			HttpParams httpParams = client.getParams();
-			ConnManagerParams.setTimeout(httpParams, connectionTimeout);
-			HttpConnectionParams.setSoTimeout(httpParams, connectionTimeout);
-			HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
-			return true;
-		}else{
-			return false;
-		}
-	}
+//	/**
+//	 * 设置连接超时
+//	 * @param client
+//	 * @param connectionTimeout
+//	 * @return
+//	 */
+//	static boolean setConnectionTimeout(HttpClient client, int connectionTimeout){
+//		if(client != null){
+//			HttpParams httpParams = client.getParams();
+//			ConnManagerParams.setTimeout(httpParams, connectionTimeout);
+//			HttpConnectionParams.setSoTimeout(httpParams, connectionTimeout);
+//			HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
+//			return true;
+//		}else{
+//			return false;
+//		}
+//	}
 	
 	/**
 	 * 设置连接超时
@@ -70,22 +70,22 @@ class GeneralUtils {
 		}
 	}
 	
-	/**
-	 * 设置最大连接数
-	 * @param client
-	 * @param maxConnections
-	 * @return
-	 */
-	static boolean setMaxConnections(HttpClient client, int maxConnections){
-		if(client != null){
-			HttpParams httpParams = client.getParams();
-			ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(maxConnections));
-			ConnManagerParams.setMaxTotalConnections(httpParams, maxConnections);
-			return true;
-		}else{
-			return false;
-		}
-	}
+//	/**
+//	 * 设置最大连接数
+//	 * @param client
+//	 * @param maxConnections
+//	 * @return
+//	 */
+//	static boolean setMaxConnections(HttpClient client, int maxConnections){
+//		if(client != null){
+//			HttpParams httpParams = client.getParams();
+//			ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(maxConnections));
+//			ConnManagerParams.setMaxTotalConnections(httpParams, maxConnections);
+//			return true;
+//		}else{
+//			return false;
+//		}
+//	}
 	
 	/**
 	 *  设置最大连接数
@@ -271,7 +271,7 @@ class GeneralUtils {
 	 * @return 日期时间格式化器
 	 */
 	static DateFormat getDateTimeFormatByDefult(){
-		return getDateTimeFormatByCustom("yyyy-MM-dd hh:mm:ss");
+		return getDateTimeFormatByCustom("yyyy-MM-dd HH:mm:ss");
 	}
 	
 	/**

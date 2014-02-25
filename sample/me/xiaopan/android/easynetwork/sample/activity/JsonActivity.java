@@ -44,7 +44,7 @@ public class JsonActivity extends Activity {
 		setContentView(R.layout.activity_text);
 		text = (TextView) findViewById(R.id.text1);
 		
-		EasyHttpClient.getInstance().execute(getBaseContext(), new BeijingWeatherRequest(), new JsonHttpResponseHandler<Weather>(Weather.class) {
+		EasyHttpClient.getInstance(getBaseContext()).execute(getBaseContext(), new BeijingWeatherRequest(), new JsonHttpResponseHandler<Weather>(Weather.class) {
             @Override
             public void onStart() {
                 findViewById(R.id.loading).setVisibility(View.VISIBLE);
