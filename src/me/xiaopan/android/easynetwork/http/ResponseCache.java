@@ -5,6 +5,8 @@ package me.xiaopan.android.easynetwork.http;
  * Created by XIAOPAN on 13-11-24.
  */
 public class ResponseCache {
+	private String id; 
+	
     /**
      * 本地缓存缓存有效期，单位毫秒，超过此有效期本地缓存将被清除，然后直接从网络加载，小于0时永久有效
      */
@@ -31,6 +33,22 @@ public class ResponseCache {
     private ResponseCache(){}
 
     /**
+     * 获取ID
+     * @return
+     */
+    public String getId() {
+		return id;
+	}
+
+	/**
+	 * 设置ID
+	 * @param id
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	/**
      * 获取本地缓存缓存有效期
      * @return 本地缓存缓存有效期，单位毫秒，超过此有效期本地缓存将被清除，然后直接从网络加载，小于0时永久有效
      */
