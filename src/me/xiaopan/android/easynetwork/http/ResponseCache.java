@@ -134,6 +134,15 @@ public class ResponseCache {
             this(-1);
         }
 
+    	/**
+    	 * 设置ID
+    	 * @param id
+    	 */
+    	public Builder setId(String id) {
+    		 responseCache.setId(id);
+             return this;
+    	}
+
         /**
          * 设置本地缓存缓存有效期
          * @param periodOfValidity 本地缓存缓存有效期，单位毫秒，超过此有效期本地缓存将被清除，然后直接从网络加载，小于0时永久有效
