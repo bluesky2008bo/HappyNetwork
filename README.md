@@ -12,20 +12,14 @@
 
 ##Usage Guide
 
-###初始化
-你必须在使用之前在主线程中调用如下代码执行初始化：
-```java
-EasyHttpClient.getInstance().init(getBaseContext());
-```
-
 ###发送请求
 
 ####使用普通方式发送请求
->* 调用``EasyHttpClient.execute(Context, String, HttpUriRequest, ResponseCache, HttpResponseHandler)``方法；
->* 使用重新封装的HttpRequest（包括``HttpGetRequest``、``HttpPostRequest``、``HttpPutRequest``、``HttpDeleteRequest``）调用``EasyHttpClient.get(Context, HttpGetRequest, HttpResponseHandler)``、``EasyHttpClient.post(Context, HttpPostRequest, HttpResponseHandler)``、``EasyHttpClient.put(Context, HttpPutRequest, HttpResponseHandler)``、``EasyHttpClient.delete(Context, HttpDeleteRequest, HttpResponseHandler)``等方法。
+>* 调用``EasyHttpClient.execute(String, HttpUriRequest, ResponseCache, HttpResponseHandler)``方法；
+>* 使用重新封装的HttpRequest（包括``HttpGetRequest``、``HttpPostRequest``、``HttpPutRequest``、``HttpDeleteRequest``）调用``EasyHttpClient.get(HttpGetRequest, HttpResponseHandler)``、``EasyHttpClient.post(HttpPostRequest, HttpResponseHandler)``、``EasyHttpClient.put(HttpPutRequest, HttpResponseHandler)``、``EasyHttpClient.delete(HttpDeleteRequest, HttpResponseHandler)``等方法。
 
 ####使用请求对象发送请求
-当你调用EasyHttpClient的``execute(Context, Request, HttpResponseHandler)``方法去执行一个请求的时候，会要求你传一个实现了``Request``接口的对象，此对象被称作请求对象，``EasyHttpClient``将通过此请求对象解析出请求方式、请求地址、请求头、请求参数等信息。具体配置如下：
+当你调用EasyHttpClient的``execute(Request, HttpResponseHandler)``方法去执行一个请求的时候，会要求你传一个实现了``Request``接口的对象，此对象被称作请求对象，``EasyHttpClient``将通过此请求对象解析出请求方式、请求地址、请求头、请求参数等信息。具体配置如下：
 >* 请求名称的配置：
     1. 在请求对象上加上``@Name``注解即可，例如：``@Name("百度搜索")``。请求名称将用于在log中区分不同的请求。
 
@@ -227,7 +221,7 @@ public class QiuBaiRequest extends BaseRequest{
 
 ####一个完整的发送请求并处理响应的示例：
 ```java
-EasyHttpClient.getInstance().execute(getBaseContext(), new BeijingWeatherRequest(), new JsonHttpResponseHandler<Weather>(Weather.class) {
+EasyHttpClient.getInstance(getBaseContext()).execute(new BeijingWeatherRequest(), new JsonHttpResponseHandler<Weather>(Weather.class) {
     @Override
     public void onStart() {
         findViewById(R.id.loading).setVisibility(View.VISIBLE);
@@ -262,17 +256,22 @@ EasyHttpClient.getInstance().execute(getBaseContext(), new BeijingWeatherRequest
 ```
 
 ###单例模式
-你只需调用``EasyHttpClient.getInstance()``即可获取EasyHttpClient的实例。
+你只需调用``EasyHttpClient.getInstance(Context)``即可获取EasyHttpClient的实例。
 
 ##Downloads
-**[android-easy-network-2.1.8.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.8.jar)**
+**[android-easy-network-2.2.0.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.2.0.jar)**
 
-**[android-easy-network-2.1.8-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.1.8-with-src.jar)**
+**[android-easy-network-2.2.0-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.2.0-with-src.jar)**
 
 ##Depend
 >* **[gson-2.2.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
 
 ##Change Log
+###2.2.0
+>* 优化HttpClient组织方式，采用HttpClientManager来管理和配置HttpClient
+>* getInstance()方法增加Context参数
+>* 所有发送请求的方法的参数重新规划
+
 ###2.1.8
 >* 增加初始化功能，在使用之前必须调用init()方法初始化，并且初始化方法只能在主线程中调用
 

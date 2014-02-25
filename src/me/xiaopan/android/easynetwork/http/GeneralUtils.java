@@ -15,7 +15,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.security.MessageDigest;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,116 +22,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 
 import android.content.Context;
 import android.os.Environment;
 
 class GeneralUtils {
-	
-//	/**
-//	 * 设置连接超时
-//	 * @param client
-//	 * @param connectionTimeout
-//	 * @return
-//	 */
-//	static boolean setConnectionTimeout(HttpClient client, int connectionTimeout){
-//		if(client != null){
-//			HttpParams httpParams = client.getParams();
-//			ConnManagerParams.setTimeout(httpParams, connectionTimeout);
-//			HttpConnectionParams.setSoTimeout(httpParams, connectionTimeout);
-//			HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
-//			return true;
-//		}else{
-//			return false;
-//		}
-//	}
-	
-	/**
-	 * 设置连接超时
-	 * @param httpParams
-	 * @param connectionTimeout
-	 * @return
-	 */
-	static boolean setConnectionTimeout(HttpParams httpParams, int connectionTimeout){
-		if(httpParams != null && connectionTimeout > 0){
-			ConnManagerParams.setTimeout(httpParams, connectionTimeout);
-			HttpConnectionParams.setSoTimeout(httpParams, connectionTimeout);
-			HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
-			return true;
-		}else{
-			return false;
-		}
-	}
-	
-//	/**
-//	 * 设置最大连接数
-//	 * @param client
-//	 * @param maxConnections
-//	 * @return
-//	 */
-//	static boolean setMaxConnections(HttpClient client, int maxConnections){
-//		if(client != null){
-//			HttpParams httpParams = client.getParams();
-//			ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(maxConnections));
-//			ConnManagerParams.setMaxTotalConnections(httpParams, maxConnections);
-//			return true;
-//		}else{
-//			return false;
-//		}
-//	}
-	
-	/**
-	 *  设置最大连接数
-	 * @param httpParams
-	 * @param maxConnections
-	 * @return
-	 */
-	static boolean setMaxConnections(HttpParams httpParams, int maxConnections){
-		if(httpParams != null && maxConnections > 0){
-			ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(maxConnections));
-			ConnManagerParams.setMaxTotalConnections(httpParams, maxConnections);
-			return true;
-		}else{
-			return false;
-		}
-	}
-	
-	/**
-	 * 设置Socket缓存大小
-	 * @param client
-	 * @param socketBufferSize
-	 * @return
-	 */
-	static boolean setSocketBufferSize(HttpClient client, int socketBufferSize){
-		if(client != null){
-			HttpParams httpParams = client.getParams();
-			HttpConnectionParams.setSocketBufferSize(httpParams, socketBufferSize);
-			return true;
-		}else{
-			return false;
-		}
-	}
-	
-	/**
-	 * 设置Socket缓存大小
-	 * @param httpParams
-	 * @param socketBufferSize
-	 * @return
-	 */
-	static boolean setSocketBufferSize(HttpParams httpParams, int socketBufferSize){
-		if(httpParams != null && socketBufferSize > 0){
-			HttpConnectionParams.setSocketBufferSize(httpParams, socketBufferSize);
-			return true;
-		}else{
-			return false;
-		}
-	}
 	
 	/**
 	 * 判断给定的字符串是否为null或者是空的
@@ -216,19 +111,11 @@ class GeneralUtils {
 	 }
 	
 	/**
-	 * 获取SD卡的状态
-	 * @return 
-	 */
-	static String getState(){
-		return Environment.getExternalStorageState();
-	}
-	
-	/**
 	 * SD卡是否可用
 	 * @return 只有当SD卡已经安装并且准备好了才返回true
 	 */
-	static boolean isAvailable(){
-		return getState().equals(Environment.MEDIA_MOUNTED);
+	static boolean isSdCardAvailable(){
+		return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
 	}
 	
 	/**
@@ -237,7 +124,7 @@ class GeneralUtils {
 	 * @return 如果SD卡可用，就返回外部缓存目录，否则返回机身自带缓存目录
 	 */
 	static File getDynamicCacheDir(Context context){
-		if(isAvailable()){
+		if(isSdCardAvailable()){
 			File dir = context.getExternalCacheDir();
 			if(dir == null){
 				dir = context.getCacheDir();
@@ -249,37 +136,11 @@ class GeneralUtils {
 	}
 	
 	/**
-	 * 根据给定的格式化器，获取当前的日期时间
-	 * @param fromat 给定的格式化器
+	 * 根据默认的格式（yyyy-MM-dd hh:mm:ss）获取当前的日期时间（24小时制）
 	 * @return 当前的日期时间
 	 */
-	static String getCurrentDateTimeByFormat(DateFormat fromat){
-		return fromat.format(new Date());
-	}
-	
-	/**
-	 * 获取一个自定义格式的日期时间格式化器
-	 * @param customFormat 给定的自定义格式，例如："yyyy-MM-dd hh:mm:ss"
-	 * @return 日期时间格式化器
-	 */
-	static DateFormat getDateTimeFormatByCustom(String customFormat){
-		return new SimpleDateFormat(customFormat, Locale.getDefault());
-	}
-	
-	/**
-	 * 获取一个默认格式的（yyyy-MM-dd hh:mm:ss）日期时间格式化器
-	 * @return 日期时间格式化器
-	 */
-	static DateFormat getDateTimeFormatByDefult(){
-		return getDateTimeFormatByCustom("yyyy-MM-dd HH:mm:ss");
-	}
-	
-	/**
-	 * 根据默认的格式（yyyy-MM-dd hh:mm:ss）获取当前的日期时间
-	 * @return 当前的日期时间
-	 */
-	static String getCurrentDateTimeByDefultFormat(){
-		return getCurrentDateTimeByFormat(getDateTimeFormatByDefult());
+	static String getCurrentDateTimeBy24Hour(){
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 	}
 	
 	/**
@@ -541,10 +402,12 @@ class GeneralUtils {
 		if(responseCache != null){
 			StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append(baseUrl);
-			for(BasicNameValuePair basicNameValuePair : requestParams.getParamsList()){
-				if(cacheIgnoreParams == null || !cacheIgnoreParams.contains(basicNameValuePair.getName())){
-					stringBuffer.append(basicNameValuePair.getName());
-					stringBuffer.append(basicNameValuePair.getValue());
+			if(requestParams != null){
+				for(BasicNameValuePair basicNameValuePair : requestParams.getParamsList()){
+					if(cacheIgnoreParams == null || !cacheIgnoreParams.contains(basicNameValuePair.getName())){
+						stringBuffer.append(basicNameValuePair.getName());
+						stringBuffer.append(basicNameValuePair.getValue());
+					}
 				}
 			}
 			return GeneralUtils.MD5(stringBuffer.toString());

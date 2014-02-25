@@ -59,16 +59,16 @@ public class EasyHttpClient {
 
     /**
      * 执行请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
-     * @param name 请求名称，在后台输出log的时候会输出此名称方便区分请求
      * @param httpRequest http请求对象
+     * @param name 请求名称，在后台输出log的时候会输出此名称方便区分请求
      * @param cacheId 缓存ID
      * @param responseCache 响应缓存配置
      * @param httpResponseHandler Http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
      * @return 
      */
-    public RequestHandle execute(Context context, String name, HttpUriRequest httpRequest, String cacheId, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
-    	HttpRequestRunnable httpRequestRunnable = new HttpRequestRunnable(this, name, httpRequest, cacheId, responseCache, httpResponseHandler);
+    public RequestHandle execute(HttpUriRequest httpRequest, String name, String cacheId, ResponseCache responseCache, HttpResponseHandler httpResponseHandler, Context context) {
+    	HttpRequestExecuteRunnable httpRequestRunnable = new HttpRequestExecuteRunnable(this, name, httpRequest, cacheId, responseCache, httpResponseHandler);
     	getConfiguration().getExecutorService().submit(httpRequestRunnable);
         RequestHandle requestHandle = new RequestHandle(httpRequestRunnable);
         if(context != null) {
@@ -84,23 +84,49 @@ public class EasyHttpClient {
 
     /**
      * 执行请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param httpRequest http请求对象
+     * @param name 请求名称，在后台输出log的时候会输出此名称方便区分请求
+     * @param cacheId 缓存ID
+     * @param responseCache 响应缓存配置
      * @param httpResponseHandler Http响应处理器
-     * @return
+     * @return 
      */
-    public RequestHandle execute(Context context, HttpUriRequest httpRequest, HttpResponseHandler httpResponseHandler) {
-    	 return execute(context, null, httpRequest, null, null, httpResponseHandler);
+    public RequestHandle execute(HttpUriRequest httpRequest, String name, String cacheId, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
+        return execute(httpRequest, name, cacheId, responseCache, httpResponseHandler, null);
     }
 
     /**
      * 执行请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param httpRequest http请求对象
+     * @param httpResponseHandler Http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @return 
+     */
+    public RequestHandle execute(HttpUriRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context) {
+    	return execute(httpRequest, null, null, null, httpResponseHandler, context);
+    }
+
+    /**
+     * 执行请求
+     * @param httpRequest http请求对象
+     * @param name 请求名称，在后台输出log的时候会输出此名称方便区分请求
+     * @param cacheId 缓存ID
+     * @param responseCache 响应缓存配置
+     * @param httpResponseHandler Http响应处理器
+     * @return 
+     */
+    public RequestHandle execute(HttpUriRequest httpRequest, HttpResponseHandler httpResponseHandler) {
+        return execute(httpRequest, null, null, null, httpResponseHandler, null);
+    }
+
+    /**
+     * 执行请求
      * @param request 请求对象，将通过请求对象来解析出一个Http请求
      * @param httpResponseHandler http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
      * @return
      */
-    public RequestHandle execute(Context context, Request request, HttpResponseHandler httpResponseHandler){
+    public RequestHandle execute(Request request, HttpResponseHandler httpResponseHandler, Context context){
         if(request != null){
             /* 解析请求方式 */
             MethodType methodType = MethodType.GET;
@@ -111,13 +137,13 @@ public class EasyHttpClient {
 
             //根据不同的请求方式选择不同的方法执行
             if(methodType == MethodType.GET){
-            	 return get(context, new HttpGetRequest.Builder(request).create(), httpResponseHandler);
+            	 return get(new HttpGetRequest.Builder(request).create(), httpResponseHandler, context);
             }else if(methodType == MethodType.POST){
-            	 return post(context, new HttpPostRequest.Builder(request).create(), httpResponseHandler);
+            	 return post(new HttpPostRequest.Builder(request).create(), httpResponseHandler, context);
             }else if(methodType == MethodType.PUT){
-            	 return put(context, new HttpPutRequest.Builder(request).create(), httpResponseHandler);
+            	 return put(new HttpPutRequest.Builder(request).create(), httpResponseHandler, context);
             }else if(methodType == MethodType.DELETE){
-            	 return delete(context, new HttpDeleteRequest.Builder(request).create(), httpResponseHandler);
+            	 return delete(new HttpDeleteRequest.Builder(request).create(), httpResponseHandler, context);
             }else{
             	 return null;
             }
@@ -130,19 +156,29 @@ public class EasyHttpClient {
             return null;
         }
     }
+
+    /**
+     * 执行请求
+     * @param request 请求对象，将通过请求对象来解析出一个Http请求
+     * @param httpResponseHandler http响应处理器
+     * @return
+     */
+    public RequestHandle execute(Request request, HttpResponseHandler httpResponseHandler){
+        return execute(request, httpResponseHandler, null);
+    }
 	
     /**
      * 执行一个Get请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
      * @param httpRequest Http Get请求
      * @param httpResponseHandler Http响应处理器
      * @return
      */
-    public RequestHandle get(Context context, HttpGetRequest httpRequest, HttpResponseHandler httpResponseHandler) {
+    public RequestHandle get(HttpGetRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context) {
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
             HttpGet httGet = new HttpGet(HttpUtils.getUrlByParams(getConfiguration().isUrlEncodingEnabled(), httpRequest.getBaseUrl(), httpRequest.getParams()));
             HttpUtils.appendHeaders(httGet, httpRequest.getHeaders());
-            return execute(context, httpRequest.getName(), httGet, GeneralUtils.getCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()), httpRequest.getResponseCache(), httpResponseHandler);
+            return execute(httGet, httpRequest.getName(), GeneralUtils.getCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()), httpRequest.getResponseCache(), httpResponseHandler, context);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
@@ -152,37 +188,67 @@ public class EasyHttpClient {
             return null;
         }
     }
+	
+    /**
+     * 执行一个Get请求
+     * @param httpRequest Http Get请求
+     * @param httpResponseHandler Http响应处理器
+     * @return
+     */
+    public RequestHandle get(HttpGetRequest httpRequest, HttpResponseHandler httpResponseHandler) {
+        return get(httpRequest, httpResponseHandler, null);
+    }
 
     /**
      * 执行一个Get请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param httpResponseHandler Http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @return
+     */
+    public RequestHandle get(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Context context) {
+    	 return get(new HttpGetRequest.Builder(url).setParams(params).create(), httpResponseHandler, context);
+    }
+
+    /**
+     * 执行一个Get请求
      * @param url 请求地址
      * @param params 请求参数
      * @param httpResponseHandler Http响应处理器
      * @return
      */
-    public RequestHandle get(Context context, String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
-    	 return get(context, new HttpGetRequest.Builder(url).setParams(params).create(), httpResponseHandler);
+    public RequestHandle get(String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
+    	 return get(new HttpGetRequest.Builder(url).setParams(params).create(), httpResponseHandler, null);
     }
 
     /**
      * 执行一个Get请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param httpResponseHandler Http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     */
+    public RequestHandle get(String url, HttpResponseHandler httpResponseHandler, Context context) {
+    	 return get(new HttpGetRequest.Builder(url).create(), httpResponseHandler, context);
+    }
+
+    /**
+     * 执行一个Get请求
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
      */
-    public RequestHandle get(Context context, String url, HttpResponseHandler httpResponseHandler) {
-    	 return get(context, new HttpGetRequest.Builder(url).create(), httpResponseHandler);
+    public RequestHandle get(String url, HttpResponseHandler httpResponseHandler) {
+    	 return get(new HttpGetRequest.Builder(url).create(), httpResponseHandler, null);
     }
     
     /**
      * 执行一个Post请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param httpRequest Http Post请求
      * @param httpResponseHandler Http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
      * @return
      */
-    public RequestHandle post(Context context, HttpPostRequest httpRequest, HttpResponseHandler httpResponseHandler){
+    public RequestHandle post(HttpPostRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context){
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
             HttpPost httPost = new HttpPost(httpRequest.getBaseUrl());
             HttpUtils.appendHeaders(httPost, httpRequest.getHeaders());
@@ -198,7 +264,7 @@ public class EasyHttpClient {
                 httPost.setEntity(httpEntity);
             }
 
-            return execute(context, httpRequest.getName(), httPost, GeneralUtils.getCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()), httpRequest.getResponseCache(), httpResponseHandler);
+            return execute(httPost, httpRequest.getName(), GeneralUtils.getCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()), httpRequest.getResponseCache(), httpResponseHandler, context);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
@@ -208,38 +274,69 @@ public class EasyHttpClient {
             return null;
         }
     }
+    
+    /**
+     * 执行一个Post请求
+     * @param httpRequest Http Post请求
+     * @param httpResponseHandler Http响应处理器
+     * @return
+     */
+    public RequestHandle post(HttpPostRequest httpRequest, HttpResponseHandler httpResponseHandler){
+        return post(httpRequest, httpResponseHandler, null);
+    }
 
     /**
      * 执行一个Post请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param httpResponseHandler Http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @return
+     */
+    public RequestHandle post(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Context context) {
+    	 return post(new HttpPostRequest.Builder(url).setParams(params).create(), httpResponseHandler, context);
+    }
+
+    /**
+     * 执行一个Post请求
      * @param url 请求地址
      * @param params 请求参数
      * @param httpResponseHandler Http响应处理器
      * @return
      */
-    public RequestHandle post(Context context, String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
-    	 return post(context, new HttpPostRequest.Builder(url).setParams(params).create(), httpResponseHandler);
+    public RequestHandle post(String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
+    	 return post(new HttpPostRequest.Builder(url).setParams(params).create(), httpResponseHandler, null);
     }
 
     /**
      * 执行一个Post请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param httpResponseHandler Http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @return
+     */
+    public RequestHandle post(String url, HttpResponseHandler httpResponseHandler, Context context) {
+    	 return post(new HttpPostRequest.Builder(url).create(), httpResponseHandler, context);
+    }
+
+    /**
+     * 执行一个Post请求
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
      * @return
      */
-    public RequestHandle post(Context context, String url, HttpResponseHandler httpResponseHandler) {
-    	 return post(context, new HttpPostRequest.Builder(url).create(), httpResponseHandler);
+    public RequestHandle post(String url, HttpResponseHandler httpResponseHandler) {
+    	 return post(new HttpPostRequest.Builder(url).create(), httpResponseHandler, null);
     }
 
     /**
      * 执行一个Put请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param httpRequest Http Put请求
      * @param httpResponseHandler Http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
      * @return
      */
-    public RequestHandle put(Context context, HttpPutRequest httpRequest, HttpResponseHandler httpResponseHandler){
+    public RequestHandle put(HttpPutRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context){
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
             HttpPut httPut = new HttpPut(httpRequest.getBaseUrl());
             HttpUtils.appendHeaders(httPut, httpRequest.getHeaders());
@@ -254,8 +351,7 @@ public class EasyHttpClient {
             if(httpEntity != null){
                 httPut.setEntity(httpEntity);
             }
-
-            return execute(context, httpRequest.getName(), httPut, GeneralUtils.getCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()), httpRequest.getResponseCache(), httpResponseHandler);
+            return execute(httPut, httpRequest.getName(), GeneralUtils.getCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()), httpRequest.getResponseCache(), httpResponseHandler, context);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
@@ -268,39 +364,70 @@ public class EasyHttpClient {
 
     /**
      * 执行一个Put请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param httpRequest Http Put请求
+     * @param httpResponseHandler Http响应处理器
+     * @return
+     */
+    public RequestHandle put(HttpPutRequest httpRequest, HttpResponseHandler httpResponseHandler){
+        return put(httpRequest, httpResponseHandler, null);
+    }
+
+    /**
+     * 执行一个Put请求
+     * @param url 请求地址
+     * @param params 请求参数
+     * @param httpResponseHandler Http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @return
+     */
+    public RequestHandle put(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Context context) {
+    	 return put(new HttpPutRequest.Builder(url).setParams(params).create(), httpResponseHandler, context);
+    }
+
+    /**
+     * 执行一个Put请求
      * @param url 请求地址
      * @param params 请求参数
      * @param httpResponseHandler Http响应处理器
      * @return
      */
-    public RequestHandle put(Context context, String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
-    	 return put(context, new HttpPutRequest.Builder(url).setParams(params).create(), httpResponseHandler);
+    public RequestHandle put(String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
+    	 return put(new HttpPutRequest.Builder(url).setParams(params).create(), httpResponseHandler, null);
     }
 
     /**
      * 执行一个Put请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param url 请求地址
+     * @param httpResponseHandler Http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @return
+     */
+    public RequestHandle put(String url, HttpResponseHandler httpResponseHandler, Context context) {
+    	 return put(new HttpPutRequest.Builder(url).create(), httpResponseHandler, context);
+    }
+
+    /**
+     * 执行一个Put请求
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
      * @return
      */
-    public RequestHandle put(Context context, String url, HttpResponseHandler httpResponseHandler) {
-    	 return put(context, new HttpPutRequest.Builder(url).create(), httpResponseHandler);
+    public RequestHandle put(String url, HttpResponseHandler httpResponseHandler) {
+    	 return put(new HttpPutRequest.Builder(url).create(), httpResponseHandler, null);
     }
 
     /**
      * 执行一个Delete请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
      * @param httpRequest Http Delete请求
      * @param httpResponseHandler Http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
      * @return
      */
-    public RequestHandle delete(Context context, HttpDeleteRequest httpRequest, HttpResponseHandler httpResponseHandler) {
+    public RequestHandle delete(HttpDeleteRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context) {
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
             HttpDelete httDelete = new HttpDelete(HttpUtils.getUrlByParams(getConfiguration().isUrlEncodingEnabled(), httpRequest.getBaseUrl(), httpRequest.getParams()));
             HttpUtils.appendHeaders(httDelete, httpRequest.getHeaders());
-            return execute(context, httpRequest.getName(), httDelete, null, null, httpResponseHandler);
+            return execute(httDelete, httpRequest.getName(), null, null, httpResponseHandler, context);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("你必须指定url。你有两种方式来指定url，一是使用HttpGetRequest.Builder.setUrl()，而是在Request上使有Url注解或者Host加Path注解");
             illegalArgumentException.printStackTrace();
@@ -313,13 +440,33 @@ public class EasyHttpClient {
 
     /**
      * 执行一个Delete请求
-     * @param context Android上下文，稍后你可以通过此上下文来取消此次请求
+     * @param httpRequest Http Delete请求
+     * @param httpResponseHandler Http响应处理器
+     * @return
+     */
+    public RequestHandle delete(HttpDeleteRequest httpRequest, HttpResponseHandler httpResponseHandler) {
+        return delete(httpRequest, httpResponseHandler, null);
+    }
+
+    /**
+     * 执行一个Delete请求
+     * @param url 请求地址
+     * @param httpResponseHandler Http响应处理器
+     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @return
+     */
+    public RequestHandle delete(String url, HttpResponseHandler httpResponseHandler, Context context) {
+        return delete(new HttpDeleteRequest.Builder(url).create(), httpResponseHandler, context);
+    }
+
+    /**
+     * 执行一个Delete请求
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
      * @return
      */
-    public RequestHandle delete(Context context, String url, HttpResponseHandler httpResponseHandler) {
-        return delete(context, new HttpDeleteRequest.Builder(url).create(), httpResponseHandler);
+    public RequestHandle delete(String url, HttpResponseHandler httpResponseHandler) {
+        return delete(new HttpDeleteRequest.Builder(url).create(), httpResponseHandler, null);
     }
 
     /**

@@ -20,6 +20,7 @@ import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.http.HttpGetRequest;
 import me.xiaopan.android.easynetwork.http.ResponseCache;
 import me.xiaopan.android.easynetwork.http.StringHttpResponseHandler;
+import me.xiaopan.android.easynetwork.http.headers.ContentType;
 import me.xiaopan.android.easynetwork.sample.util.WebViewManager;
 
 import org.apache.http.Header;
@@ -45,7 +46,7 @@ public class StringActivity extends Activity {
 		setContentView(R.layout.activity_web);
 		webViewManager = new WebViewManager((WebView) findViewById(R.id.web1));
 		
-		EasyHttpClient.getInstance(getBaseContext()).get(getBaseContext(), new HttpGetRequest.Builder("http://www.miui.com/forum.php").setResponseCache(new ResponseCache.Builder(20 * 1000).create()).create(), new StringHttpResponseHandler(){
+		EasyHttpClient.getInstance(getBaseContext()).get(new HttpGetRequest.Builder("http://www.miui.com/forum.php").setResponseCache(new ResponseCache.Builder(20 * 1000).create()).create(), new StringHttpResponseHandler(){
 			@Override
 			public void onStart() {
 				findViewById(R.id.loading).setVisibility(View.VISIBLE);
@@ -54,7 +55,8 @@ public class StringActivity extends Activity {
 			@Override
 			public void onSuccess(HttpResponse httpResponse, String responseContent, boolean isNotRefresh, boolean isOver) {
 				Header contentTypeHeader = httpResponse.getEntity().getContentType();
-				webViewManager.getWebView().loadData(responseContent, contentTypeHeader != null?contentTypeHeader.getValue():"text/html;charset=utf-8", null);
+				ContentType contentType = new ContentType(contentTypeHeader.getValue());
+				webViewManager.getWebView().loadDataWithBaseURL(null, responseContent, contentType.getMimeType(), contentType.getCharset("UTF-8"), null);
 				findViewById(R.id.loading).setVisibility(View.GONE);
 			}
 			

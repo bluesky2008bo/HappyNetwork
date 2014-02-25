@@ -4,7 +4,7 @@ import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.message.BasicStatusLine;
 
-public class SaveStatusLine {
+class SaveStatusLine {
 	private String reasonPhrase;
 	private int statusCode;
 	private int major;

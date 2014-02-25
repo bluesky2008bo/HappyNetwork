@@ -50,9 +50,6 @@ public class HttpClientManager {
 	
     public HttpClientManager(SchemeRegistry schemeRegistry){
     	BasicHttpParams httpParams = new BasicHttpParams();
-        GeneralUtils.setConnectionTimeout(httpParams, DEFAULT_TIMEOUT);	//设置Http连接、Socket连接超时时间
-		GeneralUtils.setMaxConnections(httpParams, DEFAULT_MAX_CONNECTIONS);	//设置最大连接数
-		GeneralUtils.setSocketBufferSize(httpParams, DEFAULT_SOCKET_BUFFER_SIZE);	//设置Socket缓存大小
         HttpConnectionParams.setTcpNoDelay(httpParams, true);	//开启TCP无延迟
         HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);	//设置使用的Http协议版本
 		HttpProtocolParams.setUserAgent(httpParams, String.format("android-easy-network/%s (https://github.com/xiaopansky/Android-EasyNetwork)", "2.1.8"));	//设置浏览器标识
@@ -63,6 +60,9 @@ public class HttpClientManager {
         httpClient.addResponseInterceptor(new GzipProcessResponseInterceptor());
         httpClient.setHttpRequestRetryHandler(new RetryHandler(DEFAULT_MAX_RETRIES, DEFAULT_RETRY_SLEEP_TIME_MILLIS));
     	clientHeaderMap = new HashMap<String, String>();
+    	setTimeout(DEFAULT_TIMEOUT);
+    	setMaxConnections(DEFAULT_MAX_CONNECTIONS);
+    	setSocketBufferSize(DEFAULT_SOCKET_BUFFER_SIZE);
 	}
     
     /**
@@ -177,7 +177,8 @@ public class HttpClientManager {
 	 * @param socketBufferSize
 	 */
 	public void setSocketBufferSize(int socketBufferSize) {
-		GeneralUtils.setSocketBufferSize(httpClient, socketBufferSize);
+		HttpParams httpParams = httpClient.getParams();
+		HttpConnectionParams.setSocketBufferSize(httpParams, socketBufferSize);
 	}
 
     /**

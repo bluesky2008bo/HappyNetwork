@@ -33,7 +33,7 @@ public class ContentType extends HttpHeader{
 	/**
 	 * 类型
 	 */
-	private String type;
+	private String mimeType;
 	/**
 	 * 字符集
 	 */
@@ -44,7 +44,7 @@ public class ContentType extends HttpHeader{
 	}
 	
 	public ContentType() {
-		setType("text/html");
+		setMimeType("text/html");
 		setCharset("utf-8");
 	}
 
@@ -52,16 +52,16 @@ public class ContentType extends HttpHeader{
 	 * 获取类型
 	 * @return 类型
 	 */
-	public String getType() {
-		return type;
+	public String getMimeType() {
+		return mimeType;
 	}
 	
 	/**
 	 * 设置类型
 	 * @param type 类型
 	 */
-	public void setType(String type) {
-		this.type = type;
+	public void setMimeType(String type) {
+		this.mimeType = type;
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class ContentType extends HttpHeader{
 	@Override
 	public String getValue() {
 		if(value == null || "".equals(value.trim())){
-			value = getType()+";charset="+getCharset();
+			value = getMimeType()+";charset="+getCharset();
 		}
 		return value;
 	}
@@ -108,7 +108,7 @@ public class ContentType extends HttpHeader{
 		if(value != null){
 			String[] strs = GeneralUtils.split(value, ';');
 			if(strs.length > 0){
-				setType(strs[0]);
+				setMimeType(strs[0]);
 			}
 			if(strs.length > 1){
 				strs = GeneralUtils.split(strs[1], '=');
@@ -119,7 +119,7 @@ public class ContentType extends HttpHeader{
 		}
 	}
 	
-	public static ContentType getContentType(HttpResponse httpResponse){
+	public static ContentType valueOf(HttpResponse httpResponse){
 		Header[] contentTypeString = httpResponse.getHeaders(ContentType.NAME);
 		if(contentTypeString.length > 0){
 			return new ContentType(contentTypeString[0].getValue());

@@ -23,14 +23,14 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
-public class HttpUtils {
+class HttpUtils {
 	/**
 	 * 获取响应编码，首先会尝试从响应体的Content-Type中获取，如果获取不到的话就返回默认的UTF-8
 	 * @param httpResponse
 	 * @return
 	 */
 	public static final String getResponseCharset(HttpResponse httpResponse){
-		ContentType contentType = ContentType.getContentType(httpResponse);
+		ContentType contentType = ContentType.valueOf(httpResponse);
 		if(contentType != null){
 			return contentType.getCharset("UTF-8");
 		}else{

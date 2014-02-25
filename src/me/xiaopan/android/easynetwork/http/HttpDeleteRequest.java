@@ -20,7 +20,7 @@ public class HttpDeleteRequest {
     private RequestParams params;   //请求参数
 
     private HttpDeleteRequest(){
-        setName(GeneralUtils.getCurrentDateTimeByDefultFormat() + " DELETE ");
+        setName(GeneralUtils.getCurrentDateTimeBy24Hour() + " DELETE ");
     }
 
     /**

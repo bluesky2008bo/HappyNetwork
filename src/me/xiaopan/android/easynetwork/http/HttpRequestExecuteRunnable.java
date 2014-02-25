@@ -38,7 +38,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
-public class HttpRequestRunnable implements Runnable {
+class HttpRequestExecuteRunnable implements Runnable {
     private String name;    //请求名称，在输出log的时候会用此参数来作为标识，方便在log中区分具体的请求
 	private EasyHttpClient easyHttpClient;
     private HttpUriRequest httpUriRequest;  //HttpUri请求
@@ -53,7 +53,7 @@ public class HttpRequestRunnable implements Runnable {
     private boolean cancelIsNotified = false;
     private boolean isFinished = false;
 
-    public HttpRequestRunnable(EasyHttpClient easyHttpClient, String name, HttpUriRequest request, String cacheId, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
+    public HttpRequestExecuteRunnable(EasyHttpClient easyHttpClient, String name, HttpUriRequest request, String cacheId, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
     	this.easyHttpClient = easyHttpClient;
         this.httpUriRequest = request;
         this.responseCache = responseCache;

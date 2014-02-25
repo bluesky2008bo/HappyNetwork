@@ -19,6 +19,7 @@ package me.xiaopan.android.easynetwork.sample.activity;
 import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.http.StringHttpResponseHandler;
+import me.xiaopan.android.easynetwork.http.headers.ContentType;
 import me.xiaopan.android.easynetwork.sample.net.request.BaiduSearchRequest;
 import me.xiaopan.android.easynetwork.sample.util.Utils;
 import me.xiaopan.android.easynetwork.sample.util.WebViewManager;
@@ -65,7 +66,7 @@ public class RequestObjectActivity extends Activity {
 	
 	@SuppressLint("HandlerLeak")
 	private void search(String keyword){
-		EasyHttpClient.getInstance(getBaseContext()).execute(getBaseContext(), new BaiduSearchRequest(keyword), new StringHttpResponseHandler(){
+		EasyHttpClient.getInstance(getBaseContext()).execute(new BaiduSearchRequest(keyword), new StringHttpResponseHandler(){
 			@Override
 			public void onStart() {
 				searchButton.setEnabled(false);
@@ -75,7 +76,8 @@ public class RequestObjectActivity extends Activity {
 			@Override
 			public void onSuccess(HttpResponse httpResponse, String responseContent, boolean isNotRefresh, boolean isOver) {
 				Header contentTypeHeader = httpResponse.getEntity().getContentType();
-				webViewManager.getWebView().loadData(responseContent, contentTypeHeader != null?contentTypeHeader.getValue():"text/html;charset=utf-8", null);
+				ContentType contentType = new ContentType(contentTypeHeader.getValue());
+				webViewManager.getWebView().loadDataWithBaseURL(null, responseContent, contentType.getMimeType(), contentType.getCharset("UTF-8"), null);
 				searchButton.setEnabled(true);
 				if(isOver){	//如果已经结束了
 					findViewById(R.id.loading).setVisibility(View.GONE);

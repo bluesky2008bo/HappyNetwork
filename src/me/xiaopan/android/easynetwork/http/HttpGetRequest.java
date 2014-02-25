@@ -22,7 +22,7 @@ public class HttpGetRequest {
     private List<String> cacheIgnoreParams;	//计算缓存ID时候忽略的参数集
 
     private HttpGetRequest(){
-        setName(GeneralUtils.getCurrentDateTimeByDefultFormat() + " GET ");
+        setName(GeneralUtils.getCurrentDateTimeBy24Hour() + " GET ");
     }
 
     /**

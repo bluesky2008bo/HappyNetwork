@@ -6,10 +6,10 @@ import java.lang.ref.WeakReference;
  * A Handle to an AsyncRequest which can be used to cancel a running request.
  */
 public class RequestHandle {
-    private final WeakReference<HttpRequestRunnable> request;
+    private final WeakReference<HttpRequestExecuteRunnable> request;
 
-    public RequestHandle(HttpRequestRunnable request) {
-        this.request = new WeakReference<HttpRequestRunnable>(request);
+    public RequestHandle(HttpRequestExecuteRunnable request) {
+        this.request = new WeakReference<HttpRequestExecuteRunnable>(request);
     }
 
     /**
@@ -28,7 +28,7 @@ public class RequestHandle {
      * completed normally; true otherwise
      */
     public boolean cancel(boolean mayInterruptIfRunning) {
-    	HttpRequestRunnable _request = request.get();
+    	HttpRequestExecuteRunnable _request = request.get();
         return _request == null || _request.cancel(mayInterruptIfRunning);
     }
 
@@ -39,7 +39,7 @@ public class RequestHandle {
      * @return true if this task completed
      */
     public boolean isFinished() {
-    	HttpRequestRunnable _request = request.get();
+    	HttpRequestExecuteRunnable _request = request.get();
         return _request == null || _request.isDone();
     }
 
@@ -49,7 +49,7 @@ public class RequestHandle {
      * @return true if this task was cancelled before it completed
      */
     public boolean isCancelled() {
-    	HttpRequestRunnable _request = request.get();
+    	HttpRequestExecuteRunnable _request = request.get();
         return _request == null || _request.isCancelled();
     }
 

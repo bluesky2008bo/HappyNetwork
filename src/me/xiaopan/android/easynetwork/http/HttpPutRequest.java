@@ -24,7 +24,7 @@ public class HttpPutRequest {
     private List<String> cacheIgnoreParams;	//计算缓存ID时候忽略的参数集
 
     private HttpPutRequest(){
-        setName(GeneralUtils.getCurrentDateTimeByDefultFormat() + " PUT ");
+        setName(GeneralUtils.getCurrentDateTimeBy24Hour() + " PUT ");
     }
 
     /**
