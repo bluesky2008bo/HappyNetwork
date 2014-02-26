@@ -81,9 +81,9 @@ class HttpRequestExecuteRunnable implements Runnable {
     	try{
     		boolean isAvailable = false;
     		if(responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId())){
-    			statusLineCacheFile = getCacheFile(easyHttpClient.getConfiguration(), GeneralUtils.isNotEmpty(responseCache.getId()) + ".status_line");
-    			responseHeadersCacheFile = getCacheFile(easyHttpClient.getConfiguration(), GeneralUtils.isNotEmpty(responseCache.getId()) + ".headers");
-    			responseEntityCacheFile = getCacheFile(easyHttpClient.getConfiguration(), GeneralUtils.isNotEmpty(responseCache.getId()) + ".entity");
+    			statusLineCacheFile = getCacheFile(easyHttpClient.getConfiguration(), responseCache.getId() + ".status_line");
+    			responseHeadersCacheFile = getCacheFile(easyHttpClient.getConfiguration(), responseCache.getId() + ".headers");
+    			responseEntityCacheFile = getCacheFile(easyHttpClient.getConfiguration(), responseCache.getId() + ".entity");
     			isAvailable = statusLineCacheFile.exists() && responseHeadersCacheFile.exists() && responseEntityCacheFile.exists();
     			if(isAvailable){
     				if(responseCache.getPeriodOfValidity() > 0){
