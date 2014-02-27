@@ -41,7 +41,7 @@ public class HttpClientManager {
 	public static final int DEFAULT_MAX_RETRIES = 5;	//默认最大重试次数
 	public static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;	//默认Socket缓存池大小
 	public static final int DEFAULT_MAX_CONNECTIONS = 10;	//默认最大连接数
-	public static final int DEFAULT_TIMEOUT = 2000;	//默认连接超时时间
+	public static final int DEFAULT_TIMEOUT = 20000;	//默认连接超时时间
     public static final int DEFAULT_RETRY_SLEEP_TIME_MILLIS = 1500;
 	
     private HttpContext httpContext;	//Http上下文

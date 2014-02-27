@@ -267,7 +267,10 @@ EasyHttpClient.getInstance(getBaseContext()).execute(new BeijingWeatherRequest()
 >* **[gson-2.2.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
 
 ##Change Log
-###2.2.0
+###2.2.1
+>* 修复默认超时时间只有两秒的BUG
+
+###2.2.1
 >* 优化HttpClient组织方式，采用HttpClientManager来管理和配置HttpClient
 >* getInstance()方法增加Context参数
 >* 所有发送请求的方法的参数重新规划
