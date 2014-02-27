@@ -1,6 +1,6 @@
 # ![Logo](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/res/drawable-mdpi/ic_launcher.png) Android-EasyNetwork
 
-这是一个参考了android-async-http项目的Android网络访问库，旨在用最简单、最快捷的方式来访问网络！
+这是一个参考了android-async-http项目的Android网络访问库，旨在用最简单、最快捷的方式来访问网络，最低兼容Android2.2
 
 ##Features
 >* 异步发送Http请求，并用ThreadPool来维护每一个请求
