@@ -20,6 +20,8 @@ import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.http.StringHttpResponseHandler;
 import me.xiaopan.android.easynetwork.http.headers.ContentType;
+import me.xiaopan.android.easynetwork.sample.MyActivity;
+import me.xiaopan.android.easynetwork.sample.net.Failure;
 import me.xiaopan.android.easynetwork.sample.net.request.BaiduSearchRequest;
 import me.xiaopan.android.easynetwork.sample.util.Utils;
 import me.xiaopan.android.easynetwork.sample.util.WebViewManager;
@@ -28,19 +30,17 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 /**
  * 请求对象演示Demo
  */
-public class RequestObjectActivity extends Activity {
+public class RequestObjectActivity extends MyActivity {
 	private WebViewManager webViewManager;
 	private EditText keywordEdit;
 	private Button searchButton;
@@ -65,32 +65,36 @@ public class RequestObjectActivity extends Activity {
 	}
 	
 	@SuppressLint("HandlerLeak")
-	private void search(String keyword){
+	private void search(final String keyword){
 		EasyHttpClient.getInstance(getBaseContext()).execute(new BaiduSearchRequest(keyword), new StringHttpResponseHandler(){
 			@Override
-			public void onStart() {
+			protected void onStart() {
 				searchButton.setEnabled(false);
-				findViewById(R.id.loading).setVisibility(View.VISIBLE);
+				getHintView().loading(keyword+"相关信息");
 			}
 
 			@Override
-			public void onSuccess(HttpResponse httpResponse, String responseContent, boolean isNotRefresh, boolean isOver) {
+			protected void onSuccess(HttpResponse httpResponse, String responseContent, boolean isNotRefresh, boolean isOver) {
 				Header contentTypeHeader = httpResponse.getEntity().getContentType();
 				ContentType contentType = new ContentType(contentTypeHeader.getValue());
 				webViewManager.getWebView().loadDataWithBaseURL(null, responseContent, contentType.getMimeType(), contentType.getCharset("UTF-8"), null);
-				searchButton.setEnabled(true);
-				if(isOver){	//如果已经结束了
-					findViewById(R.id.loading).setVisibility(View.GONE);
+				if(isNotRefresh || isOver){
+					searchButton.setEnabled(true);
+					getHintView().hidden();
 				}
 			}
 			
 			@Override
-			public void onFailure(Throwable throwable, boolean isNotRefresh) {
-				if(isNotRefresh){
-					Toast.makeText(getBaseContext(), "失败了，信息："+(throwable.getMessage()!=null?throwable.getMessage():""), Toast.LENGTH_LONG).show();
-				}
+			protected void onFailure(Throwable throwable, boolean isNotRefresh) {
 				searchButton.setEnabled(true);
-				findViewById(R.id.loading).setVisibility(View.GONE);
+				if(isNotRefresh){
+					getHintView().failure(Failure.buildByException(getBaseContext(), throwable), new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							search(keyword);
+						}
+					});
+				}
 			}
 		});
 	}

@@ -16,6 +16,7 @@
 
 package me.xiaopan.android.easynetwork.http;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 
 import me.xiaopan.android.easynetwork.http.annotation.ResponseBody;
@@ -47,7 +48,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 	
 	@Override
-	public void start(final Handler handler) {
+	protected final void onStart(final Handler handler) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -57,7 +58,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 
 	@Override
-	public void handleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
+	protected void onHandleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
@@ -104,12 +105,16 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
                 throw new Exception("没有响应体");
 			}
 		}else{
-            throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode());
+			if(httpResponse.getStatusLine().getStatusCode() == 404){
+				throw new FileNotFoundException("请求地址错误");
+			}else{
+				throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode());
+			}
 		}
 	}
 	
 	@Override
-	public void exception(final Handler handler, final Throwable e, final boolean isNotRefresh) {
+	protected void onException(final Handler handler, final Throwable e, final boolean isNotRefresh) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -119,14 +124,14 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 	
 	@Override
-	public void cancel(Handler handler) {
+	protected void onCancel(Handler handler) {
 		
 	}
 
 	/**
 	 * 请求开始
 	 */
-	public abstract void onStart();
+	protected abstract void onStart();
 	
 	/**
 	 * 请求成功
@@ -135,12 +140,12 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
      * @param isNotRefresh 本次响应不是刷新
 	 * @param isOver 本次执行是否是最后一次
 	 */
-	public abstract void onSuccess(HttpResponse httpResponse, T responseObject, boolean isNotRefresh, boolean isOver);
+	protected abstract void onSuccess(HttpResponse httpResponse, T responseObject, boolean isNotRefresh, boolean isOver);
 	
 	/**
 	 * 请求失败
 	 * @param throwable 异常
 	 * @param isNotRefresh 本次异常不是在刷新缓存数据的时候发生的
 	 */
-	public abstract void onFailure(Throwable throwable, boolean isNotRefresh);
+	protected abstract void onFailure(Throwable throwable, boolean isNotRefresh);
 }

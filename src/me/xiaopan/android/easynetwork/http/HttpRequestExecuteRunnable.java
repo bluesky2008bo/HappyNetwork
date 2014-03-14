@@ -64,7 +64,7 @@ class HttpRequestExecuteRunnable implements Runnable {
     @Override
     public void run() {
     	if(httpUriRequest != null && httpResponseHandler != null) {
-            httpResponseHandler.start(easyHttpClient.getConfiguration().getHandler());
+            httpResponseHandler.onStart(easyHttpClient.getConfiguration().getHandler());
             uri = httpUriRequest.getURI().toString();
             if(isAvailableByCache()){
                 fromCacheLoad();
@@ -131,7 +131,7 @@ class HttpRequestExecuteRunnable implements Runnable {
         }
 		try{
             /* 回调处理响应 */
-            httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), readHttpResponseFromCacheFile(statusLineCacheFile, responseHeadersCacheFile, responseEntityCacheFile), true, !(responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId()) && responseCache.isRefreshCache() && responseCache.isRefreshCallback()));
+            httpResponseHandler.onHandleResponse(easyHttpClient.getConfiguration().getHandler(), readHttpResponseFromCacheFile(statusLineCacheFile, responseHeadersCacheFile, responseEntityCacheFile), true, !(responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId()) && responseCache.isRefreshCache() && responseCache.isRefreshCallback()));
             if(easyHttpClient.getConfiguration().isDebugMode()){
             	Log.i(easyHttpClient.getConfiguration().getLogTag(), name + "（本地）加载成功（"+uri+"）");
             }
@@ -169,7 +169,7 @@ class HttpRequestExecuteRunnable implements Runnable {
             }
             //回调处理响应
             if(!isRefreshCache || (responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId()) && responseCache.isRefreshCallback())){
-                httpResponseHandler.handleResponse(easyHttpClient.getConfiguration().getHandler(), httpResponse, !isRefreshCache, true);
+                httpResponseHandler.onHandleResponse(easyHttpClient.getConfiguration().getHandler(), httpResponse, !isRefreshCache, true);
             }
             if(easyHttpClient.getConfiguration().isDebugMode()){
             	if(isRefreshCache){
@@ -179,6 +179,7 @@ class HttpRequestExecuteRunnable implements Runnable {
             	}
             }
         }catch(Throwable throwable){
+        	httpUriRequest.abort();
             if(easyHttpClient.getConfiguration().isDebugMode()){
             	if(isRefreshCache){
             		Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "（网络）刷新缓存失败（"+uri+"）"+throwable.toString());
@@ -187,9 +188,8 @@ class HttpRequestExecuteRunnable implements Runnable {
             	}
             }
             throwable.printStackTrace();
-            httpUriRequest.abort();
             if(!isRefreshCache || (responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId()) && responseCache.isRefreshCallback())){
-            	httpResponseHandler.exception(easyHttpClient.getConfiguration().getHandler(), throwable, !isRefreshCache);
+            	httpResponseHandler.onException(easyHttpClient.getConfiguration().getHandler(), throwable, !isRefreshCache);
             }
         }
     }
@@ -308,7 +308,7 @@ class HttpRequestExecuteRunnable implements Runnable {
         if (!isFinished && isCancelled && !cancelIsNotified) {
             cancelIsNotified = true;
             if (httpResponseHandler != null){
-            	httpResponseHandler.cancel(easyHttpClient.getConfiguration().getHandler());
+            	httpResponseHandler.onCancel(easyHttpClient.getConfiguration().getHandler());
             }
         }
     }

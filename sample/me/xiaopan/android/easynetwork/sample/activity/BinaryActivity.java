@@ -18,43 +18,50 @@ package me.xiaopan.android.easynetwork.sample.activity;
 import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.BinaryHttpResponseHandler;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
+import me.xiaopan.android.easynetwork.sample.MyActivity;
+import me.xiaopan.android.easynetwork.sample.net.Failure;
 
 import org.apache.http.HttpResponse;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 /**
  * 使用BinaryResponseHandler下载图片
  */
-public class BinaryActivity extends Activity {
+public class BinaryActivity extends MyActivity {
 	
-	@SuppressLint("HandlerLeak")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_image);
+		setContentView(R.layout.activity_binary);
+		load();
+	}
+	
+	private void load(){
 		EasyHttpClient.getInstance(getBaseContext()).get("http://img.pconline.com.cn/images/upload/upc/tx/wallpaper/1311/11/c0/28529113_1384156076013_800x600.jpg", new BinaryHttpResponseHandler() {
 			@Override
-			public void onStart() {
-				findViewById(R.id.loading).setVisibility(View.VISIBLE);
+			protected void onStart() {
+				getHintView().loading("图片");
 			}
 			
 			@Override
-			public void onSuccess(HttpResponse httpResponse, byte[] binaryData, boolean isNotRefresh, boolean isOver) {
-				((ImageView) findViewById(R.id.image1)).setImageBitmap(BitmapFactory.decodeByteArray(binaryData, 0, binaryData.length));
-				findViewById(R.id.loading).setVisibility(View.GONE);
+			protected void onSuccess(HttpResponse httpResponse, byte[] binaryData, boolean isNotRefresh, boolean isOver) {
+				((ImageView) findViewById(R.id.image_binary)).setImageBitmap(BitmapFactory.decodeByteArray(binaryData, 0, binaryData.length));
+				getHintView().hidden();
 			}
 			
 			@Override
-			public void onFailure(Throwable throwable, boolean isNotRefresh) {
-				Toast.makeText(getBaseContext(), "失败了，信息："+throwable.getMessage(), Toast.LENGTH_LONG).show();
-				finish();
+			protected void onFailure(Throwable throwable, boolean isNotRefresh) {
+				getHintView().failure(Failure.buildByException(getBaseContext(), throwable), new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						load();
+					}
+				});
 			}
 		});
 	}

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/base_match_wrap"
+    style="@style/match_wrap"
     android:id="@android:id/text1"
     android:textColor="@android:color/black"
-    android:textSize="@dimen/base_textSize_default"
-	android:padding="@dimen/base_padding_specialLarge"
+    android:textSize="@dimen/textSize_default"
+	android:padding="@dimen/padding_specialLarge"
 	android:text=""
     />

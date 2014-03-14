@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.xiaopan.android.easynetwork"
-    android:versionCode="221"
-    android:versionName="2.2.1">
+    android:versionCode="222"
+    android:versionName="2.2.2">
 
     <!-- 声明兼容的系统版本 -->
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="19" />
     
     <!-- 声明要使用的权限 -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <!-- 声明应用需要的各种组件 -->

@@ -16,12 +16,12 @@
 package me.xiaopan.android.easynetwork.sample.activity;
 
 import me.xiaopan.android.easynetwork.R;
+import me.xiaopan.android.easynetwork.sample.MyListActivity;
 import me.xiaopan.android.easynetwork.sample.adapter.ActivityAdapter;
 import me.xiaopan.android.easynetwork.sample.beans.ActivityItem;
-import android.app.ListActivity;
 import android.os.Bundle;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends MyListActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

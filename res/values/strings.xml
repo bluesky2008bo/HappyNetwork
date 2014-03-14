@@ -9,4 +9,8 @@
     
     <string name="editHint_search">请输入搜索关键字</string>
     <string name="button_search">搜索</string>
+	
+    <string name="ingLater">正在%s，请稍后…</string>
+	<string name="loadingLater">正在加载%s，请稍后…</string>
+	<string name="image_contentDescription">这是一张图片</string>
 </resources>

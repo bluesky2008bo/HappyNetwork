@@ -1,44 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 文字大小 -  默认 -->
-	<dimen name="base_textSize_default">16sp</dimen>
-	
-	<!-- 内边距 - 有点小 -->
-	<dimen name="base_padding_littleSmall">4dp</dimen>
-	<!-- 内边距 - 默认 -->
-    <dimen name="base_padding_default">8dp</dimen>
-    <!-- 内边距 - 大的 -->
-    <dimen name="base_padding_large">10dp</dimen>
-    <!-- 内边距 - 非常大 -->
-    <dimen name="base_padding_veryLarge">14dp</dimen>
-    <!-- 内边距 - 特别大 -->
-    <dimen name="base_padding_specialLarge">16dp</dimen>
-	
-	<!-- 外边距 - 非常小 -->
-	<dimen name="base_margin_verySmall">2dp</dimen>
-	<!-- 外边距 - 有点小 -->
-	<dimen name="base_margin_littleSmall">4dp</dimen>
-    <!-- 布局 - 列表项 - 最小高度 -->
-    <dimen name="layout_listItem_minHeight">48dp</dimen>
-
-    <!--  按钮 - 最小宽度 -->
-	<dimen name="button_minWidth">80dp</dimen>
-	
-	<!-- 按钮 - 最小高度 -->
-    <dimen name="button_minHeight">48dp</dimen>
-    
-    <!-- 按钮 - 列表项 -最小高度 -->
-    <dimen name="button_listItem_minHeight">40dp</dimen>
-    
-    <!-- 编辑器 - 最小宽度 -->
-    <dimen name="edit_minWidth">100dp</dimen>
-    
-    <!-- 编辑器 - 最小高度 -->
-    <dimen name="edit_minHeight">60dp</dimen>
-    
-    <!-- 阴影 - 高度 -->
+	<dimen name="textSize_default">16sp</dimen>
+    <dimen name="padding_default">8dp</dimen>
+    <dimen name="padding_specialLarge">16dp</dimen>
+    <dimen name="listItem_minHeight">48dp</dimen>
     <dimen name="shadow_height">2dp</dimen>
-    
-    <!-- 间隔 - 大的 - 高度 -->
-    <dimen name="spacing_large_height">15dp</dimen>
 </resources>

@@ -19,22 +19,24 @@ package me.xiaopan.android.easynetwork.sample.activity;
 import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.http.JsonHttpResponseHandler;
+import me.xiaopan.android.easynetwork.sample.MyActivity;
 import me.xiaopan.android.easynetwork.sample.beans.Weather;
+import me.xiaopan.android.easynetwork.sample.net.Failure;
 import me.xiaopan.android.easynetwork.sample.net.request.BeijingWeatherRequest;
 
 import org.apache.http.HttpResponse;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 /**
  * 获取天气信息
  */
-public class JsonActivity extends Activity {
+public class JsonActivity extends MyActivity {
 	private TextView text;
 	
 	@SuppressLint("HandlerLeak")
@@ -43,38 +45,45 @@ public class JsonActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_text);
 		text = (TextView) findViewById(R.id.text1);
-		
+		load();
+	}
+	
+	private void load(){
 		EasyHttpClient.getInstance(getBaseContext()).execute(new BeijingWeatherRequest(), new JsonHttpResponseHandler<Weather>(Weather.class) {
-            @Override
-            public void onStart() {
-                findViewById(R.id.loading).setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onSuccess(HttpResponse httpResponse, Weather responseObject, boolean isNotRefresh, boolean isOver) {
-                text.setText(Html.fromHtml("<h2>" + responseObject.getCity() + "</h2>"
-                        + "<br>" + responseObject.getDate_y() + " " + responseObject.getWeek()
-                        + "<br>" + responseObject.getTemp1() + " " + responseObject.getWeather1()
-                        + "<p><br>风力：" + responseObject.getWind1()
-                        + "<br>紫外线：" + responseObject.getIndex_uv()
-                        + "<br>紫外线（48小时）：" + responseObject.getIndex48_uv()
-                        + "<br>穿衣指数：" + responseObject.getIndex() + "，" + responseObject.getIndex_d()
-                        + "<br>穿衣指数（48小时）：" + responseObject.getIndex48() + "，" + responseObject.getIndex48_d()
-                        + "<br>舒适指数：" + responseObject.getIndex_co()
-                        + "<br>洗车指数：" + responseObject.getIndex_xc()
-                        + "<br>旅游指数：" + responseObject.getIndex_tr()
-                        + "<br>晨练指数：" + responseObject.getIndex_cl()
-                        + "<br>晾晒指数：" + responseObject.getIndex_ls()
-                        + "<br>过敏指数：" + responseObject.getIndex_ag() + "</p>"
-                ));
-                findViewById(R.id.loading).setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onFailure(Throwable throwable, boolean isNotRefresh) {
-                text.setText(throwable.getMessage());
-                findViewById(R.id.loading).setVisibility(View.GONE);
-            }
-        });
+			@Override
+			protected void onStart() {
+				getHintView().loading("天气信息");
+			}
+			
+			@Override
+			protected void onSuccess(HttpResponse httpResponse, Weather responseObject, boolean isNotRefresh, boolean isOver) {
+				text.setText(Html.fromHtml("<h2>" + responseObject.getCity() + "</h2>"
+						+ "<br>" + responseObject.getDate_y() + " " + responseObject.getWeek()
+						+ "<br>" + responseObject.getTemp1() + " " + responseObject.getWeather1()
+						+ "<p><br>风力：" + responseObject.getWind1()
+						+ "<br>紫外线：" + responseObject.getIndex_uv()
+						+ "<br>紫外线（48小时）：" + responseObject.getIndex48_uv()
+						+ "<br>穿衣指数：" + responseObject.getIndex() + "，" + responseObject.getIndex_d()
+						+ "<br>穿衣指数（48小时）：" + responseObject.getIndex48() + "，" + responseObject.getIndex48_d()
+						+ "<br>舒适指数：" + responseObject.getIndex_co()
+						+ "<br>洗车指数：" + responseObject.getIndex_xc()
+						+ "<br>旅游指数：" + responseObject.getIndex_tr()
+						+ "<br>晨练指数：" + responseObject.getIndex_cl()
+						+ "<br>晾晒指数：" + responseObject.getIndex_ls()
+						+ "<br>过敏指数：" + responseObject.getIndex_ag() + "</p>"
+						));
+				getHintView().hidden();
+			}
+			
+			@Override
+			protected void onFailure(Throwable throwable, boolean isNotRefresh) {
+				getHintView().failure(Failure.buildByException(getBaseContext(), throwable), new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						load();
+					}
+				});
+			}
+		});
 	}
 }
