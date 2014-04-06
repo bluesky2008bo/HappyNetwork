@@ -414,7 +414,7 @@ class GeneralUtils {
 		}
 	}
 	
-	static final String getCacheId(ResponseCache responseCache, String baseUrl, RequestParams requestParams, List<String> cacheIgnoreParams){
+	static final String createCacheId(ResponseCache responseCache, String baseUrl, RequestParams requestParams, List<String> cacheIgnoreParams){
 		if(responseCache != null){
 			StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append(baseUrl);

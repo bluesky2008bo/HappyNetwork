@@ -29,5 +29,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Inherited
 public @interface ResponseBody {
-	String value();
+	public String value() default "";
+	public int resId() default 0;
 }

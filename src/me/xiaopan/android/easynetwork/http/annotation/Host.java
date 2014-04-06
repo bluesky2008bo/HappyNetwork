@@ -29,5 +29,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Host {
-	public String value();
+	public String value() default "";
+	public int resId() default 0;
 }

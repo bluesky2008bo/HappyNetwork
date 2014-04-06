@@ -25,6 +25,8 @@ import java.util.List;
 
 import org.apache.http.Header;
 
+import android.content.Context;
+
 /**
  * Http Delete请求
  */
@@ -227,11 +229,12 @@ public class HttpDeleteRequest {
 
         /**
          * 创建一个Http Delete请求构建器，同时你必须指定请求对象
+         * @param 上下文
          * @param request
          */
-        public Builder(Request request) {
+        public Builder(Context context, Request request) {
             httpRequest = new HttpDeleteRequest();
-            setRequest(request);
+            setRequest(context, request);
         }
 
         /**
@@ -355,22 +358,23 @@ public class HttpDeleteRequest {
 
         /**
          * 设置请求对象，会从此请求对象身上解析所需的信息
+         * @param 上下文
          * @param request
          * @return
          */
-        public Builder setRequest(Request request){
+        public Builder setRequest(Context context, Request request){
         	Class<? extends Request> requestClass = request.getClass();
-            String requestName = RequestParser.parseName(requestClass);
+            String requestName = RequestParser.parseName(context, requestClass);
             if(GeneralUtils.isNotEmpty(requestName)){
                 httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
             }
             
-        	String url = RequestParser.parseBaseUrl(requestClass);
+        	String url = RequestParser.parseBaseUrl(context, requestClass);
             if(GeneralUtils.isEmpty(url)){
                 throw new IllegalArgumentException("你必须在Request上使有Url注解或者Host加Path注解指定请求地址");
             }
             httpRequest.setBaseUrl(url);
-            httpRequest.setParams(RequestParser.parseRequestParams(request, httpRequest.getParams()));
+            httpRequest.setParams(RequestParser.parseRequestParams(context, request, httpRequest.getParams()));
             httpRequest.addHeader(RequestParser.parseRequestHeaders(request));
             return this;
         }

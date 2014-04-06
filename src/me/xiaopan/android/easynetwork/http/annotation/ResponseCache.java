@@ -53,4 +53,10 @@ public @interface ResponseCache {
      * @return
      */
     public String cacheDirectory() default "";
+    
+    /**
+     * 缓存目录ID
+     * @return
+     */
+    public int cacheDirectoryResId() default 0;
 }

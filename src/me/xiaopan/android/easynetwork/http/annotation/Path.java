@@ -29,5 +29,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Path {
-	public String value();
+	public String value() default "";
+	public int resId() default 0;
 }

@@ -26,7 +26,6 @@ import me.xiaopan.android.easynetwork.http.enums.MethodType;
 
 /**
  * 请求方式
- * Created by XIAOPAN on 13-11-24.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

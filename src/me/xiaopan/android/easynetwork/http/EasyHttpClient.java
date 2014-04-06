@@ -135,13 +135,13 @@ public class EasyHttpClient {
 
             //根据不同的请求方式选择不同的方法执行
             if(methodType == MethodType.GET){
-            	 return get(new HttpGetRequest.Builder(request).create(), httpResponseHandler, context);
+            	 return get(new HttpGetRequest.Builder(configuration.getContext(), request).create(), httpResponseHandler, context);
             }else if(methodType == MethodType.POST){
-            	 return post(new HttpPostRequest.Builder(request).create(), httpResponseHandler, context);
+            	 return post(new HttpPostRequest.Builder(configuration.getContext(), request).create(), httpResponseHandler, context);
             }else if(methodType == MethodType.PUT){
-            	 return put(new HttpPutRequest.Builder(request).create(), httpResponseHandler, context);
+            	 return put(new HttpPutRequest.Builder(configuration.getContext(), request).create(), httpResponseHandler, context);
             }else if(methodType == MethodType.DELETE){
-            	 return delete(new HttpDeleteRequest.Builder(request).create(), httpResponseHandler, context);
+            	 return delete(new HttpDeleteRequest.Builder(configuration.getContext(), request).create(), httpResponseHandler, context);
             }else{
             	 return null;
             }
@@ -177,7 +177,7 @@ public class EasyHttpClient {
             HttpGet httGet = new HttpGet(HttpUtils.getUrlByParams(getConfiguration().isUrlEncodingEnabled(), httpRequest.getBaseUrl(), httpRequest.getParams()));
             HttpUtils.appendHeaders(httGet, httpRequest.getHeaders());
             if(httpRequest.getResponseCache() != null && GeneralUtils.isEmpty(httpRequest.getResponseCache().getId())){
-            	httpRequest.getResponseCache().setId(GeneralUtils.getCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
+            	httpRequest.getResponseCache().setId(GeneralUtils.createCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
             }
             return execute(httGet, httpRequest.getName(), httpRequest.getResponseCache(), httpResponseHandler, context);
         }else{
@@ -265,7 +265,7 @@ public class EasyHttpClient {
                 httPost.setEntity(httpEntity);
             }
             if(httpRequest.getResponseCache() != null && GeneralUtils.isEmpty(httpRequest.getResponseCache().getId())){
-            	httpRequest.getResponseCache().setId(GeneralUtils.getCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
+            	httpRequest.getResponseCache().setId(GeneralUtils.createCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
             }
             return execute(httPost, httpRequest.getName(), httpRequest.getResponseCache(), httpResponseHandler, context);
         }else{
@@ -355,7 +355,7 @@ public class EasyHttpClient {
                 httPut.setEntity(httpEntity);
             }
             if(httpRequest.getResponseCache() != null && GeneralUtils.isEmpty(httpRequest.getResponseCache().getId())){
-            	httpRequest.getResponseCache().setId(GeneralUtils.getCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
+            	httpRequest.getResponseCache().setId(GeneralUtils.createCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
             }
             return execute(httPut, httpRequest.getName(), httpRequest.getResponseCache(), httpResponseHandler, context);
         }else{

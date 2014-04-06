@@ -24,11 +24,11 @@ import java.lang.annotation.Target;
 
 /**
  * 请求名称，当激活Debug模式的时候会在Log中显示此Name用来区分Log到底属于哪个请求
- * Created by XIAOPAN on 13-11-24.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Name {
-    public String value();
+	public String value() default "";
+	public int resId() default 0;
 }

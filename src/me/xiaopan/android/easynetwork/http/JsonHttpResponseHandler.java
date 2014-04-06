@@ -19,8 +19,6 @@ package me.xiaopan.android.easynetwork.http;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 
-import me.xiaopan.android.easynetwork.http.annotation.ResponseBody;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
@@ -28,6 +26,7 @@ import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.os.Handler;
 
 import com.google.gson.GsonBuilder;
@@ -36,14 +35,17 @@ import com.google.gson.GsonBuilder;
  * 默认的JsonHttp响应处理器
  */
 public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
+	private Context context;
 	private Class<?> responseClass;
 	private Type responseType;
 
-	public JsonHttpResponseHandler(Class<?> responseClass){
+	public JsonHttpResponseHandler(Context context, Class<?> responseClass){
+		this.context = context;
 		this.responseClass = responseClass;
 	}
 	
-	public JsonHttpResponseHandler(Type responseType){
+	public JsonHttpResponseHandler(Context context, Type responseType){
+		this.context = context;
 		this.responseType = responseType;
 	}
 	
@@ -66,9 +68,9 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 				String jsonString = EntityUtils.toString(new BufferedHttpEntity(httpEntity), HttpUtils.getResponseCharset(httpResponse));
 				if(jsonString != null && !"".equals(jsonString)){
 					if(responseClass != null){	//如果是要转换成一个对象
-                        ResponseBody responseBodyKey = responseClass.getAnnotation(ResponseBody.class);
-						if(responseBodyKey != null && responseBodyKey.value() != null && !"".equals(responseBodyKey.value())){
-                            final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey.value()), responseClass);
+						String responseBodyKey = RequestParser.parseResponseBody(context, responseClass);
+                        if(responseBodyKey != null && !"".equals(responseBodyKey)){
+                            final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey), responseClass);
                             handler.post(new Runnable() {
                                 @SuppressWarnings("unchecked")
 								@Override

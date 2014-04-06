@@ -9,6 +9,7 @@
 >* 内置多种BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler等响应处理器
 >* 支持缓存HttpResponse，还可以配置过期时间、刷新缓存等功能；
 >* 默认提供单例模式；
+>* 请求对象中注解的值支持使用String资源
 
 ##Usage Guide
 
@@ -267,6 +268,9 @@ EasyHttpClient.getInstance(getBaseContext()).execute(new BeijingWeatherRequest()
 >* **[gson-2.2.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
 
 ##Change Log
+###2.2.3
+>* 所有有字符串参数的注解都支持使用String资源来配置，例如之前是``@Param("loginName")``，现在你还可以这样写`@Param(R.string.login_name)``，然后字符串资源的内容是``<string name="login_name">loginName</string>``
+
 ###2.2.2
 >* 优化HttpResponseHandler回调方法命名逻辑并优化异常处理
 
