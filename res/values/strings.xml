@@ -13,4 +13,6 @@
     <string name="ingLater">正在%s，请稍后…</string>
 	<string name="loadingLater">正在加载%s，请稍后…</string>
 	<string name="image_contentDescription">这是一张图片</string>
+
+	<string name="lang">cn</string>
 </resources>

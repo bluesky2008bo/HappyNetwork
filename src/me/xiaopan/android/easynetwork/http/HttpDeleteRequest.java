@@ -42,7 +42,6 @@ public class HttpDeleteRequest {
 
     /**
      * 获取请求名称，在输出log的时候会用此参数来作为标识，方便在log中区分具体的请求
-     * @return
      */
     public String getName() {
         return name;
@@ -50,7 +49,6 @@ public class HttpDeleteRequest {
 
     /**
      * 设置请求名称，在输出log的时候会用此参数来作为标识，方便在log中区分具体的请求
-     * @param name
      */
     public void setName(String name) {
         this.name = name;
@@ -58,7 +56,6 @@ public class HttpDeleteRequest {
 
     /**
      * 获取请求地址
-     * @return
      */
     public String getBaseUrl() {
         return baseUrl;
@@ -66,7 +63,6 @@ public class HttpDeleteRequest {
 
     /**
      * 设置请求地址
-     * @param baseUrl
      */
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
@@ -74,7 +70,6 @@ public class HttpDeleteRequest {
     
     /**
      * 获取请求参数
-     * @return
      */
     public RequestParams getParams() {
         return params;
@@ -82,8 +77,6 @@ public class HttpDeleteRequest {
 
     /**
      * 添加请求参数
-     * @param key
-     * @param value
      */
     public void addParam(String key, String value){
         if(GeneralUtils.isNotEmpty(key, value)){
@@ -96,8 +89,6 @@ public class HttpDeleteRequest {
 
     /**
      * 添加请求参数
-     * @param key
-     * @param values
      */
     public void addParam(String key, ArrayList<String> values){
         if(GeneralUtils.isNotEmpty(key) && values != null && values.size() > 0){
@@ -110,8 +101,6 @@ public class HttpDeleteRequest {
 
     /**
      * 添加请求参数
-     * @param key
-     * @param value
      */
     public void addParam(String key, File value){
         if(GeneralUtils.isNotEmpty(key) && value != null && value.exists()){
@@ -128,8 +117,6 @@ public class HttpDeleteRequest {
 
     /**
      * 添加请求参数
-     * @param key
-     * @param value
      */
     public void addParam(String key, InputStream value){
         if(GeneralUtils.isNotEmpty(key) && value != null){

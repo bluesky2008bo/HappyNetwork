@@ -30,7 +30,7 @@ public class Configuration {
 	private boolean debugMode;	//调试模式
     private boolean isUrlEncodingEnabled = true;
 	private String logTag;	//Log Tag
-	private String defaultCacheDirerctory;	//默认缓存目录
+	private String defaultCacheDirectory;	//默认缓存目录
 	private Context context;	//上下文
 	private Handler handler;	//异步处理器
 	private ExecutorService executorService;	//线程池
@@ -43,6 +43,7 @@ public class Configuration {
     	this.context = context;
     	this.logTag = EasyHttpClient.class.getSimpleName();
     	this.handler = new Handler();
+        this.httpClientManager = new HttpClientManager();
 	}
 
 	public boolean isDebugMode() {
@@ -69,20 +70,16 @@ public class Configuration {
 		this.logTag = logTag;
 	}
 
-	public String getDefaultCacheDirerctory() {
-		return defaultCacheDirerctory;
+	public String getDefaultCacheDirectory() {
+		return defaultCacheDirectory;
 	}
 
-	public void setDefaultCacheDirerctory(String defaultCacheDirerctory) {
-		this.defaultCacheDirerctory = defaultCacheDirerctory;
+	public void setDefaultCacheDirectory(String defaultCacheDirectory) {
+		this.defaultCacheDirectory = defaultCacheDirectory;
 	}
 
 	public Context getContext() {
 		return context;
-	}
-
-	public void setContext(Context context) {
-		this.context = context;
 	}
 
 	public Handler getHandler() {
@@ -101,13 +98,6 @@ public class Configuration {
 	}
 
 	public HttpClientManager getHttpClientManager() {
-		if(httpClientManager == null){
-			httpClientManager = new HttpClientManager();
-		}
 		return httpClientManager;
-	}
-
-	public void setHttpClientManager(HttpClientManager httpClientManager) {
-		this.httpClientManager = httpClientManager;
 	}
 }

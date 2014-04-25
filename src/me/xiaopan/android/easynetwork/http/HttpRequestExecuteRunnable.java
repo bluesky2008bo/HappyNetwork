@@ -326,8 +326,8 @@ class HttpRequestExecuteRunnable implements Runnable {
     }
     
     private static final File getCacheFile(Configuration configuration, String fileName){
-    	if(GeneralUtils.isNotEmpty(configuration.getDefaultCacheDirerctory())){
-    		return new File(configuration.getDefaultCacheDirerctory() + File.separator + "easy_http_client" + File.separator  + fileName);
+    	if(GeneralUtils.isNotEmpty(configuration.getDefaultCacheDirectory())){
+    		return new File(configuration.getDefaultCacheDirectory() + File.separator + "easy_http_client" + File.separator  + fileName);
     	}else{
     		return new File(GeneralUtils.getDynamicCacheDir(configuration.getContext()).getPath() + File.separator + "easy_http_client" + File.separator  + fileName);
     	}

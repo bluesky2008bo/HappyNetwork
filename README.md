@@ -40,17 +40,19 @@
 >* 请求参数的配置：
     1. 将请求对象中需要转换成请求参数的字段加上``@Param``注解即可；
     2. 默认请求参数名称是字段的名称，如果你想自定义名称就给``@Param``注解附上值，例如：``@Param("wd")``
-    3. 默认使用字段的toString()方法来获取请求参数值，但以下几种类型的字段将会被特殊处理：
-        * Map
+    3. 默认使用字段的toString()方法来获取请求参数值，但以下几种情况将会被特殊处理：
+        * 字段上有``@Value``注解
+            有``@Value``注解时，将会用``@Value``注解的值来作为请求参数值，而不再考虑字段的值
+        * 字段类型为Map
             对于``Map``类型的字段``EasyHttpClient``会将其每一对键值对都转换成请求参数，而每一对键值对的键将作为参数名，键值对的值将作为参数值；
-        * File
+        * 字段类型为File
             对于``File``类型的字段EasyHttpClient将使用``RequestParams``的``put(String key, File file)``方法将其添加到``RequestParams``中；
-        * ArrayList 
+        * 字段类型为ArrayList
             对于``ArrayList``类型的字段EasyHttpClient将使用``RequestParams``的``put(String key, ArrayList<String> values)``方法将其添加到``RequestParams``中；
-        * Boolean 
+        * 字段类型为Boolean
             对于``Boolean``类型的字段你可以通过``@True``和``@False``注解来指定当字段值是``true``或``false``的时候其对应的转换成请求参数时的参数值；
-        * Enum
-            对于``Enum``类型的参数你可以使用``@Param``注解来指定其参数值，如果没有```@Param``注解将使用Enum对象的name来作为参数值。
+        * 字段类型为Enum
+            对于``Enum``类型的参数你可以使用``@Value``注解来指定其参数值，如果没有```@Value``注解将使用Enum对象的name来作为参数值。
 
 >* HttpResponse缓存的配置：
     1. 使用``@ResponseCache``注解来配置响应缓存，``@ResponseCache``有四个参数
@@ -260,14 +262,19 @@ EasyHttpClient.getInstance(getBaseContext()).execute(new BeijingWeatherRequest()
 你只需调用``EasyHttpClient.getInstance(Context)``即可获取EasyHttpClient的实例。
 
 ##Downloads
-**[android-easy-network-2.2.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.2.2.jar)**
+**[android-easy-network-2.2.4.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.2.4.jar)**
 
-**[android-easy-network-2.2.2-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.2.2-with-src.jar)**
+**[android-easy-network-2.2.4-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.2.4-with-src.jar)**
 
 ##Depend
 >* **[gson-2.2.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
 
 ##Change Log
+###2.2.4
+>* 增加``@Value``注解，用来配置请求参数值
+>* 枚举类型的字段的请求参数值配置注解由``@Param``替换为``@Value``
+>* 增加DownloadHttpResponseHandler
+
 ###2.2.3
 >* 所有有字符串参数的注解都支持使用String资源来配置，例如之前是``@Param("loginName")``，现在你还可以这样写`@Param(R.string.login_name)``，然后字符串资源的内容是``<string name="login_name">loginName</string>``
 

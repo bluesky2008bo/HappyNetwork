@@ -18,6 +18,7 @@ package me.xiaopan.android.easynetwork.http;
 
 import java.io.BufferedWriter;
 import java.io.CharArrayWriter;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -44,11 +45,31 @@ import android.content.Context;
 import android.os.Environment;
 
 class GeneralUtils {
+
+    /**
+     * 关闭流
+     * @param stream 要关闭的流
+     */
+    public static void close(Closeable stream) {
+        if(stream != null){
+            if(stream instanceof OutputStream){
+                try {
+                    ((OutputStream) stream).flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            try {
+                stream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 	
 	/**
 	 * 判断给定的字符串是否为null或者是空的
-	 * @param string 给定的字符串
-	 * @return 
 	 */
 	static boolean isEmpty(String string){
 		return string == null || "".equals(string.trim());
@@ -56,8 +77,6 @@ class GeneralUtils {
 	
 	/**
 	 * 判断给定的字符串是否不为null且不为空
-	 * @param string 给定的字符串
-	 * @return 
 	 */
 	static boolean isNotEmpty(String string){
 		return !isEmpty(string);
@@ -65,8 +84,6 @@ class GeneralUtils {
 	
 	/**
 	 * 判断给定的字符串数组中的所有字符串是否都为null或者是空的
-	 * @param string 给定的字符串
-	 * @return 
 	 */
 	static boolean isEmpty(String... strings){
 		boolean result = true;
@@ -109,10 +126,9 @@ class GeneralUtils {
 				byteArray[i] = (byte) charArray[i];
 			}
 
-			StringBuffer hexValue = new StringBuffer();
-			byte[] md5Bytes = MessageDigest.getInstance("MD5").digest(byteArray);
-			for (int i = 0; i < md5Bytes.length; i++) {
-				int val = ((int) md5Bytes[i]) & 0xff;
+			StringBuilder hexValue = new StringBuilder();
+			for (byte by : MessageDigest.getInstance("MD5").digest(byteArray)) {
+				int val = ((int) by) & 0xff;
 				if (val < 16){
 					hexValue.append("0");
 				}
@@ -168,7 +184,7 @@ class GeneralUtils {
 	static char[] read(Reader reader) throws IOException{
 		char[] chars = new char[1024];
 		CharArrayWriter caw = new CharArrayWriter();
-		int number = -1;
+		int number;
 		while((number = reader.read(chars)) != -1){
 			caw.write(chars, 0, number);
 		}
@@ -207,18 +223,16 @@ class GeneralUtils {
 	
 	/**
 	 * 创建文件，此方法的重要之处在于，如果其父目录不存在会先创建其父目录
-	 * @param file
-	 * @return
 	 * @throws IOException
 	 */
 	static File createFile(File file) throws IOException{
 		if(!file.exists()){
-			boolean mkadirsSuccess = true;
+			boolean makeSuccess = true;
 			File parentFile = file.getParentFile();
 			if(!parentFile.exists()){
-				mkadirsSuccess = parentFile.mkdirs();
+				makeSuccess = parentFile.mkdirs();
 			}
-			if(mkadirsSuccess){
+			if(makeSuccess){
 				try{
 					file.createNewFile();
 					return file;
@@ -288,62 +302,36 @@ class GeneralUtils {
 	/**
 	 * 获取一个枚举上的指定类型的注解
 	 * @param enumObject 给定的枚举
-	 * @param annoitaion 指定类型的注解
-	 * @return
+	 * @param annotation 指定类型的注解
 	 */
-	static final <T extends Annotation> T getAnnotationFromEnum(Enum<?> enumObject, Class<T> annoitaion){
+	static <T extends Annotation> T getAnnotationFromEnum(Enum<?> enumObject, Class<T> annotation){
 		try {
-			return (T) enumObject.getClass().getField(enumObject.name()).getAnnotation(annoitaion);
+			return (T) enumObject.getClass().getField(enumObject.name()).getAnnotation(annotation);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	/**
-	 * 把给定的字符串用给定的字符分割
-	 * @param string 给定的字符串
-	 * @param ch 给定的字符
-	 * @return 分割后的字符串数组
-	 */
-	static String[] split(String string, char ch) {
-		ArrayList<String> stringList = new ArrayList<String>();
-		char chars[] = string.toCharArray();
-		int nextStart = 0;
-		for (int w = 0; w < chars.length; w++){
-			if (ch == chars[w]) {
-				stringList.add(new String(chars, nextStart, w-nextStart));
-				nextStart = w+1;
-				if(nextStart == chars.length){	//当最后一位是分割符的话，就再添加一个空的字符串到分割数组中去
-					stringList.add("");
-				}
-			}
-		}
-		if(nextStart < chars.length){	//如果最后一位不是分隔符的话，就将最后一个分割符到最后一个字符中间的左右字符串作为一个字符串添加到分割数组中去
-			stringList.add(new String(chars,nextStart, chars.length-1-nextStart+1));
-		}
-		return stringList.toArray(new String[stringList.size()]);
-	}
-	
-	
+
 	/* ************************************************** 父类相关的方法 ******************************************************* */
 	/**
 	 * 获取给定的类所有的父类
-	 * @param clas 给定的类
+	 * @param sourceClass 给定的类
 	 * @param isAddCurrentClass 是否将当年类放在最终返回的父类列表的首位
 	 * @return 给定的类所有的父类
 	 */
-	static List<Class<?>> getSuperClasss(Class<?> sourceClass, boolean isAddCurrentClass){
+	static List<Class<?>> getSuperClasses(Class<?> sourceClass, boolean isAddCurrentClass){
 		List<Class<?>> classList = new ArrayList<Class<?>>();
-		Class<?> classs;
+		Class<?> currentClass;
 		if(isAddCurrentClass){
-			classs = sourceClass;
+			currentClass = sourceClass;
 		}else{
-			classs = sourceClass.getSuperclass();
+			currentClass = sourceClass.getSuperclass();
 		}
-		while(classs != null){
-			classList.add(classs);
-			classs = classs.getSuperclass();
+		while(currentClass != null){
+			classList.add(currentClass);
+			currentClass = currentClass.getSuperclass();
 		}
 		return classList;
 	}
@@ -361,7 +349,7 @@ class GeneralUtils {
 		//如果需要从父类中获取
 		if(isFromSuperClassGet){
 			//获取当前类的所有父类
-			List<Class<?>> classList = getSuperClasss(sourceClass, true);
+			List<Class<?>> classList = getSuperClasses(sourceClass, true);
 			
 			//如果是降序获取
 			if(isDESCGet){
@@ -387,24 +375,17 @@ class GeneralUtils {
 	
 	/**
 	 * 判断给定字段是否是type类型的数组
-	 * @param field
-	 * @param type
-	 * @return
 	 */
-	static final boolean isArrayByType(Field field, Class<?> type){
+	static boolean isArrayByType(Field field, Class<?> type){
 		Class<?> fieldType = field.getType();
 		return fieldType.isArray() && type.isAssignableFrom(fieldType.getComponentType());
 	}
 	
 	/**
 	 * 判断给定字段是否是type类型的collectionType集合，例如collectionType=List.class，type=Date.class就是要判断给定字段是否是Date类型的List
-	 * @param field
-	 * @param collectionType
-	 * @param type
-	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	static final boolean isCollectionByType(Field field, Class<? extends Collection> collectionType, Class<?> type){
+	static boolean isCollectionByType(Field field, Class<? extends Collection> collectionType, Class<?> type){
 		Class<?> fieldType = field.getType();
 		if(collectionType.isAssignableFrom(fieldType)){
 			Class<?> first = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
@@ -414,19 +395,19 @@ class GeneralUtils {
 		}
 	}
 	
-	static final String createCacheId(ResponseCache responseCache, String baseUrl, RequestParams requestParams, List<String> cacheIgnoreParams){
+	static String createCacheId(ResponseCache responseCache, String baseUrl, RequestParams requestParams, List<String> cacheIgnoreParams){
 		if(responseCache != null){
-			StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append(baseUrl);
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append(baseUrl);
 			if(requestParams != null){
 				for(BasicNameValuePair basicNameValuePair : requestParams.getParamsList()){
 					if(cacheIgnoreParams == null || !cacheIgnoreParams.contains(basicNameValuePair.getName())){
-						stringBuffer.append(basicNameValuePair.getName());
-						stringBuffer.append(basicNameValuePair.getValue());
+						stringBuilder.append(basicNameValuePair.getName());
+						stringBuilder.append(basicNameValuePair.getValue());
 					}
 				}
 			}
-			return GeneralUtils.MD5(stringBuffer.toString());
+			return GeneralUtils.MD5(stringBuilder.toString());
 		}else{
 			return null;
 		}

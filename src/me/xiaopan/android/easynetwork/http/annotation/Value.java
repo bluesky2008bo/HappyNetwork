@@ -16,7 +16,10 @@
 
 package me.xiaopan.android.easynetwork.http.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * 此注解用来配置请求参数的值

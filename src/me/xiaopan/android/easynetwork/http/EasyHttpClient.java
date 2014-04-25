@@ -65,7 +65,7 @@ public class EasyHttpClient {
      * @param responseCache 响应缓存配置
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
-     * @return 
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle execute(HttpUriRequest httpRequest, String name, ResponseCache responseCache, HttpResponseHandler httpResponseHandler, Context context) {
     	HttpRequestExecuteRunnable httpRequestRunnable = new HttpRequestExecuteRunnable(this, name, httpRequest, responseCache, httpResponseHandler);
@@ -88,7 +88,7 @@ public class EasyHttpClient {
      * @param name 请求名称，在后台输出log的时候会输出此名称方便区分请求
      * @param responseCache 响应缓存配置
      * @param httpResponseHandler Http响应处理器
-     * @return 
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle execute(HttpUriRequest httpRequest, String name, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
         return execute(httpRequest, name, responseCache, httpResponseHandler, null);
@@ -99,7 +99,7 @@ public class EasyHttpClient {
      * @param httpRequest http请求对象
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
-     * @return 
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle execute(HttpUriRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context) {
     	return execute(httpRequest, null, null, httpResponseHandler, context);
@@ -108,10 +108,8 @@ public class EasyHttpClient {
     /**
      * 执行请求
      * @param httpRequest http请求对象
-     * @param name 请求名称，在后台输出log的时候会输出此名称方便区分请求
-     * @param responseCache 响应缓存配置
      * @param httpResponseHandler Http响应处理器
-     * @return 
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle execute(HttpUriRequest httpRequest, HttpResponseHandler httpResponseHandler) {
         return execute(httpRequest, null, null, httpResponseHandler, null);
@@ -122,7 +120,7 @@ public class EasyHttpClient {
      * @param request 请求对象，将通过请求对象来解析出一个Http请求
      * @param httpResponseHandler http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle execute(Request request, HttpResponseHandler httpResponseHandler, Context context){
         if(request != null){
@@ -159,7 +157,7 @@ public class EasyHttpClient {
      * 执行请求
      * @param request 请求对象，将通过请求对象来解析出一个Http请求
      * @param httpResponseHandler http响应处理器
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle execute(Request request, HttpResponseHandler httpResponseHandler){
         return execute(request, httpResponseHandler, null);
@@ -170,7 +168,7 @@ public class EasyHttpClient {
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
      * @param httpRequest Http Get请求
      * @param httpResponseHandler Http响应处理器
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle get(HttpGetRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context) {
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
@@ -194,7 +192,7 @@ public class EasyHttpClient {
      * 执行一个Get请求
      * @param httpRequest Http Get请求
      * @param httpResponseHandler Http响应处理器
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle get(HttpGetRequest httpRequest, HttpResponseHandler httpResponseHandler) {
         return get(httpRequest, httpResponseHandler, null);
@@ -206,7 +204,7 @@ public class EasyHttpClient {
      * @param params 请求参数
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle get(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Context context) {
     	 return get(new HttpGetRequest.Builder(url).setParams(params).create(), httpResponseHandler, context);
@@ -217,7 +215,7 @@ public class EasyHttpClient {
      * @param url 请求地址
      * @param params 请求参数
      * @param httpResponseHandler Http响应处理器
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle get(String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
     	 return get(new HttpGetRequest.Builder(url).setParams(params).create(), httpResponseHandler, null);
@@ -228,6 +226,7 @@ public class EasyHttpClient {
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle get(String url, HttpResponseHandler httpResponseHandler, Context context) {
     	 return get(new HttpGetRequest.Builder(url).create(), httpResponseHandler, context);
@@ -237,6 +236,7 @@ public class EasyHttpClient {
      * 执行一个Get请求
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle get(String url, HttpResponseHandler httpResponseHandler) {
     	 return get(new HttpGetRequest.Builder(url).create(), httpResponseHandler, null);
@@ -247,7 +247,7 @@ public class EasyHttpClient {
      * @param httpRequest Http Post请求
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle post(HttpPostRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context){
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
@@ -282,7 +282,7 @@ public class EasyHttpClient {
      * 执行一个Post请求
      * @param httpRequest Http Post请求
      * @param httpResponseHandler Http响应处理器
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle post(HttpPostRequest httpRequest, HttpResponseHandler httpResponseHandler){
         return post(httpRequest, httpResponseHandler, null);
@@ -294,7 +294,7 @@ public class EasyHttpClient {
      * @param params 请求参数
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle post(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Context context) {
     	 return post(new HttpPostRequest.Builder(url).setParams(params).create(), httpResponseHandler, context);
@@ -305,7 +305,7 @@ public class EasyHttpClient {
      * @param url 请求地址
      * @param params 请求参数
      * @param httpResponseHandler Http响应处理器
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle post(String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
     	 return post(new HttpPostRequest.Builder(url).setParams(params).create(), httpResponseHandler, null);
@@ -316,7 +316,7 @@ public class EasyHttpClient {
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle post(String url, HttpResponseHandler httpResponseHandler, Context context) {
     	 return post(new HttpPostRequest.Builder(url).create(), httpResponseHandler, context);
@@ -326,7 +326,7 @@ public class EasyHttpClient {
      * 执行一个Post请求
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle post(String url, HttpResponseHandler httpResponseHandler) {
     	 return post(new HttpPostRequest.Builder(url).create(), httpResponseHandler, null);
@@ -337,7 +337,7 @@ public class EasyHttpClient {
      * @param httpRequest Http Put请求
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle put(HttpPutRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context){
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
@@ -372,7 +372,7 @@ public class EasyHttpClient {
      * 执行一个Put请求
      * @param httpRequest Http Put请求
      * @param httpResponseHandler Http响应处理器
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle put(HttpPutRequest httpRequest, HttpResponseHandler httpResponseHandler){
         return put(httpRequest, httpResponseHandler, null);
@@ -384,7 +384,7 @@ public class EasyHttpClient {
      * @param params 请求参数
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle put(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Context context) {
     	 return put(new HttpPutRequest.Builder(url).setParams(params).create(), httpResponseHandler, context);
@@ -395,7 +395,7 @@ public class EasyHttpClient {
      * @param url 请求地址
      * @param params 请求参数
      * @param httpResponseHandler Http响应处理器
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle put(String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
     	 return put(new HttpPutRequest.Builder(url).setParams(params).create(), httpResponseHandler, null);
@@ -406,7 +406,7 @@ public class EasyHttpClient {
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle put(String url, HttpResponseHandler httpResponseHandler, Context context) {
     	 return put(new HttpPutRequest.Builder(url).create(), httpResponseHandler, context);
@@ -416,7 +416,7 @@ public class EasyHttpClient {
      * 执行一个Put请求
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle put(String url, HttpResponseHandler httpResponseHandler) {
     	 return put(new HttpPutRequest.Builder(url).create(), httpResponseHandler, null);
@@ -427,7 +427,7 @@ public class EasyHttpClient {
      * @param httpRequest Http Delete请求
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle delete(HttpDeleteRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context) {
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
@@ -448,7 +448,7 @@ public class EasyHttpClient {
      * 执行一个Delete请求
      * @param httpRequest Http Delete请求
      * @param httpResponseHandler Http响应处理器
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle delete(HttpDeleteRequest httpRequest, HttpResponseHandler httpResponseHandler) {
         return delete(httpRequest, httpResponseHandler, null);
@@ -459,7 +459,7 @@ public class EasyHttpClient {
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle delete(String url, HttpResponseHandler httpResponseHandler, Context context) {
         return delete(new HttpDeleteRequest.Builder(url).create(), httpResponseHandler, context);
@@ -469,7 +469,7 @@ public class EasyHttpClient {
      * 执行一个Delete请求
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
-     * @return
+     * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle delete(String url, HttpResponseHandler httpResponseHandler) {
         return delete(new HttpDeleteRequest.Builder(url).create(), httpResponseHandler, null);

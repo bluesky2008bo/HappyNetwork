@@ -16,10 +16,12 @@
 
 package me.xiaopan.android.easynetwork.sample.net.request;
 
+import me.xiaopan.android.easynetwork.R;
 import me.xiaopan.android.easynetwork.http.annotation.Name;
 import me.xiaopan.android.easynetwork.http.annotation.Param;
 import me.xiaopan.android.easynetwork.http.annotation.ResponseCache;
 import me.xiaopan.android.easynetwork.http.annotation.URL;
+import me.xiaopan.android.easynetwork.http.annotation.Value;
 import me.xiaopan.android.easynetwork.sample.net.BaseRequest;
 
 /**
@@ -58,6 +60,10 @@ public class BaiduSearchRequest extends BaseRequest {
 
 	@Param("wd")
 	public String keyword;
+
+    @Param
+    @Value(resId = R.string.lang)
+    public String lang;
 	
 	/**
 	 * 创建一个百度搜索请求

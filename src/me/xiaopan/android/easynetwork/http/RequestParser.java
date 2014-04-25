@@ -17,6 +17,7 @@
 package me.xiaopan.android.easynetwork.http;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -25,8 +26,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import me.xiaopan.android.easynetwork.http.annotation.*;
+import me.xiaopan.android.easynetwork.http.annotation.CacheIgnore;
+import me.xiaopan.android.easynetwork.http.annotation.False;
+import me.xiaopan.android.easynetwork.http.annotation.Header;
+import me.xiaopan.android.easynetwork.http.annotation.Host;
+import me.xiaopan.android.easynetwork.http.annotation.Method;
+import me.xiaopan.android.easynetwork.http.annotation.Name;
+import me.xiaopan.android.easynetwork.http.annotation.Param;
+import me.xiaopan.android.easynetwork.http.annotation.Path;
+import me.xiaopan.android.easynetwork.http.annotation.ResponseBody;
+import me.xiaopan.android.easynetwork.http.annotation.True;
 import me.xiaopan.android.easynetwork.http.annotation.URL;
+import me.xiaopan.android.easynetwork.http.annotation.Value;
 import me.xiaopan.android.easynetwork.http.enums.MethodType;
 import android.content.Context;
 
@@ -205,39 +216,104 @@ public class RequestParser {
             requestParams = new RequestParams();
         }
 
-        String paramValue;
-        Object paramValueObject;
+        String requestParamName;
+        String requestParamValue;
+        Object requestParamValueObject = null;
         for(Field field : GeneralUtils.getFields(requestClass, true, true, true)){
-            if(field.getAnnotation(Param.class) != null && Modifier.isStatic(field.getModifiers())){	//如果当前字段被标记为需要序列化并且是静态的
-                try {
-                    field.setAccessible(true);
-                    paramValueObject = field.get(null);
-                    if(paramValueObject != null){
-                        if(paramValueObject instanceof Map){	//如果当前字段是一个MAP，就取出其中的每一项添加到请求参数集中
-                            Map<Object, Object> map = (Map<Object, Object>)paramValueObject;
-                            for(java.util.Map.Entry<Object, Object> entry : map.entrySet()){
-                                if(entry.getKey() != null && entry.getValue() != null && GeneralUtils.isNotEmpty(entry.getKey().toString(), entry.getValue().toString())){
-                                    requestParams.put(entry.getKey().toString(), entry.getValue().toString());
-                                }
-                            }
-                        }else if(paramValueObject instanceof File){	//如果当前字段是一个文件，就将其作为一个文件添加到请求参水集中
-                            requestParams.put(getRequestParamName(context, field), (File) paramValueObject);
-                        }else if(paramValueObject instanceof ArrayList){	//如果当前字段是ArrayList，就将其作为一个ArrayList添加到请求参水集中
-                            requestParams.put(getRequestParamName(context, field), (ArrayList<String>) paramValueObject);
-                        }else if(paramValueObject instanceof Boolean){	//如果当前字段是boolean
-                        	requestParams.put(getRequestParamName(context, field), (Boolean) paramValueObject? parseTrueAnnotation(context, field): parseFalseAnnotation(context, field));
-                        }else if(paramValueObject instanceof Enum){	//如果当前字段是枚举
-                        	requestParams.put(getRequestParamName(context, field), parseValueAnnotationFromEnum(context, (Enum<?>) paramValueObject));
-                        }else{	//如果以上几种情况都不是就直接转为字符串添加到请求参数集中
-                            paramValue = paramValueObject.toString();
-                            if(GeneralUtils.isNotEmpty(paramValue)){
-                                requestParams.put(getRequestParamName(context, field), paramValue);
-                            }
+            // 如果当前字段不是请求参数，或者不是静态的就跳过处理下一个字段
+            if(!field.isAnnotationPresent(Param.class) || !Modifier.isStatic(field.getModifiers())){
+                continue;
+            }
+
+            // 解析请求参数名称
+            requestParamName = parseParamAnnotation(context, field);
+            if(requestParamName == null){
+                requestParamName = field.getName();
+            }
+
+            // 如果当前字段上有Value注解，就直接使用Value注解的值作为请求参数值
+            if(field.isAnnotationPresent(Value.class)){
+                String value = parseValueAnnotation(context, field);
+                if(value != null){
+                    requestParams.put(requestParamName, value);
+                    continue;
+                }
+            }
+
+            try {
+                field.setAccessible(true);
+                requestParamValueObject = field.get(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // 如果当前字段为null，就直接跳过处理下一个字段
+            if(requestParamValueObject == null){
+                continue;
+            }
+
+            // 如果当前字段是Map，就取出其中的每一项都添加到请求参数集中
+            if(Map.class.isAssignableFrom(field.getType())){
+                for(java.util.Map.Entry<Object, Object> entry : ((Map<Object, Object>) requestParamValueObject).entrySet()){
+                    if(entry.getKey() != null && entry.getValue() != null){
+                        String key =  entry.getKey().toString();
+                        String value =  entry.getValue().toString();
+                        if(GeneralUtils.isNotEmpty(key, value)){
+                            requestParams.put(key, value);
                         }
                     }
-                } catch (Exception e) {
+                }
+                continue;
+            }
+
+            // 如果当前字段是File，就将其作为一个文件添加到请求参水集中
+            if(File.class.isAssignableFrom(field.getType())){
+                try {
+                    requestParams.put(requestParamName, (File) requestParamValueObject);
+                } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
+                continue;
+            }
+
+            // 如果当前字段是ArrayList，就将其作为一个ArrayList添加到请求参数集中
+            if(ArrayList.class.isAssignableFrom(field.getType())){
+                requestParams.put(requestParamName, (ArrayList<String>) requestParamValueObject);
+                continue;
+            }
+
+            // 如果当前字段是boolean
+            if(Boolean.class.isAssignableFrom(field.getType())){
+                if((Boolean) requestParamValueObject){
+                    requestParamValue = parseTrueAnnotation(context, field);
+                    if(requestParamValue == null){
+                        requestParamValue = DEFAULT_VALUE_TRUE;
+                    }
+                }else{
+                    requestParamValue = parseFalseAnnotation(context, field);
+                    if(requestParamValue == null){
+                        requestParamValue = DEFAULT_VALUE_FALSE;
+                    }
+                }
+                requestParams.put(requestParamName, requestParamValue);
+                continue;
+            }
+
+            // 如果当前字段是枚举
+            if(Enum.class.isAssignableFrom(field.getType())){
+                Enum<?> enumObject = (Enum<?>) requestParamValueObject;
+                requestParamValue = parseValueAnnotationFromEnum(context, enumObject);
+                if(requestParamValue == null){
+                    requestParamValue = enumObject.name();
+                }
+                requestParams.put(requestParamName, requestParamValue);
+                continue;
+            }
+
+            // 如果以上几种情况都不是就直接转为字符串添加到请求参数集中
+            requestParamValue = requestParamValueObject.toString();
+            if(GeneralUtils.isNotEmpty(requestParamValue)){
+                requestParams.put(requestParamName, requestParamValue);
             }
         }
 
@@ -267,39 +343,104 @@ public class RequestParser {
             requestParams = new RequestParams();
         }
 
-        String paramValue;
-        Object paramValueObject;
+        String requestParamName;
+        String requestParamValue;
+        Object requestParamValueObject = null;
         for(Field field : GeneralUtils.getFields(request.getClass(), true, true, true)){
-            if(field.getAnnotation(Param.class) != null){	//如果当前字段被标记为需要序列化
-                try {
-                    field.setAccessible(true);
-                    paramValueObject = field.get(request);
-                    if(paramValueObject != null){
-                        if(paramValueObject instanceof Map){	//如果当前字段是一个MAP，就取出其中的每一项添加到请求参数集中
-                            Map<Object, Object> map = (Map<Object, Object>)paramValueObject;
-                            for(java.util.Map.Entry<Object, Object> entry : map.entrySet()){
-                                if(entry.getKey() != null && entry.getValue() != null && GeneralUtils.isNotEmpty(entry.getKey().toString(), entry.getValue().toString())){
-                                    requestParams.put(entry.getKey().toString(), entry.getValue().toString());
-                                }
-                            }
-                        }else if(paramValueObject instanceof File){	//如果当前字段是一个文件，就将其作为一个文件添加到请求参水集中
-                            requestParams.put(getRequestParamName(context, field), (File) paramValueObject);
-                        }else if(paramValueObject instanceof ArrayList){	//如果当前字段是ArrayList，就将其作为一个ArrayList添加到请求参水集中
-                            requestParams.put(getRequestParamName(context, field), (ArrayList<String>) paramValueObject);
-                        }else if(paramValueObject instanceof Boolean){	//如果当前字段是boolean
-                            requestParams.put(getRequestParamName(context, field), (Boolean) paramValueObject? parseTrueAnnotation(context, field): parseFalseAnnotation(context, field));
-                        }else if(paramValueObject instanceof Enum){	//如果当前字段是枚举
-                            requestParams.put(getRequestParamName(context, field), parseValueAnnotationFromEnum(context, (Enum<?>) paramValueObject));
-                        }else{	//如果以上几种情况都不是就直接转为字符串添加到请求参数集中
-                            paramValue = paramValueObject.toString();
-                            if(GeneralUtils.isNotEmpty(paramValue)){
-                                requestParams.put(getRequestParamName(context, field), paramValue);
-                            }
+            // 如果当前字段不是请求参数，就跳过处理下一个字段
+            if(!field.isAnnotationPresent(Param.class)){
+                continue;
+            }
+
+            // 解析请求参数名称
+            requestParamName = parseParamAnnotation(context, field);
+            if(requestParamName == null){
+                requestParamName = field.getName();
+            }
+
+            // 如果当前字段上有Value注解，就直接使用Value注解的值作为请求参数值
+            if(field.isAnnotationPresent(Value.class)){
+                String value = parseValueAnnotation(context, field);
+                if(value != null){
+                    requestParams.put(requestParamName, value);
+                    continue;
+                }
+            }
+
+            try {
+                field.setAccessible(true);
+                requestParamValueObject = field.get(request);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // 如果当前字段为null，就直接跳过处理下一个字段
+            if(requestParamValueObject == null){
+                continue;
+            }
+
+            // 如果当前字段是Map，就取出其中的每一项都添加到请求参数集中
+            if(Map.class.isAssignableFrom(field.getType())){
+                for(java.util.Map.Entry<Object, Object> entry : ((Map<Object, Object>) requestParamValueObject).entrySet()){
+                    if(entry.getKey() != null && entry.getValue() != null){
+                        String key =  entry.getKey().toString();
+                        String value =  entry.getValue().toString();
+                        if(GeneralUtils.isNotEmpty(key, value)){
+                            requestParams.put(key, value);
                         }
                     }
-                } catch (Exception e) {
+                }
+                continue;
+            }
+
+            // 如果当前字段是File，就将其作为一个文件添加到请求参水集中
+            if(File.class.isAssignableFrom(field.getType())){
+                try {
+                    requestParams.put(requestParamName, (File) requestParamValueObject);
+                } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
+                continue;
+            }
+
+            // 如果当前字段是ArrayList，就将其作为一个ArrayList添加到请求参数集中
+            if(ArrayList.class.isAssignableFrom(field.getType())){
+                requestParams.put(requestParamName, (ArrayList<String>) requestParamValueObject);
+                continue;
+            }
+
+            // 如果当前字段是boolean
+            if(Boolean.class.isAssignableFrom(field.getType())){
+                if((Boolean) requestParamValueObject){
+                    requestParamValue = parseTrueAnnotation(context, field);
+                    if(requestParamValue == null){
+                        requestParamValue = DEFAULT_VALUE_TRUE;
+                    }
+                }else{
+                    requestParamValue = parseFalseAnnotation(context, field);
+                    if(requestParamValue == null){
+                        requestParamValue = DEFAULT_VALUE_FALSE;
+                    }
+                }
+                requestParams.put(requestParamName, requestParamValue);
+                continue;
+            }
+
+            // 如果当前字段是枚举
+            if(Enum.class.isAssignableFrom(field.getType())){
+                Enum<?> enumObject = (Enum<?>) requestParamValueObject;
+                requestParamValue = parseValueAnnotationFromEnum(context, enumObject);
+                if(requestParamValue == null){
+                    requestParamValue = enumObject.name();
+                }
+                requestParams.put(requestParamName, requestParamValue);
+                continue;
+            }
+
+            // 如果以上几种情况都不是就直接转为字符串添加到请求参数集中
+            requestParamValue = requestParamValueObject.toString();
+            if(GeneralUtils.isNotEmpty(requestParamValue)){
+                requestParams.put(requestParamName, requestParamValue);
             }
         }
 
@@ -381,7 +522,11 @@ public class RequestParser {
             	if(finalHeaders == null){
             		finalHeaders = new LinkedList<String>();
             	}
-            	finalHeaders.add(getRequestParamName(context, field));
+                String requestParamName = parseParamAnnotation(context, field);
+                if(requestParamName == null){
+                    requestParamName = field.getName();
+                }
+            	finalHeaders.add(requestParamName);
             }
         }
        return finalHeaders;
@@ -424,16 +569,15 @@ public class RequestParser {
      */
 	public static String parseFalseAnnotation(Context context, Field field){
     	False annotation = field.getAnnotation(False.class);
-        if(annotation != null){
-            if(GeneralUtils.isNotEmpty(annotation.value())){
-            	return annotation.value();
-            }else if(context != null && annotation.resId() > 0){
-            	return context.getString(annotation.resId());
-            }else{
-            	return DEFAULT_VALUE_FALSE;
-            }
+        if(annotation == null){
+            return null;
+        }
+        if(GeneralUtils.isNotEmpty(annotation.value())){
+            return annotation.value();
+        }else if(context != null && annotation.resId() > 0){
+            return context.getString(annotation.resId());
         }else{
-            return DEFAULT_VALUE_FALSE;
+            return null;
         }
     }
 	
@@ -444,16 +588,15 @@ public class RequestParser {
      */
     public static String parseHostAnnotation(Context context, Class<? extends Request> requestClass){
         Host annotation = requestClass.getAnnotation(Host.class);
-        if(annotation != null){
-        	if(GeneralUtils.isNotEmpty(annotation.value())){
-        		return annotation.value();
-        	}else if(context != null && annotation.resId() > 0){
-        		return context.getString(annotation.resId());
-        	}else{
-        		return null;
-        	}
+        if(annotation == null){
+            return null;
+        }
+        if(GeneralUtils.isNotEmpty(annotation.value())){
+            return annotation.value();
+        }else if(context != null && annotation.resId() > 0){
+            return context.getString(annotation.resId());
         }else{
-        	return null;
+            return null;
         }
     }
 
@@ -464,14 +607,13 @@ public class RequestParser {
      */
     public static String parseNameAnnotation(Context context, Class<? extends Request> requestClass){
         Name annotation = requestClass.getAnnotation(Name.class);
-        if(annotation != null){
-            if(GeneralUtils.isNotEmpty(annotation.value())){
-                return annotation.value();
-            }else if(context != null && annotation.resId() > 0){
-                return context.getString(annotation.resId());
-            }else{
-                return null;
-            }
+        if(annotation == null){
+            return null;
+        }
+        if(GeneralUtils.isNotEmpty(annotation.value())){
+            return annotation.value();
+        }else if(context != null && annotation.resId() > 0){
+            return context.getString(annotation.resId());
         }else{
             return null;
         }
@@ -484,14 +626,13 @@ public class RequestParser {
      */
     public static String parseParamAnnotation(Context context, Field field){
         Param annotation = field.getAnnotation(Param.class);
-        if(annotation != null){
-            if(GeneralUtils.isNotEmpty(annotation.value())){
-                return annotation.value();
-            }else if(context != null && annotation.resId() > 0){
-                return context.getString(annotation.resId());
-            }else{
-                return null;
-            }
+        if(annotation == null){
+            return null;
+        }
+        if(GeneralUtils.isNotEmpty(annotation.value())){
+            return annotation.value();
+        }else if(context != null && annotation.resId() > 0){
+            return context.getString(annotation.resId());
         }else{
             return null;
         }
@@ -504,14 +645,13 @@ public class RequestParser {
      */
     public static String parsePathAnnotation(Context context, Class<? extends Request> requestClass){
         Path annotation = requestClass.getAnnotation(Path.class);
-        if(annotation != null){
-            if(GeneralUtils.isNotEmpty(annotation.value())){
-                return annotation.value();
-            }else if(context != null && annotation.resId() > 0){
-                return context.getString(annotation.resId());
-            }else{
-                return null;
-            }
+        if(annotation == null){
+            return null;
+        }
+        if(GeneralUtils.isNotEmpty(annotation.value())){
+            return annotation.value();
+        }else if(context != null && annotation.resId() > 0){
+            return context.getString(annotation.resId());
         }else{
             return null;
         }
@@ -524,16 +664,15 @@ public class RequestParser {
      */
     public static String parseResponseBodyAnnotation(Context context, Class<?> responseClass){
     	ResponseBody annotation = responseClass.getAnnotation(ResponseBody.class);
-        if(annotation != null){
-        	if(GeneralUtils.isNotEmpty(annotation.value())){
-        		return annotation.value();
-        	}else if(context != null && annotation.resId() > 0){
-        		return context.getString(annotation.resId());
-        	}else{
-        		return null;
-        	}
+        if(annotation == null){
+            return null;
+        }
+        if(GeneralUtils.isNotEmpty(annotation.value())){
+            return annotation.value();
+        }else if(context != null && annotation.resId() > 0){
+            return context.getString(annotation.resId());
         }else{
-        	return null;
+            return null;
         }
     }
 
@@ -543,22 +682,21 @@ public class RequestParser {
      * @param requestClass 请求对象的class
      */
     public static me.xiaopan.android.easynetwork.http.ResponseCache parseResponseCacheAnnotation(Context context, Class<? extends Request> requestClass){
-        me.xiaopan.android.easynetwork.http.annotation.ResponseCache responseCacheAnnotation = requestClass.getAnnotation(me.xiaopan.android.easynetwork.http.annotation.ResponseCache.class);
-        if(responseCacheAnnotation != null){
-            me.xiaopan.android.easynetwork.http.ResponseCache.Builder builder = new me.xiaopan.android.easynetwork.http.ResponseCache.Builder()
-                    .setRefreshCache(responseCacheAnnotation.isRefreshCache())
-                    .setPeriodOfValidity(responseCacheAnnotation.periodOfValidity())
-                    .setRefreshCallback(responseCacheAnnotation.isRefreshCallback());
-
-            if(GeneralUtils.isNotEmpty(responseCacheAnnotation.cacheDirectory())){
-                builder.setCacheDirectory(responseCacheAnnotation.cacheDirectory());
-            }else if(context != null && responseCacheAnnotation.cacheDirectoryResId() > 0){
-                builder.setCacheDirectory(context.getString(responseCacheAnnotation.cacheDirectoryResId()));
-            }
-            return builder.create();
-        }else{
+        me.xiaopan.android.easynetwork.http.annotation.ResponseCache annotation = requestClass.getAnnotation(me.xiaopan.android.easynetwork.http.annotation.ResponseCache.class);
+        if(annotation == null){
             return null;
         }
+        me.xiaopan.android.easynetwork.http.ResponseCache.Builder builder = new me.xiaopan.android.easynetwork.http.ResponseCache.Builder()
+                .setRefreshCache(annotation.isRefreshCache())
+                .setPeriodOfValidity(annotation.periodOfValidity())
+                .setRefreshCallback(annotation.isRefreshCallback());
+
+        if(GeneralUtils.isNotEmpty(annotation.cacheDirectory())){
+            builder.setCacheDirectory(annotation.cacheDirectory());
+        }else if(context != null && annotation.cacheDirectoryResId() > 0){
+            builder.setCacheDirectory(context.getString(annotation.cacheDirectoryResId()));
+        }
+        return builder.create();
     }
 
     /**
@@ -568,16 +706,15 @@ public class RequestParser {
      */
     public static String parseTrueAnnotation(Context context, Field field){
         True annotation = field.getAnnotation(True.class);
-        if(annotation != null){
-            if(GeneralUtils.isNotEmpty(annotation.value())){
-                return annotation.value();
-            }else if(context != null && annotation.resId() > 0){
-                return context.getString(annotation.resId());
-            }else{
-                return DEFAULT_VALUE_TRUE;
-            }
+        if(annotation == null){
+            return null;
+        }
+        if(GeneralUtils.isNotEmpty(annotation.value())){
+            return annotation.value();
+        }else if(context != null && annotation.resId() > 0){
+            return context.getString(annotation.resId());
         }else{
-            return DEFAULT_VALUE_TRUE;
+            return null;
         }
     }
 
@@ -588,14 +725,13 @@ public class RequestParser {
      */
     public static String parseURLAnnotation(Context context, Class<? extends Request> requestClass){
         URL annotation = requestClass.getAnnotation(URL.class);
-        if(annotation != null){
-            if(GeneralUtils.isNotEmpty(annotation.value())){
-                return annotation.value();
-            }else if(context != null && annotation.resId() > 0){
-                return context.getString(annotation.resId());
-            }else{
-                return null;
-            }
+        if(annotation == null){
+            return null;
+        }
+        if(GeneralUtils.isNotEmpty(annotation.value())){
+            return annotation.value();
+        }else if(context != null && annotation.resId() > 0){
+            return context.getString(annotation.resId());
         }else{
             return null;
         }
@@ -608,14 +744,13 @@ public class RequestParser {
      */
     public static String parseValueAnnotation(Context context, Field field){
         Value annotation = field.getAnnotation(Value.class);
-        if(annotation != null){
-            if(GeneralUtils.isNotEmpty(annotation.value())){
-                return annotation.value();
-            }else if(context != null && annotation.resId() > 0){
-                return context.getString(annotation.resId());
-            }else{
-                return null;
-            }
+        if(annotation == null){
+            return null;
+        }
+        if(GeneralUtils.isNotEmpty(annotation.value())){
+            return annotation.value();
+        }else if(context != null && annotation.resId() > 0){
+            return context.getString(annotation.resId());
         }else{
             return null;
         }
@@ -628,42 +763,15 @@ public class RequestParser {
      */
     public static String parseValueAnnotationFromEnum(Context context, Enum<?> enumObject){
         Value annotation = GeneralUtils.getAnnotationFromEnum(enumObject, Value.class);
-        if(annotation != null){
-            if(GeneralUtils.isNotEmpty(annotation.value())){
-                return annotation.value();
-            }else if(context != null && annotation.resId() > 0){
-                return context.getString(annotation.resId());
-            }else{
-                return enumObject.name();
-            }
+        if(annotation == null){
+            return null;
+        }
+        if(GeneralUtils.isNotEmpty(annotation.value())){
+            return annotation.value();
+        }else if(context != null && annotation.resId() > 0){
+            return context.getString(annotation.resId());
         }else{
-            return enumObject.name();
+            return null;
         }
-    }
-
-    /**
-     * 获取请求参数名
-     * @param context 上下文
-     * @param field 字段
-     */
-    public static String getRequestParamName(Context context, Field field){
-        String requestParamName = parseParamAnnotation(context, field);
-        if(requestParamName == null){
-            requestParamName = field.getName();
-        }
-        return requestParamName;
-    }
-
-    /**
-     * 获取请求参数名
-     * @param context 上下文
-     * @param field 字段
-     */
-    public static String getRequestParamValue(Context context, Field field){
-        String requestParamName = parseParamAnnotation(context, field);
-        if(requestParamName == null){
-            requestParamName = field.getName();
-        }
-        return requestParamName;
     }
 }

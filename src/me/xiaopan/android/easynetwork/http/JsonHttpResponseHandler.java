@@ -60,7 +60,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 
 	@Override
-	protected void onHandleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
+	protected final void onHandleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
 		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if(httpEntity != null){
@@ -116,7 +116,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 	
 	@Override
-	protected void onException(final Handler handler, final Throwable e, final boolean isNotRefresh) {
+	protected final void onException(final Handler handler, final Throwable e, final boolean isNotRefresh) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -126,8 +126,13 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 	
 	@Override
-	protected void onCancel(Handler handler) {
-		
+	protected final void onCancel(Handler handler) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                onCancel();
+            }
+        });
 	}
 
 	/**
@@ -150,4 +155,11 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	 * @param isNotRefresh 本次异常不是在刷新缓存数据的时候发生的
 	 */
 	protected abstract void onFailure(Throwable throwable, boolean isNotRefresh);
+
+    /**
+     * 请求取消
+     */
+    protected void onCancel(){
+
+    }
 }
