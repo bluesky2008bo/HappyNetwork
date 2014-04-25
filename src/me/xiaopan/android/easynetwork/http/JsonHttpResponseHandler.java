@@ -68,7 +68,7 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 				String jsonString = EntityUtils.toString(new BufferedHttpEntity(httpEntity), HttpUtils.getResponseCharset(httpResponse));
 				if(jsonString != null && !"".equals(jsonString)){
 					if(responseClass != null){	//如果是要转换成一个对象
-						String responseBodyKey = RequestParser.parseResponseBody(context, responseClass);
+						String responseBodyKey = RequestParser.parseResponseBodyAnnotation(context, responseClass);
                         if(responseBodyKey != null && !"".equals(responseBodyKey)){
                             final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey), responseClass);
                             handler.post(new Runnable() {

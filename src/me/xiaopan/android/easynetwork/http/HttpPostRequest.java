@@ -436,7 +436,7 @@ public class HttpPostRequest {
          */
         public Builder setRequest(Context context, Request request){
         	Class<? extends Request> requestClass = request.getClass();
-            String requestName = RequestParser.parseName(context, requestClass);
+            String requestName = RequestParser.parseNameAnnotation(context, requestClass);
             if(GeneralUtils.isNotEmpty(requestName)){
                 httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
             }
@@ -450,7 +450,7 @@ public class HttpPostRequest {
             httpRequest.setParams(RequestParser.parseRequestParams(context, request, httpRequest.getParams()));
             httpRequest.setCacheIgnoreParams(RequestParser.parseCacheIgnoreParams(context, requestClass));
             httpRequest.addHeader(RequestParser.parseRequestHeaders(request));
-            ResponseCache responseCache = RequestParser.parseResponseCache(context, requestClass);
+            ResponseCache responseCache = RequestParser.parseResponseCacheAnnotation(context, requestClass);
             if(responseCache != null){
                 httpRequest.setResponseCache(responseCache);
             }
