@@ -130,16 +130,22 @@ class HttpRequestExecuteRunnable implements Runnable {
             Log.d(easyHttpClient.getConfiguration().getLogTag(), name + "（本地）开始加载（"+uri+"）");
         }
 		try{
-            /* 回调处理响应 */
-            httpResponseHandler.onHandleResponse(easyHttpClient.getConfiguration().getHandler(), readHttpResponseFromCacheFile(statusLineCacheFile, responseHeadersCacheFile, responseEntityCacheFile), true, !(responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId()) && responseCache.isRefreshCache() && responseCache.isRefreshCallback()));
-            if(easyHttpClient.getConfiguration().isDebugMode()){
-            	Log.i(easyHttpClient.getConfiguration().getLogTag(), name + "（本地）加载成功（"+uri+"）");
-            }
+			if(!isCancelled){
+				/* 回调处理响应 */
+				httpResponseHandler.onHandleResponse(easyHttpClient.getConfiguration().getHandler(), readHttpResponseFromCacheFile(statusLineCacheFile, responseHeadersCacheFile, responseEntityCacheFile), true, !(responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId()) && responseCache.isRefreshCache() && responseCache.isRefreshCallback()));
+				if(easyHttpClient.getConfiguration().isDebugMode()){
+					Log.i(easyHttpClient.getConfiguration().getLogTag(), name + "（本地）加载成功（"+uri+"）");
+				}
 
-            /* 如果需要刷新本地缓存 */
-            if(responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId()) && responseCache.isRefreshCache()){
-                fromNetworkLoad(true);
-            }
+				/* 如果需要刷新本地缓存 */
+				if(responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId()) && responseCache.isRefreshCache()){
+					fromNetworkLoad(true);
+				}
+			}else{
+				if(easyHttpClient.getConfiguration().isDebugMode()){
+	                Log.e(easyHttpClient.getConfiguration().getLogTag(), name + "（本地）已取消加载失败（"+uri+"）");
+	            }
+			}
 		}catch(Throwable throwable){
 			throwable.printStackTrace();
             if(easyHttpClient.getConfiguration().isDebugMode()){
@@ -167,15 +173,25 @@ class HttpRequestExecuteRunnable implements Runnable {
             if(responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId()) && httpResponseHandler.isCanCache(easyHttpClient.getConfiguration().getHandler(), httpResponse)){
             	saveHttpResponseToCacheFile(httpResponse, statusLineCacheFile, responseHeadersCacheFile, responseEntityCacheFile);
             }
-            //回调处理响应
-            if(!isRefreshCache || (responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId()) && responseCache.isRefreshCallback())){
-                httpResponseHandler.onHandleResponse(easyHttpClient.getConfiguration().getHandler(), httpResponse, !isRefreshCache, true);
-            }
-            if(easyHttpClient.getConfiguration().isDebugMode()){
-            	if(isRefreshCache){
-            		Log.i(easyHttpClient.getConfiguration().getLogTag(), name + "（网络）刷新缓存成功（"+uri+"）");
-            	}else{
-            		Log.i(easyHttpClient.getConfiguration().getLogTag(), name + "（网络）加载成功（"+uri+"）");
+            if(!isCancelled){
+            	//回调处理响应
+            	if(!isRefreshCache || (responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId()) && responseCache.isRefreshCallback())){
+            		httpResponseHandler.onHandleResponse(easyHttpClient.getConfiguration().getHandler(), httpResponse, !isRefreshCache, true);
+            	}
+            	if(easyHttpClient.getConfiguration().isDebugMode()){
+            		if(isRefreshCache){
+            			Log.i(easyHttpClient.getConfiguration().getLogTag(), name + "（网络）刷新缓存成功（"+uri+"）");
+            		}else{
+            			Log.i(easyHttpClient.getConfiguration().getLogTag(), name + "（网络）加载成功（"+uri+"）");
+            		}
+            	}
+            }else{
+            	if(easyHttpClient.getConfiguration().isDebugMode()){
+            		if(isRefreshCache){
+            			Log.i(easyHttpClient.getConfiguration().getLogTag(), name + "（网络）已取消刷新缓存（"+uri+"）");
+            		}else{
+            			Log.i(easyHttpClient.getConfiguration().getLogTag(), name + "（网络）已取消加载（"+uri+"）");
+            		}
             	}
             }
         }catch(Throwable throwable){
