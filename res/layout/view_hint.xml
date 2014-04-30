@@ -8,7 +8,7 @@
 	    android:background="@color/page_background">
 		<ViewSwitcher style="@style/match_wrap" android:id="@+id/viewSwitcher_hint" android:padding="@dimen/padding_specialLarge" android:layout_height="120dp">
 			<LinearLayout style="@style/wrap_wrap_vertical" android:gravity="center" android:layout_gravity="center">
-			    <ProgressBar style="@style/wrap_wrap"/>
+			    <ProgressBar style="?android:attr/progressBarStyleHorizontal" android:id="@+id/progress_hint" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 			    <TextView
 				    style="@style/wrap_wrap" 
 			        android:id="@+id/text_hint_loadingHint" 

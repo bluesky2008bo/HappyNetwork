@@ -49,6 +49,11 @@ public class BinaryActivity extends MyActivity {
 			}
 			
 			@Override
+			public void onUpdateProgress(long totalLength, long completedLength) {
+				getHintView().setProgress((int)totalLength, (int)completedLength);
+			}
+			
+			@Override
 			protected void onSuccess(HttpResponse httpResponse, byte[] binaryData, boolean isNotRefresh, boolean isOver) {
 				((ImageView) findViewById(R.id.image_binary)).setImageBitmap(BitmapFactory.decodeByteArray(binaryData, 0, binaryData.length));
 				getHintView().hidden();

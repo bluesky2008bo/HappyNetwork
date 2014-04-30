@@ -22,7 +22,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.util.EntityUtils;
 
 import android.os.Handler;
 
@@ -33,9 +32,11 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
 
 	@Override
 	protected final void onStart(final Handler handler) {
-        handler.post(new Runnable() {
+		if(isCancelled()) return;
+		handler.post(new Runnable() {
             @Override
             public void run() {
+            	if(isCancelled()) return;
                 onStart();
             }
         });
@@ -43,33 +44,49 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
 
 	@Override
 	protected final void onHandleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
-		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
-			HttpEntity httpEntity = httpResponse.getEntity();
-            if(httpEntity != null){
-                final byte[] data = EntityUtils.toByteArray(new BufferedHttpEntity(httpEntity));
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onSuccess(httpResponse, data, isNotRefresh, isOver);
-                    }
-                });
-            }else{
-                throw new Exception("没有响应体");
-            }
-		}else{
+		if(!(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300)){
 			if(httpResponse.getStatusLine().getStatusCode() == 404){
 				throw new FileNotFoundException("请求地址错误");
 			}else{
 				throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode());
 			}
-        }
+		}
+		
+		HttpEntity httpEntity = httpResponse.getEntity();
+		if(httpEntity == null){
+            throw new Exception("没有响应体");
+		}
+		
+		final byte[] data = toByteArray(new BufferedHttpEntity(httpEntity), this, handler);
+		if(isCancelled()) return;
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				if(isCancelled()) return;
+				onSuccess(httpResponse, data, isNotRefresh, isOver);
+			}
+		});
 	}
+    
+    @Override
+    protected final void onUpdateProgress(Handler handler, final long totalLength, final long completedLength){
+    	if(isCancelled()) return;
+    	handler.post(new Runnable() {
+    		@Override
+    		public void run() {
+    			if(isCancelled()) return;
+    			onUpdateProgress(totalLength, completedLength);
+    		}
+    	});
+    }
 
 	@Override
 	protected final void onException(final Handler handler, final Throwable e, final boolean isNotRefresh) {
-        handler.post(new Runnable() {
+		if(isCancelled()) return;
+		handler.post(new Runnable() {
             @Override
             public void run() {
+            	if(isCancelled()) return;
                 onFailure(e, isNotRefresh);
             }
         });
@@ -89,6 +106,13 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
 	 * 请求开始
 	 */
 	protected abstract void onStart();
+
+	/**
+	 * 更新进度
+	 * @param totalLength
+	 * @param completedLength
+	 */
+    public void onUpdateProgress(long totalLength, long completedLength){};
 	
 	/**
 	 * 请求成功

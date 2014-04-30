@@ -13,18 +13,15 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 public class DownloadActivity extends MyActivity {
 	private ImageView imageView;
-	private ProgressBar progressBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_download);
 		imageView = (ImageView) findViewById(R.id.image_download);
-		progressBar = (ProgressBar) findViewById(R.id.progress_download);
 		load();
 	}
 	
@@ -32,21 +29,19 @@ public class DownloadActivity extends MyActivity {
 		EasyHttpClient.getInstance(getBaseContext()).get("http://img.pconline.com.cn/images/upload/upc/tx/wallpaper/1311/11/c0/28529113_1384156076013_800x600.jpg", new DownloadHttpResponseHandler(null) {
 			@Override
 			public void onStart() {
-				getHintView().hidden();
-				progressBar.setVisibility(View.VISIBLE);
+				getHintView().loading("");
 			}
 			
 			@Override
 			public void onUpdateProgress(long totalLength, long completedLength) {
-				progressBar.setMax((int) totalLength);
-				progressBar.setProgress((int) completedLength);
+				getHintView().setProgress((int)totalLength, (int)completedLength);
 				Log.e("下载", "更新进度");
 			}
 
 			@Override
 			public void onSuccess(byte[] data) {
 				imageView.setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.length));
-				progressBar.setVisibility(View.GONE);
+				getHintView().hidden();
 				Log.e("下载", "成功");
 			}
 
@@ -57,7 +52,6 @@ public class DownloadActivity extends MyActivity {
 
 			@Override
 			public void onFailure(Throwable e) {
-				progressBar.setVisibility(View.GONE);
 				getHintView().failure(Failure.buildByException(getBaseContext(), e), new OnClickListener() {
 					@Override
 					public void onClick(View v) {

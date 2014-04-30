@@ -262,13 +262,17 @@ EasyHttpClient.getInstance(getBaseContext()).execute(new BeijingWeatherRequest()
 你只需调用``EasyHttpClient.getInstance(Context)``即可获取EasyHttpClient的实例。
 
 ##Downloads
->* [android-easy-network-2.2.5.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.2.5.jar)
->* [android-easy-network-2.2.5-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.2.5-with-src.jar)
+>* [android-easy-network-2.2.6.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.2.6.jar)
+>* [android-easy-network-2.2.6-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.2.6-with-src.jar)
 
 ##Depend
 >* **[gson-2.2.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
 
 ##Change Log
+###2.2.6
+>* 修复DownloadHttpResponseHandler已完成进度参数传递错误BUG
+>* 完善所有内置HttpResponseHandler实现的取消处理
+
 ###2.2.5
 >* 当已经取消时，就不在回调handleResponse()方法
 

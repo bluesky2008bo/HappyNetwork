@@ -57,6 +57,11 @@ public class StringActivity extends MyActivity {
 			}
 			
 			@Override
+			public void onUpdateProgress(long totalLength, long completedLength) {
+				getHintView().setProgress((int)totalLength, (int)completedLength);
+			}
+
+			@Override
 			protected void onSuccess(HttpResponse httpResponse, String responseContent, boolean isNotRefresh, boolean isOver) {
 				Header contentTypeHeader = httpResponse.getEntity().getContentType();
 				ContentType contentType = new ContentType(contentTypeHeader.getValue());

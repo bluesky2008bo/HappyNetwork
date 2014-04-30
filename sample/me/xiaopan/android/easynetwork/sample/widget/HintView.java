@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -24,6 +25,7 @@ public class HintView extends LinearLayout {
 	private Button actionButton;
 	private TextView loadingHintTextView;
 	private TextView hintTextView;
+	private ProgressBar progressBar;
 	private ViewSwitcher viewSwitcher;
 	private Mode mode;
 	
@@ -44,6 +46,7 @@ public class HintView extends LinearLayout {
 			loadingHintTextView = (TextView) findViewById(R.id.text_hint_loadingHint);
 			hintTextView = (TextView) findViewById(R.id.text_hint_hint);
 			actionButton = (Button) findViewById(R.id.button_hint_action);
+			progressBar = (ProgressBar) findViewById(R.id.progress_hint);
 			setVisibility(View.GONE);
 		}catch(Throwable throwable){
 			
@@ -68,6 +71,11 @@ public class HintView extends LinearLayout {
 			viewSwitcher.setDisplayedChild(mode.index);
 			setVisibility(View.VISIBLE);
 		}
+	}
+	
+	public void setProgress(int totalLength, int completedLength){
+		progressBar.setMax(totalLength);
+		progressBar.setProgress(completedLength);
 	}
 	
 	/**

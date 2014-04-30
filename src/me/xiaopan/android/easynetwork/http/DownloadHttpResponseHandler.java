@@ -1,14 +1,14 @@
 package me.xiaopan.android.easynetwork.http;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.entity.BufferedHttpEntity;
 
 import android.os.Handler;
@@ -25,97 +25,82 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
 
     @Override
     protected final void onStart(Handler handler) {
-        if(!isCancelled()){
-        	handler.post(new Runnable() {
-        		@Override
-        		public void run() {
-        			if(!isCancelled()){
-        				onStart();
-        			}
-        		}
-        	});
-        }
+    	if(isCancelled()) return;
+        handler.post(new Runnable() {
+        	@Override
+        	public void run() {
+        		if(isCancelled()) return;
+        		onStart();
+        	}
+        });
     }
 
     @Override
     protected final void onHandleResponse(Handler handler, HttpResponse httpResponse, boolean isNotRefresh, boolean isOver) throws Throwable {
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
-        try{
-            BufferedHttpEntity bufferedHttpEntity = new BufferedHttpEntity(httpResponse.getEntity());
-            inputStream = new BufferedInputStream(bufferedHttpEntity.getContent(), 8*1024);
-            if(file != null){
-            	outputStream = new BufferedOutputStream(new FileOutputStream(file));
-            }else{
-            	outputStream = new  ByteArrayOutputStream();
-            }
-            int realReadLength;
-            long totalLength = bufferedHttpEntity.getContentLength();
-            long completedLength = 0;
-            byte[] bufferData = new byte[8*1024];
-            while(!isMayInterruptIfRunning() && (realReadLength = inputStream.read(bufferData)) != -1){
-                outputStream.write(bufferData, 0, realReadLength);
-                completedLength+=realReadLength;
-                updateProgress(handler, totalLength, completedLength);
-            }
-            GeneralUtils.close(outputStream);
-            GeneralUtils.close(inputStream);
-            if(isCancelled()){
-            	if(file != null){
-            		file.delete();
-            	}
-            }else{
-            	callbackResult(handler, file != null?file:((ByteArrayOutputStream) outputStream).toByteArray());
-            }
-        }catch(Throwable e){
-            GeneralUtils.close(outputStream);
-            GeneralUtils.close(inputStream);
-            throw e;
-        }
+    	if(!(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300)){
+			if(httpResponse.getStatusLine().getStatusCode() == 404){
+				throw new FileNotFoundException("请求地址错误");
+			}else{
+				throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode());
+			}
+		}
+		
+		HttpEntity httpEntity = httpResponse.getEntity();
+		if(httpEntity == null){
+            throw new Exception("没有响应体");
+		}
+		
+		if(file != null){
+			OutputStream outputStream = null;
+			try{
+				outputStream = new BufferedOutputStream(new FileOutputStream(file), 8*1024);
+				read(new BufferedHttpEntity(httpEntity), outputStream, this, handler);
+			}finally{
+				GeneralUtils.close(outputStream);
+			}
+			if(isCancelled()) return;
+	    	handler.post(new Runnable() {
+	    		@Override
+	    		public void run() {
+	    			if(isCancelled()) return;
+    				onSuccess(file);
+	    		}
+	    	});
+		}else{
+			final byte[] data = toByteArray(new BufferedHttpEntity(httpEntity), this, handler);
+			if(isCancelled()) return;
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					if(isCancelled()) return;
+					onSuccess(data);
+				}
+			});
+		}
     }
     
-    private  void updateProgress(Handler handler, final long totalLength, final long completedLength){
-    	if(!isCancelled()){
-    		handler.post(new Runnable() {
-    			@Override
-    			public void run() {
-    				if(!isCancelled()){
-    					onUpdateProgress(totalLength, completedLength);
-    				}
-    			}
-    		});
-    	}
+    @Override
+    protected final void onUpdateProgress(Handler handler, final long totalLength, final long completedLength){
+    	if(isCancelled()) return;
+    	handler.post(new Runnable() {
+    		@Override
+    		public void run() {
+    			if(isCancelled()) return;
+    			onUpdateProgress(totalLength, completedLength);
+    		}
+    	});
     }
     
-    private void callbackResult(Handler  handler, final Object result){
-    	if(!isCancelled()){
-    		handler.post(new Runnable() {
-    			@Override
-    			public void run() {
-    				if(!isCancelled()){
-    					if(result instanceof File){
-    						onSuccess((File) result);
-    					}else{
-    						onSuccess((byte[]) result);
-    					}
-    				}
-    			}
-    		});
-    	}
-    }
-
     @Override
     protected final void onException(Handler handler, final Throwable e, boolean isNotRefresh) {
-    	if(!isCancelled()){
-    		handler.post(new Runnable() {
-    			@Override
-    			public void run() {
-    				if(!isCancelled()){
-    					onFailure(e);
-    				}
-    			}
-    		});
-    	}
+    	if(isCancelled()) return;
+    	handler.post(new Runnable() {
+    		@Override
+    		public void run() {
+    			if(isCancelled()) return;
+    			onFailure(e);
+    		}
+    	});
     }
 
     @Override

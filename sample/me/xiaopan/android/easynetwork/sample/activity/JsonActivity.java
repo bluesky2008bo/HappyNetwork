@@ -56,6 +56,11 @@ public class JsonActivity extends MyActivity {
 			}
 			
 			@Override
+			public void onUpdateProgress(long totalLength, long completedLength) {
+				getHintView().setProgress((int)totalLength, (int)completedLength);
+			}
+			
+			@Override
 			protected void onSuccess(HttpResponse httpResponse, Weather responseObject, boolean isNotRefresh, boolean isOver) {
 				text.setText(Html.fromHtml("<h2>" + responseObject.getCity() + "</h2>"
 						+ "<br>" + responseObject.getDate_y() + " " + responseObject.getWeek()

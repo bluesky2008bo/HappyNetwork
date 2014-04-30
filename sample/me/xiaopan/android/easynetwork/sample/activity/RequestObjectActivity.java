@@ -72,6 +72,11 @@ public class RequestObjectActivity extends MyActivity {
 				searchButton.setEnabled(false);
 				getHintView().loading(keyword+"相关信息");
 			}
+			
+			@Override
+			public void onUpdateProgress(long totalLength, long completedLength) {
+				getHintView().setProgress((int)totalLength, (int)completedLength);
+			}
 
 			@Override
 			protected void onSuccess(HttpResponse httpResponse, String responseContent, boolean isNotRefresh, boolean isOver) {

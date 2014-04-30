@@ -23,7 +23,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -51,9 +50,11 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	
 	@Override
 	protected final void onStart(final Handler handler) {
+		if(isCancelled()) return;
         handler.post(new Runnable() {
             @Override
             public void run() {
+        		if(isCancelled()) return;
                 onStart();
             }
         });
@@ -61,65 +62,83 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 
 	@Override
 	protected final void onHandleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
-		if(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300 ){
-			HttpEntity httpEntity = httpResponse.getEntity();
-			if(httpEntity != null){
-				/* 读取返回的JSON字符串并转换成对象 */
-				String jsonString = EntityUtils.toString(new BufferedHttpEntity(httpEntity), HttpUtils.getResponseCharset(httpResponse));
-				if(jsonString != null && !"".equals(jsonString)){
-					if(responseClass != null){	//如果是要转换成一个对象
-						String responseBodyKey = RequestParser.parseResponseBodyAnnotation(context, responseClass);
-                        if(responseBodyKey != null && !"".equals(responseBodyKey)){
-                            final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey), responseClass);
-                            handler.post(new Runnable() {
-                                @SuppressWarnings("unchecked")
-								@Override
-                                public void run() {
-                                    onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
-                                }
-                            });
-						}else{
-                            final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseClass);
-                            handler.post(new Runnable() {
-                                @SuppressWarnings("unchecked")
-								@Override
-                                public void run() {
-                                    onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
-                                }
-                            });
-						}
-					}else if(responseType != null){	//如果是要转换成一个集合
-                        final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseType);
-                        handler.post(new Runnable() {
-                            @SuppressWarnings("unchecked")
-							@Override
-                            public void run() {
-                                onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
-                            }
-                        });
-					}else{
-                        throw new Exception("responseClass和responseType至少有一个不能为null");
-					}
-				}else{
-                    throw new Exception("响应内容为空");
-				}
-			}else{
-                throw new Exception("没有响应体");
-			}
-		}else{
+		if(!(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300)){
 			if(httpResponse.getStatusLine().getStatusCode() == 404){
 				throw new FileNotFoundException("请求地址错误");
 			}else{
 				throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode());
 			}
 		}
+		
+		HttpEntity httpEntity = httpResponse.getEntity();
+		if(httpEntity == null){
+            throw new Exception("没有响应体");
+		}
+		
+		String jsonString = toString(new BufferedHttpEntity(httpEntity), this, handler, "UTF-8");
+		if(isCancelled()) return;
+		
+		if(jsonString == null || "".equals(jsonString)){
+			throw new Exception("响应内容为空");
+		}
+		
+		if(responseClass != null){	//如果是要转换成一个对象
+			String responseBodyKey = RequestParser.parseResponseBodyAnnotation(context, responseClass);
+			if(responseBodyKey != null && !"".equals(responseBodyKey)){
+				final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey), responseClass);
+				handler.post(new Runnable() {
+					@SuppressWarnings("unchecked")
+					@Override
+					public void run() {
+						if(isCancelled()) return;
+						onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
+					}
+				});
+			}else{
+				final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseClass);
+				handler.post(new Runnable() {
+					@SuppressWarnings("unchecked")
+					@Override
+					public void run() {
+						if(isCancelled()) return;
+						onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
+					}
+				});
+			}
+		}else if(responseType != null){	//如果是要转换成一个集合
+			final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseType);
+			handler.post(new Runnable() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public void run() {
+					if(isCancelled()) return;
+					onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
+				}
+			});
+		}else{
+			throw new Exception("responseClass和responseType至少有一个不能为null");
+		}
 	}
+    
+    @Override
+    protected final void onUpdateProgress(Handler handler, final long totalLength, final long completedLength){
+    	if(isCancelled()) return;
+    	handler.post(new Runnable() {
+    		@Override
+    		public void run() {
+    			if(isCancelled()) return;
+    			onUpdateProgress(totalLength, completedLength);
+    		}
+    	});
+    }
 	
 	@Override
 	protected final void onException(final Handler handler, final Throwable e, final boolean isNotRefresh) {
+		if(isCancelled()) return;
         handler.post(new Runnable() {
             @Override
             public void run() {
+        		if(isCancelled()) return;
                 onFailure(e, isNotRefresh);
             }
         });
@@ -139,6 +158,13 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	 * 请求开始
 	 */
 	protected abstract void onStart();
+
+	/**
+	 * 更新进度
+	 * @param totalLength
+	 * @param completedLength
+	 */
+    public void onUpdateProgress(long totalLength, long completedLength){};
 	
 	/**
 	 * 请求成功

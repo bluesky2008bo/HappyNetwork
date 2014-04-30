@@ -5,13 +5,6 @@
 	        android:layout_gravity="center"
 	        android:contentDescription="@string/image_contentDescription"/>
 	
-	    <ProgressBar 
-	        style="?android:attr/progressBarStyleHorizontal"
-	        android:id="@+id/progress_download" 
-	        android:layout_width="match_parent" 
-	        android:layout_height="wrap_content"
-	        android:layout_gravity="center"/>
-	    
 	    <include layout="@layout/include_hint"/>
 	    <include layout="@layout/include_shadow_down"/>
 	</FrameLayout>

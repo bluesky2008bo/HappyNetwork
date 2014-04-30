@@ -16,7 +16,20 @@
 
 package me.xiaopan.android.easynetwork.http;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+
+import org.apache.http.HeaderElement;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.ByteArrayBuffer;
+import org.apache.http.util.CharArrayBuffer;
 
 import android.os.Handler;
 
@@ -72,6 +85,14 @@ public abstract class HttpResponseHandler{
      * @throws Throwable 当发生异常时会进入exception()方法
      */
     protected abstract void onHandleResponse(Handler handler, HttpResponse httpResponse, boolean isNotRefresh, boolean isOver) throws Throwable;
+    
+    /**
+     * 更新进度
+     * @param handler
+     * @param totalLength
+     * @param completedLength
+     */
+    protected abstract void onUpdateProgress(Handler handler, long totalLength, long completedLength);
 
     /**
      * 在请求的过程中发生异常，值得注意的是在读取本地缓存发生异常的话不会回调此方法，因为会自动改为从网络获取数据，所以一旦回调此方法就意味着整个请求已经结束了
@@ -86,4 +107,137 @@ public abstract class HttpResponseHandler{
      * @param handler 消息处理器
      */
     protected abstract void onCancel(final Handler handler);
+    
+    public static byte[] toByteArray(final HttpEntity entity, HttpResponseHandler httpResponseHandler, Handler handler) throws IOException {
+		if (entity == null) {
+			throw new IllegalArgumentException("HTTP entity may not be null");
+		}
+		InputStream instream = null;
+		ByteArrayBuffer buffer = null;
+		try {
+			instream = entity.getContent();
+			if (instream == null) {
+				return new byte[] {};
+			}
+			if (entity.getContentLength() > Integer.MAX_VALUE) {
+				throw new IllegalArgumentException("HTTP entity too large to be buffered in memory");
+			}
+			int contentLength = (int) entity.getContentLength();
+			if (contentLength < 0) {
+				throw new IllegalArgumentException("HTTP entity contentLength is 0");
+			}
+			buffer = new ByteArrayBuffer(contentLength);
+			int readLength;
+			long completedLength = 0;
+			byte[] tmp = new byte[4096];
+			while (!httpResponseHandler.isMayInterruptIfRunning() && (readLength = instream.read(tmp)) != -1) {
+				buffer.append(tmp, 0, readLength);
+				completedLength+=readLength;
+				if(!httpResponseHandler.isCancelled()){
+					httpResponseHandler.onUpdateProgress(handler, contentLength, completedLength);
+				}
+			}
+		} finally {
+			GeneralUtils.close(instream);
+		}
+		return httpResponseHandler.isCancelled() || buffer==null?null:buffer.toByteArray();
+	}
+
+	public static String getContentCharSet(final HttpEntity entity) throws ParseException {
+
+		if (entity == null) {
+			throw new IllegalArgumentException("HTTP entity may not be null");
+		}
+		String charset = null;
+		if (entity.getContentType() != null) {
+			HeaderElement values[] = entity.getContentType().getElements();
+			if (values.length > 0) {
+				NameValuePair param = values[0].getParameterByName("charset");
+				if (param != null) {
+					charset = param.getValue();
+				}
+			}
+		}
+		return charset;
+	}
+
+	public static String toString(final HttpEntity entity, HttpResponseHandler httpResponseHandler, Handler handler, final String defaultCharset) throws IOException, ParseException {
+		if (entity == null) {
+			throw new IllegalArgumentException("HTTP entity may not be null");
+		}
+		InputStream instream = null;
+		CharArrayBuffer buffer = null;
+		try {
+			instream = entity.getContent();
+			if (instream == null) {
+				return "";
+			}
+			if (entity.getContentLength() > Integer.MAX_VALUE) {
+				throw new IllegalArgumentException(
+						"HTTP entity too large to be buffered in memory");
+			}
+			int contentLength = (int) entity.getContentLength();
+			if (contentLength < 0) {
+				throw new IllegalArgumentException("HTTP entity contentLength is 0");
+			}
+			String charset = getContentCharSet(entity);
+			if (charset == null) {
+				charset = defaultCharset;
+			}
+			if (charset == null) {
+				charset = HTTP.DEFAULT_CONTENT_CHARSET;
+			}
+			Reader reader = new InputStreamReader(instream, charset);
+			buffer = new CharArrayBuffer(contentLength);
+			int readLength;
+			long completedLength = 0;
+			char[] tmp = new char[1024];
+			while (!httpResponseHandler.isMayInterruptIfRunning() && (readLength = reader.read(tmp)) != -1) {
+				buffer.append(tmp, 0, readLength);
+				completedLength+=readLength;
+				if(!httpResponseHandler.isCancelled()){
+					httpResponseHandler.onUpdateProgress(handler, contentLength, completedLength);
+				}
+			}
+		} finally {
+			GeneralUtils.close(instream);
+		}
+		return httpResponseHandler.isCancelled() || buffer==null?null:buffer.toString();
+	}
+
+	public static String toString(final HttpEntity entity, HttpResponseHandler httpResponseHandler, Handler handler) throws IOException, ParseException {
+		return toString(entity, httpResponseHandler, handler, null);
+	}
+	
+	public static void read(final HttpEntity entity, OutputStream outputStream, HttpResponseHandler httpResponseHandler, Handler handler) throws IOException{
+		if (entity == null) {
+			throw new IllegalArgumentException("HTTP entity may not be null");
+		}
+		InputStream instream = null;
+		try {
+			instream = entity.getContent();
+			if (instream == null) {
+				return;
+			}
+			if (entity.getContentLength() > Integer.MAX_VALUE) {
+				throw new IllegalArgumentException("HTTP entity too large to be buffered in memory");
+			}
+			int contentLength = (int) entity.getContentLength();
+			if (contentLength < 0) {
+				throw new IllegalArgumentException("HTTP entity contentLength is 0");
+			}
+			int readLength;
+			long completedLength = 0;
+			byte[] tmp = new byte[4096];
+			while (!httpResponseHandler.isMayInterruptIfRunning() && (readLength = instream.read(tmp)) != -1) {
+				outputStream.write(tmp, 0, readLength);
+				completedLength+=readLength;
+				if(!httpResponseHandler.isCancelled()){
+					httpResponseHandler.onUpdateProgress(handler, contentLength, completedLength);
+				}
+			}
+		} finally {
+			GeneralUtils.close(instream);
+		}
+	}
 }
