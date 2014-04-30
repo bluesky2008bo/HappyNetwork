@@ -32,6 +32,7 @@ public class MainActivity extends MyListActivity {
 			, new ActivityItem(getString(R.string.activityTitle_binary), BinaryActivity.class)
 			, new ActivityItem(getString(R.string.activityTitle_string), StringActivity.class)
 			, new ActivityItem(getString(R.string.activityTitle_json), JsonActivity.class)
+			, new ActivityItem(getString(R.string.activityTitle_download), DownloadActivity.class)
 			, new ActivityItem(getString(R.string.activityTitle_requestObject), RequestObjectActivity.class)
 		));
 	}

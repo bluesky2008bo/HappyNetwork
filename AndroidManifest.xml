@@ -24,6 +24,7 @@
         <activity android:name="me.xiaopan.android.easynetwork.sample.activity.BinaryActivity" android:label="@string/activityTitle_binary"/>
         <activity android:name="me.xiaopan.android.easynetwork.sample.activity.StringActivity" android:label="@string/activityTitle_string"/>
         <activity android:name="me.xiaopan.android.easynetwork.sample.activity.JsonActivity" android:label="@string/activityTitle_json"/>
+        <activity android:name="me.xiaopan.android.easynetwork.sample.activity.DownloadActivity" android:label="@string/activityTitle_download"/>
         <activity android:name="me.xiaopan.android.easynetwork.sample.activity.RequestObjectActivity" android:label="@string/activityTitle_requestObject"/>
     </application>
 </manifest>

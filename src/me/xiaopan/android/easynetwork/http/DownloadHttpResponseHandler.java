@@ -2,6 +2,7 @@ package me.xiaopan.android.easynetwork.http;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -17,7 +18,6 @@ import android.os.Handler;
  */
 public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
     private File file;
-    private long completedLength = 0;
 
     protected DownloadHttpResponseHandler(File file) {
         this.file = file;
@@ -40,33 +40,50 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
         try{
             BufferedHttpEntity bufferedHttpEntity = new BufferedHttpEntity(httpResponse.getEntity());
             inputStream = new BufferedInputStream(bufferedHttpEntity.getContent(), 8*1024);
-            outputStream = new BufferedOutputStream(new FileOutputStream(file));
+            if(file != null){
+            	outputStream = new BufferedOutputStream(new FileOutputStream(file));
+            }else{
+            	outputStream = new  ByteArrayOutputStream();
+            }
             int realReadLength;
-            final long totalLength = bufferedHttpEntity.getContentLength();
+            long totalLength = bufferedHttpEntity.getContentLength();
+            long completedLength = 0;
             byte[] bufferData = new byte[8*1024];
             while((realReadLength = inputStream.read(bufferData)) != -1){
                 outputStream.write(bufferData, 0, realReadLength);
                 completedLength+=realReadLength;
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onUpdateProgress(totalLength, completedLength);
-                    }
-                });
+                updateProgress(handler, totalLength, completedLength);
             }
             GeneralUtils.close(outputStream);
             GeneralUtils.close(inputStream);
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onSuccess(file);
-                }
-            });
+            callbackResult(handler, file != null?file:((ByteArrayOutputStream) outputStream).toByteArray());
         }catch(Throwable e){
             GeneralUtils.close(outputStream);
             GeneralUtils.close(inputStream);
             throw e;
         }
+    }
+    
+    private  void updateProgress(Handler handler, final long totalLength, final long completedLength){
+    	handler.post(new Runnable() {
+        	@Override
+            public void run() {
+                onUpdateProgress(totalLength, completedLength);
+            }
+        });
+    }
+    
+    private void callbackResult(Handler  handler, final Object result){
+    	handler.post(new Runnable() {
+            @Override
+            public void run() {
+            	if(result instanceof File){
+            		onSuccess((File) result);
+            	}else{
+            		onSuccess((byte[]) result);
+            	}
+            }
+        });
     }
 
     @Override
@@ -94,6 +111,8 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
     public abstract void onUpdateProgress(long totalLength, long completedLength);
 
     public abstract void onSuccess(File file);
+
+    public void onSuccess(byte[] data){};
 
     public abstract void onFailure(Throwable e);
 
