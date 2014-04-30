@@ -9,6 +9,7 @@ import me.xiaopan.android.easynetwork.sample.MyActivity;
 import me.xiaopan.android.easynetwork.sample.net.Failure;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -39,12 +40,14 @@ public class DownloadActivity extends MyActivity {
 			public void onUpdateProgress(long totalLength, long completedLength) {
 				progressBar.setMax((int) totalLength);
 				progressBar.setProgress((int) completedLength);
+				Log.e("下载", "更新进度");
 			}
 
 			@Override
 			public void onSuccess(byte[] data) {
 				imageView.setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.length));
 				progressBar.setVisibility(View.GONE);
+				Log.e("下载", "成功");
 			}
 
 			@Override
@@ -61,7 +64,19 @@ public class DownloadActivity extends MyActivity {
 						load();
 					}
 				});
+				Log.e("下载", "失败");
 			}
-		});
+
+			@Override
+			protected void onCancel() {
+				Log.e("下载", "取消");
+			}
+		}, this);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		EasyHttpClient.getInstance(getBaseContext()).cancelRequests(this, true);
 	}
 }

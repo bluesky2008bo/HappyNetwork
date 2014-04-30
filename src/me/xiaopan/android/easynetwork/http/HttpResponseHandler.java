@@ -24,7 +24,30 @@ import android.os.Handler;
  * 响应处理器
  */
 public abstract class HttpResponseHandler{
+	private boolean cancelled;
+	private boolean mayInterruptIfRunning;
+	
+    public boolean isCancelled() {
+		return cancelled;
+	}
+    
+	public boolean isMayInterruptIfRunning() {
+		return mayInterruptIfRunning;
+	}
+
     /**
+     * 取消
+     * @param handler
+     * @param mayInterruptIfRunning 如果正在运行是否尝试终止
+     * @return
+     */
+    public void cancel(Handler handler, boolean mayInterruptIfRunning) {
+    	this.cancelled = true;
+    	this.mayInterruptIfRunning = mayInterruptIfRunning;
+    	onCancel(handler);
+    }
+
+	/**
      * 当请求开始
      * @param handler 消息处理器
      */

@@ -68,7 +68,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle execute(HttpUriRequest httpRequest, String name, ResponseCache responseCache, HttpResponseHandler httpResponseHandler, Context context) {
-    	HttpRequestExecuteRunnable httpRequestRunnable = new HttpRequestExecuteRunnable(this, name, httpRequest, responseCache, httpResponseHandler);
+    	HttpRequestExecuteRunnable httpRequestRunnable = new HttpRequestExecuteRunnable(getConfiguration(), name, httpRequest, responseCache, httpResponseHandler);
     	getConfiguration().getExecutorService().submit(httpRequestRunnable);
         RequestHandle requestHandle = new RequestHandle(httpRequestRunnable);
         if(context != null) {

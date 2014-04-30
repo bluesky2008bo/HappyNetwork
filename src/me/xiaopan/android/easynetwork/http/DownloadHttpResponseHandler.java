@@ -25,12 +25,16 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
 
     @Override
     protected final void onStart(Handler handler) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                onStart();
-            }
-        });
+        if(!isCancelled()){
+        	handler.post(new Runnable() {
+        		@Override
+        		public void run() {
+        			if(!isCancelled()){
+        				onStart();
+        			}
+        		}
+        	});
+        }
     }
 
     @Override
@@ -49,14 +53,20 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
             long totalLength = bufferedHttpEntity.getContentLength();
             long completedLength = 0;
             byte[] bufferData = new byte[8*1024];
-            while((realReadLength = inputStream.read(bufferData)) != -1){
+            while(!isMayInterruptIfRunning() && (realReadLength = inputStream.read(bufferData)) != -1){
                 outputStream.write(bufferData, 0, realReadLength);
                 completedLength+=realReadLength;
                 updateProgress(handler, totalLength, completedLength);
             }
             GeneralUtils.close(outputStream);
             GeneralUtils.close(inputStream);
-            callbackResult(handler, file != null?file:((ByteArrayOutputStream) outputStream).toByteArray());
+            if(isCancelled()){
+            	if(file != null){
+            		file.delete();
+            	}
+            }else{
+            	callbackResult(handler, file != null?file:((ByteArrayOutputStream) outputStream).toByteArray());
+            }
         }catch(Throwable e){
             GeneralUtils.close(outputStream);
             GeneralUtils.close(inputStream);
@@ -65,35 +75,47 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
     }
     
     private  void updateProgress(Handler handler, final long totalLength, final long completedLength){
-    	handler.post(new Runnable() {
-        	@Override
-            public void run() {
-                onUpdateProgress(totalLength, completedLength);
-            }
-        });
+    	if(!isCancelled()){
+    		handler.post(new Runnable() {
+    			@Override
+    			public void run() {
+    				if(!isCancelled()){
+    					onUpdateProgress(totalLength, completedLength);
+    				}
+    			}
+    		});
+    	}
     }
     
     private void callbackResult(Handler  handler, final Object result){
-    	handler.post(new Runnable() {
-            @Override
-            public void run() {
-            	if(result instanceof File){
-            		onSuccess((File) result);
-            	}else{
-            		onSuccess((byte[]) result);
-            	}
-            }
-        });
+    	if(!isCancelled()){
+    		handler.post(new Runnable() {
+    			@Override
+    			public void run() {
+    				if(!isCancelled()){
+    					if(result instanceof File){
+    						onSuccess((File) result);
+    					}else{
+    						onSuccess((byte[]) result);
+    					}
+    				}
+    			}
+    		});
+    	}
     }
 
     @Override
     protected final void onException(Handler handler, final Throwable e, boolean isNotRefresh) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                onFailure(e);
-            }
-        });
+    	if(!isCancelled()){
+    		handler.post(new Runnable() {
+    			@Override
+    			public void run() {
+    				if(!isCancelled()){
+    					onFailure(e);
+    				}
+    			}
+    		});
+    	}
     }
 
     @Override
