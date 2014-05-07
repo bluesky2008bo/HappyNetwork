@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.BufferedHttpEntity;
 
 import android.os.Handler;
@@ -43,18 +44,18 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler {
 	}
 
 	@Override
-	protected final void onHandleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
+	protected final void onHandleResponse(final Handler handler, HttpUriRequest request, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
 		if(!(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300)){
 			if(httpResponse.getStatusLine().getStatusCode() == 404){
-				throw new FileNotFoundException("请求地址错误");
+				throw new FileNotFoundException("请求地址错误："+request.getURI().toString());
 			}else{
-				throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode());
+				throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode()+"："+request.getURI().toString());
 			}
 		}
 		
 		HttpEntity httpEntity = httpResponse.getEntity();
 		if(httpEntity == null){
-            throw new Exception("没有响应体");
+            throw new Exception("没有响应体："+request.getURI().toString());
 		}
 		
 		final byte[] data = toByteArray(new BufferedHttpEntity(httpEntity), this, handler);

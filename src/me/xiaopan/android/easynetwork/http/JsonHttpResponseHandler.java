@@ -22,6 +22,7 @@ import java.lang.reflect.Type;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.json.JSONObject;
 
@@ -61,25 +62,25 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 
 	@Override
-	protected final void onHandleResponse(final Handler handler, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
+	protected final void onHandleResponse(final Handler handler, HttpUriRequest request, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
 		if(!(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300)){
 			if(httpResponse.getStatusLine().getStatusCode() == 404){
-				throw new FileNotFoundException("请求地址错误");
+				throw new FileNotFoundException("请求地址错误："+request.getURI().toString());
 			}else{
-				throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode());
+				throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), "异常状态码："+httpResponse.getStatusLine().getStatusCode()+"："+request.getURI().toString());
 			}
 		}
 		
 		HttpEntity httpEntity = httpResponse.getEntity();
 		if(httpEntity == null){
-            throw new Exception("没有响应体");
+            throw new Exception("没有响应体："+request.getURI().toString());
 		}
 		
 		String jsonString = toString(new BufferedHttpEntity(httpEntity), this, handler, "UTF-8");
 		if(isCancelled()) return;
 		
 		if(jsonString == null || "".equals(jsonString)){
-			throw new Exception("响应内容为空");
+			throw new Exception("响应内容为空："+request.getURI().toString());
 		}
 		
 		if(responseClass != null){	//如果是要转换成一个对象

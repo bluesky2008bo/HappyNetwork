@@ -27,6 +27,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.ByteArrayBuffer;
 import org.apache.http.util.CharArrayBuffer;
@@ -79,12 +80,13 @@ public abstract class HttpResponseHandler{
     /**
      * 处理响应，值得注意的是此方法当在开启缓存模式并且开启刷新缓存以及开启了刷新后再次回调的时候总共会回调两次，你可以通过isCache、isRefreshCacheAndCallback参数来区分并做不同的处理
      * @param handler 消息处理器
+     * @param request 请求
      * @param httpResponse Http响应
      * @param isNotRefresh 本次响应不是刷新
      * @param isOver 本次执行是否是最后一次
      * @throws Throwable 当发生异常时会进入exception()方法
      */
-    protected abstract void onHandleResponse(Handler handler, HttpResponse httpResponse, boolean isNotRefresh, boolean isOver) throws Throwable;
+    protected abstract void onHandleResponse(Handler handler, HttpUriRequest request, HttpResponse httpResponse, boolean isNotRefresh, boolean isOver) throws Throwable;
     
     /**
      * 更新进度
