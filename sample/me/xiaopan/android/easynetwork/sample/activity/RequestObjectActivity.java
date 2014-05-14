@@ -66,7 +66,7 @@ public class RequestObjectActivity extends MyActivity {
 	
 	@SuppressLint("HandlerLeak")
 	private void search(final String keyword){
-		EasyHttpClient.getInstance(getBaseContext()).execute(new BaiduSearchRequest(keyword), new StringHttpResponseHandler(){
+		EasyHttpClient.getInstance(getBaseContext()).execute(new BaiduSearchRequest(keyword), new StringHttpResponseHandler(true){
 			@Override
 			protected void onStart() {
 				searchButton.setEnabled(false);

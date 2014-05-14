@@ -4,13 +4,13 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.BufferedHttpEntity;
 
 import android.os.Handler;
 
@@ -19,21 +19,37 @@ import android.os.Handler;
  */
 public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
     private File file;
+    
+	public DownloadHttpResponseHandler(File file, boolean enableUpdateProgress) {
+		super(enableUpdateProgress);
+		if(file == null){
+    		throw new IllegalArgumentException("file 参数不能为null");
+    	}
+        this.file = file;
+	}
 
-    protected DownloadHttpResponseHandler(File file) {
+    protected DownloadHttpResponseHandler(File file){
+    	if(file == null){
+    		throw new IllegalArgumentException("file 参数不能为null");
+    	}
         this.file = file;
     }
 
-    @Override
+	@Override
     protected final void onStart(Handler handler) {
     	if(isCancelled()) return;
-        handler.post(new Runnable() {
-        	@Override
-        	public void run() {
-        		if(isCancelled()) return;
-        		onStart();
-        	}
-        });
+    	
+    	if(!isSynchronizationCallback()){
+    		handler.post(new Runnable() {
+    			@Override
+    			public void run() {
+    				if(isCancelled()) return;
+    				onStart();
+    			}
+    		});
+    	}else{
+			onStart();
+    	}
     }
 
     @Override
@@ -51,67 +67,79 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
             throw new Exception("没有响应体："+request.getURI().toString());
 		}
 		
-		if(file != null){
-			OutputStream outputStream = null;
-			try{
-				outputStream = new BufferedOutputStream(new FileOutputStream(file), 8*1024);
-				read(new BufferedHttpEntity(httpEntity), outputStream, this, handler);
-			}finally{
-				GeneralUtils.close(outputStream);
-			}
-			if(isCancelled()) return;
-	    	handler.post(new Runnable() {
-	    		@Override
-	    		public void run() {
-	    			if(isCancelled()) return;
-    				onSuccess(file);
-	    		}
-	    	});
-		}else{
-			final byte[] data = toByteArray(new BufferedHttpEntity(httpEntity), this, handler);
-			if(isCancelled()) return;
+		if(createFile(file) == null){
+			throw new IllegalArgumentException("创建文件失败："+file.getPath());
+		}
+		
+		OutputStream outputStream = null;
+		try{
+			outputStream = new BufferedOutputStream(new FileOutputStream(file), 8*1024);
+			BaseUpdateProgressCallback baseUpdateProgressCallback = isEnableUpdateProgress()?new BaseUpdateProgressCallback(this, handler):null;
+			ProgressEntityUtils.read(new ProgressBufferedHttpEntity(httpEntity, baseUpdateProgressCallback), outputStream, baseUpdateProgressCallback);
+		}finally{
+			GeneralUtils.close(outputStream);
+		}
+		if(isCancelled()) return;
+		
+		if(!isSynchronizationCallback()){
 			handler.post(new Runnable() {
 				@Override
 				public void run() {
 					if(isCancelled()) return;
-					onSuccess(data);
+					onSuccess(file);
 				}
 			});
+		}else{
+			onSuccess(file);
 		}
     }
     
     @Override
     protected final void onUpdateProgress(Handler handler, final long totalLength, final long completedLength){
     	if(isCancelled()) return;
-    	handler.post(new Runnable() {
-    		@Override
-    		public void run() {
-    			if(isCancelled()) return;
-    			onUpdateProgress(totalLength, completedLength);
-    		}
-    	});
+    	
+    	if(!isSynchronizationCallback()){
+    		handler.post(new Runnable() {
+    			@Override
+    			public void run() {
+    				if(isCancelled()) return;
+    				onUpdateProgress(totalLength, completedLength);
+    			}
+    		});
+    	}else{
+    		onUpdateProgress(totalLength, completedLength);
+    	}
     }
     
     @Override
     protected final void onException(Handler handler, final Throwable e, boolean isNotRefresh) {
     	if(isCancelled()) return;
-    	handler.post(new Runnable() {
-    		@Override
-    		public void run() {
-    			if(isCancelled()) return;
-    			onFailure(e);
-    		}
-    	});
+    	
+    	if(!isSynchronizationCallback()){
+    		handler.post(new Runnable() {
+    			@Override
+    			public void run() {
+    				if(isCancelled()) return;
+    				onFailure(e);
+    			}
+    		});
+    	}else{
+    		onFailure(e);
+    	}
     }
 
     @Override
     protected final void onCancel(Handler handler) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                onCancel();
-            }
-        });
+    	if(!isSynchronizationCallback()){
+    		handler.post(new Runnable() {
+    			@Override
+    			public void run() {
+    				onCancel();
+    			}
+    		});
+    	}else{
+    		onCancel();
+    	}
     }
 
     public abstract void onStart();
@@ -119,8 +147,6 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
     public abstract void onUpdateProgress(long totalLength, long completedLength);
 
     public abstract void onSuccess(File file);
-
-    public void onSuccess(byte[] data){};
 
     public abstract void onFailure(Throwable e);
 
@@ -130,4 +156,33 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
     protected void onCancel(){
 
     }
+    
+    /**
+	 * 创建文件，此方法的重要之处在于，如果其父目录不存在会先创建其父目录
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	private static File createFile(File file) throws IOException{
+		if(!file.exists()){
+			boolean mkadirsSuccess = true;
+			File parentFile = file.getParentFile();
+			if(!parentFile.exists()){
+				mkadirsSuccess = parentFile.mkdirs();
+			}
+			if(mkadirsSuccess){
+				try{
+					file.createNewFile();
+					return file;
+				}catch(IOException exception){
+					exception.printStackTrace();
+					return null;
+				}
+			}else{
+				return null;
+			}
+		}else{
+			return file;
+		}
+	}
 }

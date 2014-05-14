@@ -23,7 +23,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.BufferedHttpEntity;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -39,6 +38,18 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	private Class<?> responseClass;
 	private Type responseType;
 
+	public JsonHttpResponseHandler(Context context, Class<?> responseClass, boolean enableUpdateProgress){
+		super(enableUpdateProgress);
+		this.context = context;
+		this.responseClass = responseClass;
+	}
+	
+	public JsonHttpResponseHandler(Context context, Type responseType, boolean enableUpdateProgress){
+		super(enableUpdateProgress);
+		this.context = context;
+		this.responseType = responseType;
+	}
+
 	public JsonHttpResponseHandler(Context context, Class<?> responseClass){
 		this.context = context;
 		this.responseClass = responseClass;
@@ -48,19 +59,25 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 		this.context = context;
 		this.responseType = responseType;
 	}
-	
+
 	@Override
 	protected final void onStart(final Handler handler) {
 		if(isCancelled()) return;
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-        		if(isCancelled()) return;
-                onStart();
-            }
-        });
+		
+		if(!isSynchronizationCallback()){
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					if(isCancelled()) return;
+					onStart();
+				}
+			});
+		}else{
+			onStart();
+		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected final void onHandleResponse(final Handler handler, HttpUriRequest request, final HttpResponse httpResponse, final boolean isNotRefresh, final boolean isOver) throws Throwable {
 		if(!(httpResponse.getStatusLine().getStatusCode() > 100 && httpResponse.getStatusLine().getStatusCode() < 300)){
@@ -76,7 +93,8 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
             throw new Exception("没有响应体："+request.getURI().toString());
 		}
 		
-		String jsonString = toString(new BufferedHttpEntity(httpEntity), this, handler, "UTF-8");
+		BaseUpdateProgressCallback updateProgressCallback = isEnableUpdateProgress()?new BaseUpdateProgressCallback(this, handler):null;
+		String jsonString = ProgressEntityUtils.toString(new ProgressBufferedHttpEntity(httpEntity, updateProgressCallback), "UTF-8", updateProgressCallback);
 		if(isCancelled()) return;
 		
 		if(jsonString == null || "".equals(jsonString)){
@@ -85,10 +103,14 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 		
 		if(responseClass != null){	//如果是要转换成一个对象
 			String responseBodyKey = RequestParser.parseResponseBodyAnnotation(context, responseClass);
+			String readJson = jsonString;
 			if(responseBodyKey != null && !"".equals(responseBodyKey)){
-				final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(new JSONObject(jsonString).getString(responseBodyKey), responseClass);
+				readJson = new JSONObject(jsonString).getString(responseBodyKey);
+			}
+			final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(readJson, responseClass);
+			
+			if(!isSynchronizationCallback()){
 				handler.post(new Runnable() {
-					@SuppressWarnings("unchecked")
 					@Override
 					public void run() {
 						if(isCancelled()) return;
@@ -96,26 +118,22 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 					}
 				});
 			}else{
-				final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseClass);
+				onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
+			}
+		}else if(responseType != null){	//如果是要转换成一个集合
+			final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseType);
+			
+			if(!isSynchronizationCallback()){
 				handler.post(new Runnable() {
-					@SuppressWarnings("unchecked")
 					@Override
 					public void run() {
 						if(isCancelled()) return;
 						onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
 					}
 				});
+			}else{
+				onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
 			}
-		}else if(responseType != null){	//如果是要转换成一个集合
-			final Object object = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(jsonString, responseType);
-			handler.post(new Runnable() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public void run() {
-					if(isCancelled()) return;
-					onSuccess(httpResponse, (T) object, isNotRefresh, isOver);
-				}
-			});
 		}else{
 			throw new Exception("responseClass和responseType至少有一个不能为null");
 		}
@@ -124,35 +142,49 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
     @Override
     protected final void onUpdateProgress(Handler handler, final long totalLength, final long completedLength){
     	if(isCancelled()) return;
-    	handler.post(new Runnable() {
-    		@Override
-    		public void run() {
-    			if(isCancelled()) return;
-    			onUpdateProgress(totalLength, completedLength);
-    		}
-    	});
+    	
+    	if(!isSynchronizationCallback()){
+    		handler.post(new Runnable() {
+    			@Override
+    			public void run() {
+    				if(isCancelled()) return;
+    				onUpdateProgress(totalLength, completedLength);
+    			}
+    		});
+    	}else{
+    		onUpdateProgress(totalLength, completedLength);
+    	}
     }
 	
 	@Override
 	protected final void onException(final Handler handler, final Throwable e, final boolean isNotRefresh) {
 		if(isCancelled()) return;
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-        		if(isCancelled()) return;
-                onFailure(e, isNotRefresh);
-            }
-        });
+        
+		if(!isSynchronizationCallback()){
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					if(isCancelled()) return;
+					onFailure(e, isNotRefresh);
+				}
+			});
+		}else{
+			onFailure(e, isNotRefresh);
+		}
 	}
 	
 	@Override
 	protected final void onCancel(Handler handler) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                onCancel();
-            }
-        });
+		if(!isSynchronizationCallback()){
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					onCancel();
+				}
+			});
+		}else{
+			onCancel();
+		}
 	}
 
 	/**

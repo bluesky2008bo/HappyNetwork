@@ -16,21 +16,8 @@
 
 package me.xiaopan.android.easynetwork.http;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-
-import org.apache.http.HeaderElement;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.ParseException;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.ByteArrayBuffer;
-import org.apache.http.util.CharArrayBuffer;
 
 import android.os.Handler;
 
@@ -38,18 +25,33 @@ import android.os.Handler;
  * 响应处理器
  */
 public abstract class HttpResponseHandler{
-	private boolean cancelled;
-	private boolean mayInterruptIfRunning;
+	private boolean cancelled;	// 是否已经取消
+	private boolean mayInterruptIfRunning;	// 当取消请求的时候是否中断正在进行的请求
+	private boolean enableUpdateProgress;	// 开启更新进度功能
+	private boolean synchronizationCallback;	// 同步回调
 	
-    public boolean isCancelled() {
+    public HttpResponseHandler(boolean enableUpdateProgress) {
+		this.enableUpdateProgress = enableUpdateProgress;
+	}
+	
+    public HttpResponseHandler() {
+	}
+
+    /**
+     * 是否已经取消了
+     */
+	public boolean isCancelled() {
 		return cancelled;
 	}
     
+	/**
+	 * 如果正在运行是否中断
+	 */
 	public boolean isMayInterruptIfRunning() {
 		return mayInterruptIfRunning;
 	}
 
-    /**
+	/**
      * 取消
      * @param handler
      * @param mayInterruptIfRunning 如果正在运行是否尝试终止
@@ -60,6 +62,38 @@ public abstract class HttpResponseHandler{
     	this.mayInterruptIfRunning = mayInterruptIfRunning;
     	onCancel(handler);
     }
+    
+    /**
+     * 是否开启进度更新功能
+     * @return 是否开启进度更新功能
+     */
+	public boolean isEnableUpdateProgress() {
+		return enableUpdateProgress;
+	}
+
+	/**
+	 * 设置是否开启进度更新功能
+	 * @param enableUpdateProgress 是否开启进度更新功能
+	 */
+	public void setEnableUpdateProgress(boolean enableUpdateProgress) {
+		this.enableUpdateProgress = enableUpdateProgress;
+	}
+
+	/**
+	 * 是否同步回调
+	 * @return 是否同步回调
+	 */
+	public boolean isSynchronizationCallback() {
+		return synchronizationCallback;
+	}
+
+	/**
+	 * 设置是否同步回调
+	 * @param synchronizationCallback 是否同步回调
+	 */
+	public void setSynchronizationCallback(boolean synchronizationCallback) {
+		this.synchronizationCallback = synchronizationCallback;
+	}
 
 	/**
      * 当请求开始
@@ -109,137 +143,4 @@ public abstract class HttpResponseHandler{
      * @param handler 消息处理器
      */
     protected abstract void onCancel(final Handler handler);
-    
-    public static byte[] toByteArray(final HttpEntity entity, HttpResponseHandler httpResponseHandler, Handler handler) throws IOException {
-		if (entity == null) {
-			throw new IllegalArgumentException("HTTP entity may not be null");
-		}
-		InputStream instream = null;
-		ByteArrayBuffer buffer = null;
-		try {
-			instream = entity.getContent();
-			if (instream == null) {
-				return new byte[] {};
-			}
-			if (entity.getContentLength() > Integer.MAX_VALUE) {
-				throw new IllegalArgumentException("HTTP entity too large to be buffered in memory");
-			}
-			int contentLength = (int) entity.getContentLength();
-			if (contentLength < 0) {
-				throw new IllegalArgumentException("HTTP entity contentLength is 0");
-			}
-			buffer = new ByteArrayBuffer(contentLength);
-			int readLength;
-			long completedLength = 0;
-			byte[] tmp = new byte[4096];
-			while (!httpResponseHandler.isMayInterruptIfRunning() && (readLength = instream.read(tmp)) != -1) {
-				buffer.append(tmp, 0, readLength);
-				completedLength+=readLength;
-				if(!httpResponseHandler.isCancelled()){
-					httpResponseHandler.onUpdateProgress(handler, contentLength, completedLength);
-				}
-			}
-		} finally {
-			GeneralUtils.close(instream);
-		}
-		return httpResponseHandler.isCancelled() || buffer==null?null:buffer.toByteArray();
-	}
-
-	public static String getContentCharSet(final HttpEntity entity) throws ParseException {
-
-		if (entity == null) {
-			throw new IllegalArgumentException("HTTP entity may not be null");
-		}
-		String charset = null;
-		if (entity.getContentType() != null) {
-			HeaderElement values[] = entity.getContentType().getElements();
-			if (values.length > 0) {
-				NameValuePair param = values[0].getParameterByName("charset");
-				if (param != null) {
-					charset = param.getValue();
-				}
-			}
-		}
-		return charset;
-	}
-
-	public static String toString(final HttpEntity entity, HttpResponseHandler httpResponseHandler, Handler handler, final String defaultCharset) throws IOException, ParseException {
-		if (entity == null) {
-			throw new IllegalArgumentException("HTTP entity may not be null");
-		}
-		InputStream instream = null;
-		CharArrayBuffer buffer = null;
-		try {
-			instream = entity.getContent();
-			if (instream == null) {
-				return "";
-			}
-			if (entity.getContentLength() > Integer.MAX_VALUE) {
-				throw new IllegalArgumentException(
-						"HTTP entity too large to be buffered in memory");
-			}
-			int contentLength = (int) entity.getContentLength();
-			if (contentLength < 0) {
-				throw new IllegalArgumentException("HTTP entity contentLength is 0");
-			}
-			String charset = getContentCharSet(entity);
-			if (charset == null) {
-				charset = defaultCharset;
-			}
-			if (charset == null) {
-				charset = HTTP.DEFAULT_CONTENT_CHARSET;
-			}
-			Reader reader = new InputStreamReader(instream, charset);
-			buffer = new CharArrayBuffer(contentLength);
-			int readLength;
-			long completedLength = 0;
-			char[] tmp = new char[1024];
-			while (!httpResponseHandler.isMayInterruptIfRunning() && (readLength = reader.read(tmp)) != -1) {
-				buffer.append(tmp, 0, readLength);
-				completedLength+=readLength;
-				if(!httpResponseHandler.isCancelled()){
-					httpResponseHandler.onUpdateProgress(handler, contentLength, completedLength);
-				}
-			}
-		} finally {
-			GeneralUtils.close(instream);
-		}
-		return httpResponseHandler.isCancelled() || buffer==null?null:buffer.toString();
-	}
-
-	public static String toString(final HttpEntity entity, HttpResponseHandler httpResponseHandler, Handler handler) throws IOException, ParseException {
-		return toString(entity, httpResponseHandler, handler, null);
-	}
-	
-	public static void read(final HttpEntity entity, OutputStream outputStream, HttpResponseHandler httpResponseHandler, Handler handler) throws IOException{
-		if (entity == null) {
-			throw new IllegalArgumentException("HTTP entity may not be null");
-		}
-		InputStream instream = null;
-		try {
-			instream = entity.getContent();
-			if (instream == null) {
-				return;
-			}
-			if (entity.getContentLength() > Integer.MAX_VALUE) {
-				throw new IllegalArgumentException("HTTP entity too large to be buffered in memory");
-			}
-			int contentLength = (int) entity.getContentLength();
-			if (contentLength < 0) {
-				throw new IllegalArgumentException("HTTP entity contentLength is 0");
-			}
-			int readLength;
-			long completedLength = 0;
-			byte[] tmp = new byte[4096];
-			while (!httpResponseHandler.isMayInterruptIfRunning() && (readLength = instream.read(tmp)) != -1) {
-				outputStream.write(tmp, 0, readLength);
-				completedLength+=readLength;
-				if(!httpResponseHandler.isCancelled()){
-					httpResponseHandler.onUpdateProgress(handler, contentLength, completedLength);
-				}
-			}
-		} finally {
-			GeneralUtils.close(instream);
-		}
-	}
 }

@@ -7,7 +7,7 @@ import me.xiaopan.android.easynetwork.http.DownloadHttpResponseHandler;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.sample.MyActivity;
 import me.xiaopan.android.easynetwork.sample.net.Failure;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,7 +26,8 @@ public class DownloadActivity extends MyActivity {
 	}
 	
 	private void load(){
-		EasyHttpClient.getInstance(getBaseContext()).get("http://img.pconline.com.cn/images/upload/upc/tx/wallpaper/1311/11/c0/28529113_1384156076013_800x600.jpg", new DownloadHttpResponseHandler(null) {
+		File file = new File(getExternalCacheDir(), "800x600.jpg");
+		EasyHttpClient.getInstance(getBaseContext()).get("http://img.pconline.com.cn/images/upload/upc/tx/wallpaper/1311/11/c0/28529113_1384156076013_800x600.jpg", new DownloadHttpResponseHandler(file, true) {
 			@Override
 			public void onStart() {
 				getHintView().loading("");
@@ -35,19 +36,12 @@ public class DownloadActivity extends MyActivity {
 			@Override
 			public void onUpdateProgress(long totalLength, long completedLength) {
 				getHintView().setProgress((int)totalLength, (int)completedLength);
-				Log.e("下载", "更新进度");
-			}
-
-			@Override
-			public void onSuccess(byte[] data) {
-				imageView.setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.length));
-				getHintView().hidden();
-				Log.e("下载", "成功");
 			}
 
 			@Override
 			public void onSuccess(File file) {
-				
+				imageView.setImageURI(Uri.fromFile(file));
+				getHintView().hidden();
 			}
 
 			@Override
@@ -58,7 +52,6 @@ public class DownloadActivity extends MyActivity {
 						load();
 					}
 				});
-				Log.e("下载", "失败");
 			}
 
 			@Override

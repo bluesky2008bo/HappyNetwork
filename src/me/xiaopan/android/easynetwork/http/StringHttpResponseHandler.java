@@ -22,7 +22,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.BufferedHttpEntity;
 
 import android.os.Handler;
 
@@ -30,17 +29,29 @@ import android.os.Handler;
  * 默认的字符串Http响应处理器
  */
 public abstract class StringHttpResponseHandler extends HttpResponseHandler {
+	
+	public StringHttpResponseHandler() {
+	}
+
+	public StringHttpResponseHandler(boolean enableUpdateProgress) {
+		super(enableUpdateProgress);
+	}
 
 	@Override
 	protected final void onStart(final Handler handler) {
 		if(isCancelled()) return;
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-        		if(isCancelled()) return;
-                onStart();
-            }
-        });
+		
+		if(!isSynchronizationCallback()){
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					if(isCancelled()) return;
+					onStart();
+				}
+			});
+		}else{
+			onStart();
+		}
 	}
 
 	@Override
@@ -58,49 +69,69 @@ public abstract class StringHttpResponseHandler extends HttpResponseHandler {
             throw new Exception("没有响应体："+request.getURI().toString());
 		}
 		
-		final String responseContent = toString(new BufferedHttpEntity(httpEntity), this, handler, "UTF-8");
+		BaseUpdateProgressCallback updateProgressCallback = isEnableUpdateProgress()?new BaseUpdateProgressCallback(this, handler):null;
+		final String responseContent = ProgressEntityUtils.toString(new ProgressBufferedHttpEntity(httpEntity, updateProgressCallback), "UTF-8", updateProgressCallback);
         if(isCancelled()) return;
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if(isCancelled()) return;
-                onSuccess(httpResponse, responseContent, isNotRefresh, isOver);
-            }
-        });
+		
+        if(!isSynchronizationCallback()){
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					if(isCancelled()) return;
+					onSuccess(httpResponse, responseContent, isNotRefresh, isOver);
+				}
+			});
+		}else{
+			onSuccess(httpResponse, responseContent, isNotRefresh, isOver);
+		}
 	}
     
     @Override
     protected final void onUpdateProgress(Handler handler, final long totalLength, final long completedLength){
     	if(isCancelled()) return;
-    	handler.post(new Runnable() {
-    		@Override
-    		public void run() {
-    			if(isCancelled()) return;
-    			onUpdateProgress(totalLength, completedLength);
-    		}
-    	});
+		
+    	if(!isSynchronizationCallback()){
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					if(isCancelled()) return;
+					onUpdateProgress(totalLength, completedLength);
+				}
+			});
+		}else{
+			onUpdateProgress(totalLength, completedLength);
+		}
     }
 
 	@Override
 	protected final void onException(final Handler handler, final Throwable e, final boolean isNotRefresh) {
 		if(isCancelled()) return;
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-        		if(isCancelled()) return;
-                onFailure(e, isNotRefresh);
-            }
-        });
+		
+		if(!isSynchronizationCallback()){
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					if(isCancelled()) return;
+					onFailure(e, isNotRefresh);
+				}
+			});
+		}else{
+			onFailure(e, isNotRefresh);
+		}
 	}
 	
 	@Override
 	protected final void onCancel(Handler handler) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                onCancel();
-            }
-        });
+		if(!isSynchronizationCallback()){
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					onCancel();
+				}
+			});
+		}else{
+			onCancel();
+		}
 	}
 
 	/**

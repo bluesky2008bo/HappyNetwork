@@ -6,9 +6,8 @@
 >* 异步发送Http请求，并用ThreadPool来维护每一个请求
 >* 重新封装了HttpRequest，使用更方便；
 >* 支持以请求对象的方式来发送Http请求；
->* 内置多种BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler等响应处理器
->* 支持缓存HttpResponse，还可以配置过期时间、刷新缓存等功能；
->* 默认提供单例模式；
+>* 内置多种BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler、DownloadHttpResponseHandler响应处理器，方便开发者处理不同类型的数据，并且都支持进度回调
+>* 支持缓存HttpResponse，还可以配置缓存有效期、刷新缓存等功能；
 >* 请求对象中注解的值支持使用String资源
 
 ##Usage Guide

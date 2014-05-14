@@ -50,7 +50,7 @@ public class StringActivity extends MyActivity {
 	}
 	
 	private void load(){
-		EasyHttpClient.getInstance(getBaseContext()).get(new HttpGetRequest.Builder("http://www.miui.com/forum.php").setResponseCache(new ResponseCache.Builder(20 * 1000).create()).create(), new StringHttpResponseHandler(){
+		EasyHttpClient.getInstance(getBaseContext()).get(new HttpGetRequest.Builder("http://www.miui.com/forum.php").setResponseCache(new ResponseCache.Builder(20 * 1000).create()).create(), new StringHttpResponseHandler(true){
 			@Override
 			protected void onStart() {
 				getHintView().loading("MIUI首页");
