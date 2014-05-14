@@ -3,170 +3,51 @@
 这是一个参考了android-async-http项目的Android网络访问库，旨在用最简单、最快捷的方式来访问网络，最低兼容Android2.2
 
 ##Features
->* 异步发送Http请求，并用ThreadPool来维护每一个请求
+>* 异步发送Http请求，并用ThreadPool来维护每一个请求；
+>* 内置多种Http响应处理器，方便开发者处理不同类型的数据，并且都支持回调进度；
 >* 重新封装了HttpRequest，使用更方便；
->* 支持以请求对象的方式来发送Http请求；
->* 内置多种BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler、DownloadHttpResponseHandler响应处理器，方便开发者处理不同类型的数据，并且都支持进度回调
->* 支持缓存HttpResponse，还可以配置缓存有效期、刷新缓存等功能；
->* 请求对象中注解的值支持使用String资源
+>* 支持以请求对象的方式来发送Http请求，请求对象中的注解还支持使用String资源，方便开发者根据不同的环境发送不同的请求；
+>* 支持持久缓存Http响应到本地，还可以配置缓存有效期、缓存有效时再刷新缓存等；
 
 ##Usage Guide
 
 ###发送请求
 
 ####使用普通方式发送请求
->* 调用``EasyHttpClient.execute(String, HttpUriRequest, ResponseCache, HttpResponseHandler)``方法；
->* 使用重新封装的HttpRequest（包括``HttpGetRequest``、``HttpPostRequest``、``HttpPutRequest``、``HttpDeleteRequest``）调用``EasyHttpClient.get(HttpGetRequest, HttpResponseHandler)``、``EasyHttpClient.post(HttpPostRequest, HttpResponseHandler)``、``EasyHttpClient.put(HttpPutRequest, HttpResponseHandler)``、``EasyHttpClient.delete(HttpDeleteRequest, HttpResponseHandler)``等方法。
+```java
+EasyHttpClient.getInstance(getBaseContext()).get(new HttpGetRequest("http://www.miui.com/forum.php"), new StringHttpResponseHandler(true){
+	@Override
+	protected void onStart() {
+		// 你可以在这里现实一些提示信息，提示用户开始加载
+	}
+	
+	@Override
+	public void onUpdateProgress(long totalLength, long completedLength) {
+		// 更新进度
+	}
+
+	@Override
+	protected void onSuccess(HttpResponse httpResponse, String responseContent, boolean isNotRefresh, boolean isOver) {
+		// 加载成功，使用webview显示html源码
+		Header contentTypeHeader = httpResponse.getEntity().getContentType();
+        ContentType contentType = new ContentType(contentTypeHeader.getValue());
+        webViewManager.getWebView().loadDataWithBaseURL(null, responseContent, contentType.getMimeType(), contentType.getCharset("UTF-8"), null);
+	}
+	
+	@Override
+	protected void onFailure(Throwable throwable, boolean isNotRefresh) {
+		// 加载失败了，你可以根据throwable的具体类型提示用户失败的原因
+	}
+});
+```
+示例中演示的是以get()方式发送请求，其他例如post、put、delete使用方式都非常类似
 
 ####使用请求对象发送请求
-当你调用EasyHttpClient的``execute(Request, HttpResponseHandler)``方法去执行一个请求的时候，会要求你传一个实现了``Request``接口的对象，此对象被称作请求对象，``EasyHttpClient``将通过此请求对象解析出请求方式、请求地址、请求头、请求参数等信息。具体配置如下：
->* 请求名称的配置：
-    1. 在请求对象上加上``@Name``注解即可，例如：``@Name("百度搜索")``。请求名称将用于在log中区分不同的请求。
-
->* 请求方式的配置：
-    1. 在请求对象上加上``@Method``注解即可，例如：``@Method(MethodType.POST)``；
-    2. 目前支持GET、POST、PUT、DELETE四种请求，缺省值是``MethodType.GET``。
-
->* 请求地址的配置：
-    1. 使用``@Url``注解来指定完整的请求地址。例如：``@Url("http://m.weather.com.cn/data/101010100.html")``；
-    2. 你还可以选择使用``@Host``加``@Path``注解来指定完整的请求地址，其中``@Host``负责不可变部分（例如``http://m.weather.com.cn``）；``@Path``负责变化部分（例如：``data/101010100.html``）；值得注意的是请不要在``@Host``的末尾或者``@Path``的开头加``/``，因为在解析的时候会自动加上；
-    3. 以上``@Url``、``@Host``以及``@Path``注解都是可以继承的，因此你可以弄一个BaseRequest然后把请求地址的不可变部分用``@Host``注解加在BaseRequest上，然后其他的请求都继承BaseRequest，这样一来其它的请求就只需添加``@Path``注解即可，同时也可以保证主机地址只会在一个地方定义；
-    4. ``@Url``的优先级高于``@Host``加``@Path``。
-
->* 请求头的配置：
-    1. 你可以在请求对象中定义一个字段，字段类型可以是Header、Header[]或者Collection<Header>，然后在此字段上加上``@Header`注解即可；
-    
->* 请求参数的配置：
-    1. 将请求对象中需要转换成请求参数的字段加上``@Param``注解即可；
-    2. 默认请求参数名称是字段的名称，如果你想自定义名称就给``@Param``注解附上值，例如：``@Param("wd")``
-    3. 默认使用字段的toString()方法来获取请求参数值，但以下几种情况将会被特殊处理：
-        * 字段上有``@Value``注解
-            有``@Value``注解时，将会用``@Value``注解的值来作为请求参数值，而不再考虑字段的值
-        * 字段类型为Map
-            对于``Map``类型的字段``EasyHttpClient``会将其每一对键值对都转换成请求参数，而每一对键值对的键将作为参数名，键值对的值将作为参数值；
-        * 字段类型为File
-            对于``File``类型的字段EasyHttpClient将使用``RequestParams``的``put(String key, File file)``方法将其添加到``RequestParams``中；
-        * 字段类型为ArrayList
-            对于``ArrayList``类型的字段EasyHttpClient将使用``RequestParams``的``put(String key, ArrayList<String> values)``方法将其添加到``RequestParams``中；
-        * 字段类型为Boolean
-            对于``Boolean``类型的字段你可以通过``@True``和``@False``注解来指定当字段值是``true``或``false``的时候其对应的转换成请求参数时的参数值；
-        * 字段类型为Enum
-            对于``Enum``类型的参数你可以使用``@Value``注解来指定其参数值，如果没有```@Value``注解将使用Enum对象的name来作为参数值。
-
->* HttpResponse缓存的配置：
-    1. 使用``@ResponseCache``注解来配置响应缓存，``@ResponseCache``有四个参数
-    2. periodOfValidity：int型，指定缓存有效期，单位毫秒，小于等于0表示永久有效，默认值为0；
-    3. isRefreshCache：boolean型，指定当本地缓存可用的时候，是否依然从网络加载新的数据来刷新本地缓存，默认值为false；
-    4. isRefreshCallback：boolean型，指定当刷新本地缓存完成的时候是否再次回调HttpResponseHandler.handleResponse()，默认值为false；
-    5. cacheDirectory：String型，指定缓存目录，默认值为``""``。
-    6.使用``@CacheIgnore``来配置在组织缓存ID的时候需要忽略的参数（这个很重要）
-
-更加详细的配置方式请参考示例程序。
-
-####缓存Http Response
->* 在使用普通方式发送请求的时候你可以传一个ResponseCache类型的参数来定义缓存配置;
->* 使用请求对象方式发送请求的时候你可以在请求对象上加上@ResponseCache注解来定义缓存配置。
->* 另外你可以使用``@CacheIgnore``来配置在组织缓存ID的时候需要忽略的参数
-
-###处理响应
-不管你用何种方式发送请求，都会要求传一个HttpResponseHandler，因此你需要继承HttpResponseHandler抽象类来处理Http响应，HttpResponseHandler的三个抽象方法说明如下：
->* ``start(Handler)``：开始发送请求的时候会回调此方法；
->* ``handleResponse(Handler, HttpResponse, boolean)``：当请求发送成功需要处理响应的时候会回调此方法；
->* ``exception(Handler, Throwable, boolean)``：当在整个过程发生异常的话会回调此方法。
-
-另外
->* HttpResponseHandler还有一个方法isCanCache(Handler, HttpResponse)用来判定是否可以缓存，默认是当状态码大于等于200小于300就允许缓存，你可以重写此方法来改变缓存判定策略。
->* HttpResponseHandler的每一个方法都有Handler，因此你可以借助Handler在主线程更新视图，具体使用可以参考JsonHttpResponseHandler；
->* 已经提供了BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler三种实现，可以满足大部分需求了。
-
-###示例：
-
-####请求方式配置示例：
+##### 第一步：配置请求对象
+例如：
 ```java
-/**
- * 基本请求，可以将一些每个请求都必须有的参数定义在此
- */
-@Method(MethodType.POST)
-public class BaseRequest implements Request {
-
-}
-```
-你可以定义一个BaseRequest，其它所有请求都继承于BaseRequest，然后在BaseRequest上定义所有请求的请求方式
-
-####请求地址配置示例：
-
-#####@Url使用示例：
-```java
-/**
- * 北京天气请求
- */
-@Url("http://m.weather.com.cn/data/101010100.html")
-public class BeijingWeatherRequest implements Request {
-
-}
-```
-
-#####@Host加@Path使用示例：
-```java
-/**
- * 天气请求基类
- */
-@Host("http://m.weather.com.cn")
-public class WeatherRequest implements Request{
-
-}
-```
-```java
-/**
- * 北京天气请求
- */
-@Path("data/101010100.html")
-public class BeijingWeatherRequest extends WeatherRequest {
-
-}
-```
-```java
-/**
- * 上海天气请求
- */
-@Path("data/101020100.html")
-public class ShanghaiWeatherRequest extends WeatherRequest {
-
-}
-```
-
-####请求头配置示例：
-```java
-/**
- * 基本请求
- */
-@Method(MethodType.POST)
-public class BaseRequest implements Request {
-    @Header
-    private org.apache.http.Header header = new BasicHeader("Connection", "Keep-Alive");
-
-    @Header
-    private org.apache.http.Header[] headers = new org.apache.http.Header[]{new BasicHeader("Connection", "Keep-Alive"), new BasicHeader("Content-Length", "22")};
-
-    @Header
-    private List<org.apache.http.Header> headerList;
-
-    public BaseRequest() {
-        headerList = new ArrayList<org.apache.http.Header>(2);
-        headerList.add(new BasicHeader("Connection", "Keep-Alive"));
-        headerList.add(new BasicHeader("Content-Length", "22"));
-    }
-}
-```
-示例中的三种方式任意一种都可以。
-
-####请求参数配置示例：
-```java
-/**
- * 百度搜索请求
- */
-@Url("http://www.baidu.com/s")
 @Name("百度搜索")
+@Url("http://www.baidu.com/s")
 public class BaiduSearchRequest implements Request {
     @Param
     public String rsv_spt = "1";
@@ -207,11 +88,154 @@ public class BaiduSearchRequest implements Request {
 	}
 }
 ```
+#####第二步：发送请求
+例如：
+```java
+EasyHttpClient.getInstance(getBaseContext()).execute(new BaiduSearchRequest("王力宏"), new StringHttpResponseHandler(true){
+	@Override
+	protected void onStart() {
+		// 显示提示信息
+	}
+	
+	@Override
+	public void onUpdateProgress(long totalLength, long completedLength) {
+		// 更新进度
+	}
 
-####HttpResponse缓存配置示例：
+	@Override
+	protected void onSuccess(HttpResponse httpResponse, String responseContent, boolean isNotRefresh, boolean isOver) {
+	    // 加载成功，使用webview显示html源码
+		Header contentTypeHeader = httpResponse.getEntity().getContentType();
+		ContentType contentType = new ContentType(contentTypeHeader.getValue());
+		webViewManager.getWebView().loadDataWithBaseURL(null, responseContent, contentType.getMimeType(), contentType.getCharset("UTF-8"), null);
+	}
+	
+	@Override
+	protected void onFailure(Throwable throwable, boolean isNotRefresh) {
+		// 提示失败
+	}
+});
+```
+
+##### 扩展：请求对象配置详解
+**1.请求名称的配置：**
+
+在请求对象上加上``@Name``注解即可，例如：``@Name("百度搜索")``。请求名称将用于在log中区分不同的请求。
+```java
+@Name("百度搜索")
+@Url("http://www.baidu.com/s")
+public class BaseduSearchRequest implements Request {
+    // ...
+}
+```
+
+**2.请求方式的配置：**
+
+在请求对象上加上``@Method``注解即可，例如：``@Method(MethodType.POST)``；目前支持GET、POST、PUT、DELETE四种请求，缺省值是``MethodType.GET``。
+```java
+@Method(MethodType.POST)
+public class BaseRequest implements Request {
+    // ...
+}
+```
+你可以定义一个BaseRequest，在BaseRequest上配置请求方式为post，然后其它所有请求都继承于BaseRequest，由于@Method注解可继承所以所有BaseRequest的子类就都是post方式了
+    
+**3.请求地址的配置：**
+
+3.1 使用``@Url``注解来指定完整的请求地址。例如：``@Url("http://m.weather.com.cn/data/101010100.html")``；
+```java
+@Url("http://m.weather.com.cn/data/101010100.html")
+public class BeijingWeatherRequest implements Request {
+    // ...
+}
+```
+
+3.2 你还可以选择使用``@Host``加``@Path``注解来指定完整的请求地址，其中``@Host``负责不可变部分（例如``http://m.weather.com.cn``）；``@Path``负责变化部分（例如：``data/101010100.html``）；值得注意的是请不要在``@Host``的末尾或者``@Path``的开头加``/``，因为在解析的时候会自动加上；
+```java
+@Host("http://m.weather.com.cn")
+public class WeatherRequest implements Request{
+    // ...
+}
+```
+
+以上``@Url``、``@Host``以及``@Path``注解都是可以继承的，因此你可以弄一个BaseRequest然后把请求地址的不可变部分用``@Host``注解加在BaseRequest上，然后其他的请求都继承BaseRequest，这样一来其它的请求就只需添加``@Path``注解即可，同时也可以保证主机地址只会在一个地方定义；另外，``@Url``的优先级高于``@Host``加``@Path``。
+
+**4.请求头的配置：**
+
+1.你可以在请求对象中定义一个字段，字段类型可以是Header、Header[]或者Collection<Header>，然后在此字段上加上``@Header`注解即可。
+```java
+/**
+ * 基本请求
+ */
+@Method(MethodType.POST)
+public class BaseRequest implements Request {
+    @Header
+    private org.apache.http.Header header = new BasicHeader("Connection", "Keep-Alive");
+
+    @Header
+    private org.apache.http.Header[] headers = new org.apache.http.Header[]{new BasicHeader("Connection", "Keep-Alive"), new BasicHeader("Content-Length", "22")};
+
+    @Header
+    private List<org.apache.http.Header> headerList;
+
+    public BaseRequest() {
+        headerList = new ArrayList<org.apache.http.Header>(2);
+        headerList.add(new BasicHeader("Connection", "Keep-Alive"));
+        headerList.add(new BasicHeader("Content-Length", "22"));
+    }
+}
+```
+示例中的三种方式任意一种即可。
+    
+**5.请求参数的配置：**
+1. 将请求对象中需要转换成请求参数的字段加上``@Param``注解即可；
+2. 默认请求参数名称是字段的名称，如果你想自定义名称就给``@Param``注解附上值，例如：``@Param("wd")``
+3. 默认使用字段的toString()方法来获取请求参数值，但以下几种情况将会被特殊处理：
+    * 字段上有``@Value``注解
+        有``@Value``注解时，将会用``@Value``注解的值来作为请求参数值，而不再考虑字段的值
+    * 字段类型为Map
+        对于``Map``类型的字段``EasyHttpClient``会将其每一对键值对都转换成请求参数，而每一对键值对的键将作为参数名，键值对的值将作为参数值；
+    * 字段类型为File
+        对于``File``类型的字段EasyHttpClient将使用``RequestParams``的``put(String key, File file)``方法将其添加到``RequestParams``中；
+    * 字段类型为ArrayList
+        对于``ArrayList``类型的字段EasyHttpClient将使用``RequestParams``的``put(String key, ArrayList<String> values)``方法将其添加到``RequestParams``中；
+    * 字段类型为Boolean
+        对于``Boolean``类型的字段你可以通过``@True``和``@False``注解来指定当字段值是``true``或``false``的时候其对应的转换成请求参数时的参数值；
+    * 字段类型为Enum
+        对于``Enum``类型的参数你可以使用``@Value``注解来指定其参数值，如果没有```@Value``注解将使用Enum对象的name来作为参数值。
+
+```java
+@Name("百度搜索")
+@Url("http://www.baidu.com/s")
+public class BaiduSearchRequest implements Request {
+    @Param
+    public String rsv_spt = "1";
+
+	@Param("wd")
+	public String keyword;
+
+	/**
+	 * 创建一个百度搜索请求
+	 * @param keyword 搜索关键字
+	 */
+	public BaiduSearchRequest(String keyword){
+		this.keyword = keyword;
+	}
+}
+```
+
+**6.HttpResponse缓存的配置：**
+
+使用``@CacheConfig``注解来配置响应缓存，有四个参数可供配置
+1. periodOfValidity：int型，指定缓存有效期，单位毫秒，小于等于0表示永久有效，默认值为0；
+2. isRefreshCache：boolean型，指定当本地缓存可用的时候，是否依然从网络加载新的数据来刷新本地缓存，默认值为false；
+3. isRefreshCallback：boolean型，指定当刷新本地缓存完成的时候是否再次回调HttpResponseHandler.handleResponse()，默认值为false；
+4. cacheDirectory：String型，指定缓存目录，默认值为``""``。
+5. 使用``@CacheIgnore``来配置在组织缓存ID的时候需要忽略的参数（这个很重要）
+
 ```java
 @Url("http://www.qiushibaike.com/article/52638010")
-@ResponseCache(periodOfValidity = 1000 * 60 * 60 * 24, isRefreshCache = true)
+@CacheConfig(periodOfValidity = 1000 * 60 * 60 * 24, isRefreshCache = true)
 public class QiuBaiRequest extends BaseRequest{
     @Param
     private String list = "8hr";
@@ -220,78 +244,70 @@ public class QiuBaiRequest extends BaseRequest{
     private String s = "4618412";
 }
 ```
+更加详细的配置方式请参考示例程序。
 
-####一个完整的发送请求并处理响应的示例：
-```java
-EasyHttpClient.getInstance(getBaseContext()).execute(new BeijingWeatherRequest(), new JsonHttpResponseHandler<Weather>(Weather.class) {
-    @Override
-    public void onStart() {
-        findViewById(R.id.loading).setVisibility(View.VISIBLE);
-    }
+###处理响应
+####使用HttpResponseHandler
+不管你用何种方式发送请求，都会要求传一个HttpResponseHandler，来处理Http响应。
+HttpResponseHandler的特点：
+>* 提供完整的声明周期回调函数onStart()、onHandleResponse()、onUpdateProgress()、onException()、onCancel()；
+>* 可随时取消，在执行玩get()请求后悔返回一个RequestHandle给你，你可以通过RequestHandle来查看请求是否执行完毕，或者取消请求，被取消的请求将不再发生任何回调，且会根据mayInterruptIfRunning参数决定是否立即停止接收数据；
+>* 进度回调功能，此功能默认是关闭的，当你通过HttpResponseHandler(boolean enableUpdateProgress)构造函数或调用setEnableUpdateProgress()方法开启此功能后，将会回调onUpdateProgress()方法来回调进度；
+>* HttpResponseHandler默认所有的回调都通过Handler来执行，不过有时候的确不需要在Handler中回调，这时候你可以通过setSynchronizationCallback()方法切换到同步回调模式。
 
-    @Override
-    public void onSuccess(HttpResponse httpResponse, Weather responseObject, boolean isNotRefresh, boolean isOver) {
-        text.setText(Html.fromHtml("<h2>" + responseObject.getCity() + "</h2>"
-                + "<br>" + responseObject.getDate_y() + " " + responseObject.getWeek()
-                + "<br>" + responseObject.getTemp1() + " " + responseObject.getWeather1()
-                + "<p><br>风力：" + responseObject.getWind1()
-                + "<br>紫外线：" + responseObject.getIndex_uv()
-                + "<br>紫外线（48小时）：" + responseObject.getIndex48_uv()
-                + "<br>穿衣指数：" + responseObject.getIndex() + "，" + responseObject.getIndex_d()
-                + "<br>穿衣指数（48小时）：" + responseObject.getIndex48() + "，" + responseObject.getIndex48_d()
-                + "<br>舒适指数：" + responseObject.getIndex_co()
-                + "<br>洗车指数：" + responseObject.getIndex_xc()
-                + "<br>旅游指数：" + responseObject.getIndex_tr()
-                + "<br>晨练指数：" + responseObject.getIndex_cl()
-                + "<br>晾晒指数：" + responseObject.getIndex_ls()
-                + "<br>过敏指数：" + responseObject.getIndex_ag() + "</p>"
-        ));
-        findViewById(R.id.loading).setVisibility(View.GONE);
-    }
+目前内置的HttpResponseHandler有四种分别是：
 
-    @Override
-    public void onFailure(Throwable throwable, boolean isNotRefresh) {
-        text.setText(throwable.getMessage());
-        findViewById(R.id.loading).setVisibility(View.GONE);
-    }
-});
-```
+>* BinaryHttpResponseHandler：读取http响应后直接存在一个字节数组中返回，特别注意由于是要存在内存中，所以http响应不可以太大；
+>* DownloadHttpResponseHandler：读取HTTP响应并一边读一边保存到本地文件中，适用于下载比较大的文件；
+>* JsonHttpResponseHandler：会将HTTP响应转换成指定类型的对象返回，适用于http响应是json字符串；
+>* StringHttpResponseHandler：读取HTTP响应并转换成字符串返回。
 
-###单例模式
-你只需调用``EasyHttpClient.getInstance(Context)``即可获取EasyHttpClient的实例。
+####缓存Http响应
+>* 在使用普通方式发送请求的时候你可以传一个CacheConfig类型的参数来定义缓存配置;
+>* 使用请求对象方式发送请求的时候你可以在请求对象上加上@CacheConfig注解来定义缓存配置。
+>* 另外你可以使用``@CacheIgnore``来配置在组织缓存ID的时候需要忽略的参数
+
+####自定义HTTP响应
 
 ##Downloads
->* [android-easy-network-2.2.7.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.2.7.jar)
->* [android-easy-network-2.2.7-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.2.7-with-src.jar)
+>* [android-easy-network-2.3.0.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.3.0.jar)
+>* [android-easy-network-2.3.0-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.3.0-with-src.jar)
 
-##Depend
+依赖
 >* **[gson-2.2.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
 
 ##Change Log
-###2.2.7
+####2.3.0
+>* ResponseCache类和注解都改名为CacheConfig；
+>* 修复加载进度在回调之前会等待很长一段时间的BUG，原因前由于使用了BufferedHttpEntity，而BufferedHttpEntity要先将数据读完保存在一个字节数组中，然后才给你读；
+>* 修复在使用DownloadHttpResponseHandler时如果要下载的文件特别大的话会造成系统崩溃的BUG，原因是DownloadHttpResponseHandler使用了BufferedHttpEntity，而BufferedHttpEntity是要先把数据给读到一个字节数组中的，如果文件长度超过了数组长度的最大限制，那么就会造成崩溃；
+>* HttpGetRequest、HttpDeleteRequest、HttpPostRequest、HttpPutRequest都去掉了Builder；
+>* HttpResponseHandler增加了同步回调开关和更新进度回调开关，默认将不再回调进度。
+
+####2.2.7
 >* HttpResponseHandler的onHandleResponse()方法增加HttpUriRequest参数
 >* 优化请求处理逻辑，增加失败LOG
 >* 优化缓存过期判定逻辑，并优化LOG
 
-###2.2.6
+####2.2.6
 >* 修复DownloadHttpResponseHandler已完成进度参数传递错误BUG
 >* 完善所有内置HttpResponseHandler实现的取消处理
 
-###2.2.5
+####2.2.5
 >* 当已经取消时，就不在回调handleResponse()方法
 
-###2.2.4
+####2.2.4
 >* 增加``@Value``注解，用来配置请求参数值
 >* 枚举类型的字段的请求参数值配置注解由``@Param``替换为``@Value``
 >* 增加DownloadHttpResponseHandler
 
-###2.2.3
+####2.2.3
 >* 所有有字符串参数的注解都支持使用String资源来配置，例如之前是``@Param("loginName")``，现在你还可以这样写`@Param(R.string.login_name)``，然后字符串资源的内容是``<string name="login_name">loginName</string>``
 
-###2.2.2
+####2.2.2
 >* 优化HttpResponseHandler回调方法命名逻辑并优化异常处理
 
-###2.2.1
+####2.2.1
 >* 修复默认超时时间只有两秒的BUG
 
 ###2.2.1
@@ -299,35 +315,33 @@ EasyHttpClient.getInstance(getBaseContext()).execute(new BeijingWeatherRequest()
 >* getInstance()方法增加Context参数
 >* 所有发送请求的方法的参数重新规划
 
-###2.1.8
+####2.1.8
 >* 增加初始化功能，在使用之前必须调用init()方法初始化，并且初始化方法只能在主线程中调用
 
 ###2.1.7
 >* 优化缓存功能，支持配置忽略请求参数
 
-###2.1.6
+####2.1.6
 >* 优化缓存控制功能，并优化BinaryHttpResponseHandler、JsonHttpResponseHandler、StringHttpResponseHandler等Handler相关回调方法的参数，使之表达更准确，更容易理解
 
-###2.1.5
+####2.1.5
 >* 不再默认支持Gzip超高速传输，因为在实际使用中由于使用了Gzip超高速传输出现了java.io.IOException: unknown format (magic number 227b)异常，此异常出现频率大概20%，并且到现在位置我尚未发现其规律，所以目前无法解决。如果你想开启Gzip超高速传输可通过下面代码实现
 ```java
 EasyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addRequestInterceptor(new GzipProcessRequestInterceptor());
 EasyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addResponseInterceptor(new GzipProcessResponseInterceptor());
 ```
 
-###2.1.4
+####2.1.4
 >* 优化RequestPaser
 
-###2.1.3
+####2.1.3
 >* 修复GzipProcessResponseInterceptor引发的请求失败的BUG
 
-###2.1.2
+####2.1.2
 >* 修复ResponseCache注解没有加运行时标记的BUG
 
-###2.1.1
+####2.1.1
 >* 注解的序列化名称注解由SerializedName替换为Param
-
-###2.1.0
 
 ##License
 ```java

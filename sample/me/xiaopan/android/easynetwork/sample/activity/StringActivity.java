@@ -16,9 +16,9 @@
 package me.xiaopan.android.easynetwork.sample.activity;
 
 import me.xiaopan.android.easynetwork.R;
+import me.xiaopan.android.easynetwork.http.CacheConfig;
 import me.xiaopan.android.easynetwork.http.EasyHttpClient;
 import me.xiaopan.android.easynetwork.http.HttpGetRequest;
-import me.xiaopan.android.easynetwork.http.ResponseCache;
 import me.xiaopan.android.easynetwork.http.StringHttpResponseHandler;
 import me.xiaopan.android.easynetwork.http.headers.ContentType;
 import me.xiaopan.android.easynetwork.sample.MyActivity;
@@ -50,7 +50,7 @@ public class StringActivity extends MyActivity {
 	}
 	
 	private void load(){
-		EasyHttpClient.getInstance(getBaseContext()).get(new HttpGetRequest.Builder("http://www.miui.com/forum.php").setResponseCache(new ResponseCache.Builder(20 * 1000).create()).create(), new StringHttpResponseHandler(true){
+		EasyHttpClient.getInstance(getBaseContext()).get(new HttpGetRequest("http://www.miui.com/forum.php").setCacheConfig(new CacheConfig(20 * 1000)), new StringHttpResponseHandler(true){
 			@Override
 			protected void onStart() {
 				getHintView().loading("MIUI首页");

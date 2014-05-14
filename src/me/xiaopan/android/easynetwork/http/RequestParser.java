@@ -538,9 +538,9 @@ public class RequestParser {
      * @param requestClass 请求对象的class
      */
     public static String parseCacheId(Context context, Class<? extends Request> requestClass){
-       me.xiaopan.android.easynetwork.http.ResponseCache responseCache = parseResponseCacheAnnotation(context, requestClass);
-       if(responseCache != null){
-    	   return GeneralUtils.createCacheId(responseCache, parseBaseUrl(context, requestClass), parseRequestParams(context, requestClass), parseCacheIgnoreParams(context, requestClass));
+       CacheConfig cacheConfig = parseResponseCacheAnnotation(context, requestClass);
+       if(cacheConfig != null){
+    	   return GeneralUtils.createCacheId(cacheConfig, parseBaseUrl(context, requestClass), parseRequestParams(context, requestClass), parseCacheIgnoreParams(context, requestClass));
        }else{
     	   return null;
        }
@@ -553,9 +553,9 @@ public class RequestParser {
      */
     public static String parseCacheId(Context context, Request request){
     	Class<? extends Request> requestClass = request.getClass();
-    	me.xiaopan.android.easynetwork.http.ResponseCache responseCache = parseResponseCacheAnnotation(context, requestClass);
-    	if(responseCache != null){
-    		return GeneralUtils.createCacheId(responseCache, parseBaseUrl(context, requestClass), parseRequestParams(context, request), parseCacheIgnoreParams(context, requestClass));
+    	CacheConfig cacheConfig = parseResponseCacheAnnotation(context, requestClass);
+    	if(cacheConfig != null){
+    		return GeneralUtils.createCacheId(cacheConfig, parseBaseUrl(context, requestClass), parseRequestParams(context, request), parseCacheIgnoreParams(context, requestClass));
     	}else{
     		return null;
     	}
@@ -681,22 +681,22 @@ public class RequestParser {
      * @param context 上下文
      * @param requestClass 请求对象的class
      */
-    public static me.xiaopan.android.easynetwork.http.ResponseCache parseResponseCacheAnnotation(Context context, Class<? extends Request> requestClass){
-        me.xiaopan.android.easynetwork.http.annotation.ResponseCache annotation = requestClass.getAnnotation(me.xiaopan.android.easynetwork.http.annotation.ResponseCache.class);
+    public static CacheConfig parseResponseCacheAnnotation(Context context, Class<? extends Request> requestClass){
+        me.xiaopan.android.easynetwork.http.annotation.CacheConfig annotation = requestClass.getAnnotation(me.xiaopan.android.easynetwork.http.annotation.CacheConfig.class);
         if(annotation == null){
             return null;
         }
-        me.xiaopan.android.easynetwork.http.ResponseCache.Builder builder = new me.xiaopan.android.easynetwork.http.ResponseCache.Builder()
-                .setRefreshCache(annotation.isRefreshCache())
-                .setPeriodOfValidity(annotation.periodOfValidity())
-                .setRefreshCallback(annotation.isRefreshCallback());
-
+        
+        CacheConfig cacheConfig = new CacheConfig();
+        cacheConfig.setRefreshCache(annotation.isRefreshCache());
+        cacheConfig.setPeriodOfValidity(annotation.periodOfValidity());
+        cacheConfig.setRefreshCallback(annotation.isRefreshCallback());
         if(GeneralUtils.isNotEmpty(annotation.cacheDirectory())){
-            builder.setCacheDirectory(annotation.cacheDirectory());
+            cacheConfig.setCacheDirectory(annotation.cacheDirectory());
         }else if(context != null && annotation.cacheDirectoryResId() > 0){
-            builder.setCacheDirectory(context.getString(annotation.cacheDirectoryResId()));
+            cacheConfig.setCacheDirectory(context.getString(annotation.cacheDirectoryResId()));
         }
-        return builder.create();
+        return cacheConfig;
     }
 
     /**

@@ -36,59 +36,62 @@ public class HttpPutRequest {
     private String baseUrl; //请求地址
     private List<Header> headers;   //请求头信息
     private RequestParams params;   //请求参数
-    private ResponseCache responseCache;    //响应缓存配置
+    private CacheConfig cacheConfig;    //响应缓存配置
     private HttpEntity httpEntity;  //Http请求体
     private List<String> cacheIgnoreParams;	//计算缓存ID时候忽略的参数集
 
-    private HttpPutRequest(){
+    public HttpPutRequest(String baseUrl){
+        this.baseUrl = baseUrl;
         setName(GeneralUtils.getCurrentDateTimeBy24Hour() + " PUT ");
     }
 
     /**
-     * 获取请求名称，在输出log的时候会用此参数来作为标识，方便在log中区分具体的请求
-     * @return
+     * 获取请求名称
+     * @return 请求名称，在输出log的时候会用此参数来作为标识，方便在log中区分具体的请求
      */
     public String getName() {
         return name;
     }
 
     /**
-     * 设置请求名称，在输出log的时候会用此参数来作为标识，方便在log中区分具体的请求
-     * @param name
+     * 设置请求名称
+     * @param name 请求名称，在输出log的时候会用此参数来作为标识，方便在log中区分具体的请求
      */
-    public void setName(String name) {
+    public HttpPutRequest setName(String name) {
         this.name = name;
+        return this;
     }
 
     /**
-     * 获取请求地址
-     * @return
+     * 获取基本的地址
+     * @return 基本的地址
      */
     public String getBaseUrl() {
         return baseUrl;
     }
 
     /**
-     * 设置请求地址
-     * @param baseUrl
+     * 设置基本的地址
+     * @param baseUrl 基本的地址
      */
-    public void setBaseUrl(String baseUrl) {
+    public HttpPutRequest setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+        return this;
     }
 
     /**
      * 获取所有的请求头
-     * @return
+     * @return 所有的请求头
      */
     public List<Header> getHeaders() {
         return headers;
     }
 
     /**
-     * 添加请求头
-     * @param headers
+     * 批量添加请求头
+     * @param headers 请求头集合
      */
-    public void addHeader(Header... headers){
+    public HttpPutRequest addHeader(Header... headers){
         if(headers != null && headers.length > 0){
             if(this.headers == null){
                 this.headers = new LinkedList<Header>();
@@ -99,19 +102,21 @@ public class HttpPutRequest {
                 }
             }
         }
+        return this;
     }
 
     /**
      * 设置请求头
-     * @param headers
+     * @param headers 请求头集合
      */
-    public void setHeaders(List<Header> headers) {
+    public HttpPutRequest setHeaders(List<Header> headers) {
         this.headers = headers;
+        return this;
     }
 
     /**
-     * 获取请求参数
-     * @return
+     * 获取请求参数集
+     * @return 请求参数集
      */
     public RequestParams getParams() {
         return params;
@@ -119,38 +124,40 @@ public class HttpPutRequest {
 
     /**
      * 添加请求参数
-     * @param key
-     * @param value
+     * @param key 键
+     * @param value 值
      */
-    public void addParam(String key, String value){
+    public HttpPutRequest addParam(String key, String value){
         if(GeneralUtils.isNotEmpty(key, value)){
             if(params == null){
                 params = new RequestParams();
             }
             params.put(key, value);
         }
+        return this;
     }
 
     /**
      * 添加请求参数
-     * @param key
-     * @param values
+     * @param key 键
+     * @param values 值
      */
-    public void addParam(String key, ArrayList<String> values){
+    public HttpPutRequest addParam(String key, ArrayList<String> values){
         if(GeneralUtils.isNotEmpty(key) && values != null && values.size() > 0){
             if(params == null){
                 params = new RequestParams();
             }
             params.put(key, values);
         }
+        return this;
     }
 
     /**
      * 添加请求参数
-     * @param key
-     * @param value
+     * @param key 键
+     * @param value 值
      */
-    public void addParam(String key, File value){
+    public HttpPutRequest addParam(String key, File value){
         if(GeneralUtils.isNotEmpty(key) && value != null && value.exists()){
             if(params == null){
                 params = new RequestParams();
@@ -161,80 +168,86 @@ public class HttpPutRequest {
                 e.printStackTrace();
             }
         }
+        return this;
     }
 
     /**
      * 添加请求参数
-     * @param key
-     * @param value
+     * @param key 键
+     * @param value 值
      */
-    public void addParam(String key, InputStream value){
+    public HttpPutRequest addParam(String key, InputStream value){
         if(GeneralUtils.isNotEmpty(key) && value != null){
             if(params == null){
                 params = new RequestParams();
             }
             params.put(key, value);
         }
+        return this;
     }
 
     /**
      * 添加请求参数
-     * @param key
-     * @param value
-     * @param fileName
+     * @param key 键
+     * @param value 值
+     * @param fileName 文件名
      */
-    public void addParam(String key, InputStream value, String fileName){
+    public HttpPutRequest addParam(String key, InputStream value, String fileName){
         if(GeneralUtils.isNotEmpty(key, fileName) && value != null){
             if(params == null){
                 params = new RequestParams();
             }
             params.put(key, value, fileName);
         }
+        return this;
     }
 
     /**
      * 添加请求参数
-     * @param key
-     * @param value
-     * @param fileName
-     * @param contentType
+     * @param key 键
+     * @param value 值
+     * @param fileName 文件名
+     * @param contentType 文件类型
      */
-    public void addParam(String key, InputStream value, String fileName, String contentType){
+    public HttpPutRequest addParam(String key, InputStream value, String fileName, String contentType){
         if(GeneralUtils.isNotEmpty(key, fileName, contentType) && value != null){
             if(params == null){
                 params = new RequestParams();
             }
             params.put(key, value, fileName, contentType);
         }
+        return this;
     }
 
     /**
-     * 设置请求参数
-     * @param params
+     * 设置请求参数集
+     * @param params 请求参数集
      */
-    public void setParams(RequestParams params) {
+    public HttpPutRequest setParams(RequestParams params) {
         this.params = params;
+        return this;
     }
 
     /**
-     * 获取响应缓存配置
-     * @return
+     * 获取缓存配置
+     * @return 缓存配置
      */
-    public ResponseCache getResponseCache() {
-        return responseCache;
+    public CacheConfig getCacheConfig() {
+        return cacheConfig;
     }
 
     /**
-     * 设置响应缓存配置
-     * @param responseCache
+     * 设置缓存配置
+     * @param cacheConfig 缓存配置
      */
-    public void setResponseCache(ResponseCache responseCache) {
-        this.responseCache = responseCache;
+    public HttpPutRequest setCacheConfig(CacheConfig cacheConfig) {
+        this.cacheConfig = cacheConfig;
+        return this;
     }
 
     /**
      * 获取请求实体
-     * @return
+     * @return 请求实体
      */
     public HttpEntity getHttpEntity() {
         return httpEntity;
@@ -242,236 +255,58 @@ public class HttpPutRequest {
 
     /**
      * 设置请求实体
-     * @param httpEntity
+     * @param httpEntity 请求实体
      */
-    public void setHttpEntity(HttpEntity httpEntity) {
+    public HttpPutRequest setHttpEntity(HttpEntity httpEntity) {
         this.httpEntity = httpEntity;
+        return this;
     }
-    
+
     /**
      * 获取计算缓存ID时候忽略的参数集
-     * @return
+     * @return 计算缓存ID时候忽略的参数集
      */
     public List<String> getCacheIgnoreParams() {
-		return cacheIgnoreParams;
-	}
-
-	/**
-	 * 设置计算缓存ID时候忽略的参数集
-	 * @param cacheIgnoreParams
-	 */
-	public void setCacheIgnoreParams(List<String> cacheIgnoreParams) {
-		this.cacheIgnoreParams = cacheIgnoreParams;
-	}
+        return cacheIgnoreParams;
+    }
 
     /**
-     * Http Put请求构建器
+     * 设置计算缓存ID时候忽略的参数集
+     * @param cacheIgnoreParams 计算缓存ID时候忽略的参数集
      */
-    public static class Builder{
-        private HttpPutRequest httpRequest;
+    public HttpPutRequest setCacheIgnoreParams(List<String> cacheIgnoreParams) {
+        this.cacheIgnoreParams = cacheIgnoreParams;
+        return this;
+    }
 
-        /**
-         * 创建一个Http Put请求构建器，同时你必须指定请求地址
-         * @param baseUrl
-         */
-        public Builder(String baseUrl) {
-            httpRequest = new HttpPutRequest();
-            setBaseUrl(baseUrl);
+    /**
+     * 通过解析一个请求对象来创建一个Http Put 请求
+     * @param context 上下文
+     * @param request 请求对象
+     * @return Http Put 请求
+     */
+    public static HttpPutRequest valueOf(Context context, Request request){
+        Class<? extends Request> requestClass = request.getClass();
+
+        String baseUrl1 = RequestParser.parseBaseUrl(context, requestClass);
+        if(GeneralUtils.isEmpty(baseUrl1)){
+            throw new IllegalArgumentException("你必须在Request上使有Url注解或者Host加Path注解指定请求地址");
+        }
+        HttpPutRequest httpRequest = new HttpPutRequest(baseUrl1);
+
+        String requestName = RequestParser.parseNameAnnotation(context, requestClass);
+        if(GeneralUtils.isNotEmpty(requestName)){
+            httpRequest.setName(httpRequest.getName() + " " + requestName + " ");
         }
 
-        /**
-         * 创建一个Http Put请求构建器，同时你必须指定请求对象
-         * @param context 上下文
-         * @param request 请求对象
-         */
-        public Builder(Context context, Request request){
-            httpRequest = new HttpPutRequest();
-            setRequest(context, request);
+        httpRequest.setParams(RequestParser.parseRequestParams(context, request, httpRequest.getParams()));
+        httpRequest.setCacheIgnoreParams(RequestParser.parseCacheIgnoreParams(context, requestClass));
+        httpRequest.addHeader(RequestParser.parseRequestHeaders(request));
+        CacheConfig cacheConfig = RequestParser.parseResponseCacheAnnotation(context, requestClass);
+        if(cacheConfig != null){
+            httpRequest.setCacheConfig(cacheConfig);
         }
 
-        /**
-         * 设置请求名称，在输出log的时候会用此参数来作为标识，方便在log中区分具体的请求
-         * @param name
-         * @return
-         */
-        public Builder setName(String name) {
-            httpRequest.setName(name);
-            return this;
-        }
-
-        /**
-         * 设置请求地址
-         * @param baseUrl
-         * @return
-         */
-        public Builder setBaseUrl(String baseUrl) {
-            httpRequest.setBaseUrl(baseUrl);
-            return this;
-        }
-
-        /**
-         * 添加请求头
-         * @param headers
-         * @return
-         */
-        public Builder addHeader(Header... headers){
-            httpRequest.addHeader(headers);
-            return this;
-        }
-
-        /**
-         * 设置请求头
-         * @param headers
-         * @return
-         */
-        public Builder setHeaders(List<Header> headers) {
-            httpRequest.setHeaders(headers);
-            return this;
-        }
-
-        /**
-         * 添加请求参数
-         * @param key
-         * @param value
-         * @return
-         */
-        public Builder addParam(String key, String value){
-            httpRequest.addParam(key, value);
-            return this;
-        }
-
-        /**
-         * 添加请求参数
-         * @param key
-         * @param values
-         * @return
-         */
-        public Builder addParam(String key, ArrayList<String> values){
-            httpRequest.addParam(key, values);
-            return this;
-        }
-
-        /**
-         * 添加请求参数
-         * @param key
-         * @param value
-         * @return
-         */
-        public Builder addParam(String key, File value){
-            httpRequest.addParam(key, value);
-            return this;
-        }
-
-        /**
-         * 添加请求参数
-         * @param key
-         * @param value
-         * @return
-         */
-        public Builder addParam(String key, InputStream value){
-            httpRequest.addParam(key, value);
-            return this;
-        }
-
-        /**
-         * 添加请求参数
-         * @param key
-         * @param value
-         * @param fileName
-         * @return
-         */
-        public Builder addParam(String key, InputStream value, String fileName){
-            httpRequest.addParam(key, value, fileName);
-            return this;
-        }
-
-        /**
-         * 添加请求参数
-         * @param key
-         * @param value
-         * @param fileName
-         * @param contentType
-         * @return
-         */
-        public Builder addParam(String key, InputStream value, String fileName, String contentType){
-            httpRequest.addParam(key, value, fileName, contentType);
-            return this;
-        }
-
-        /**
-         * 设置请求参数
-         * @param params
-         * @return
-         */
-        public Builder setParams(RequestParams params) {
-            httpRequest.setParams(params);
-            return this;
-        }
-
-        /**
-         * 设置响应缓存配置
-         * @param responseCache
-         * @return
-         */
-        public Builder setResponseCache(ResponseCache responseCache) {
-            httpRequest.setResponseCache(responseCache);
-            return this;
-        }
-        
-    	/**
-    	 * 设置缓存忽略参数集
-    	 * @param cacheIgnoreParams
-    	 * @return
-    	 */
-    	public Builder setCacheIgnoreParams(List<String> cacheIgnoreParams) {
-    		httpRequest.setCacheIgnoreParams(cacheIgnoreParams);
-    		return this;
-    	}
-
-        /**
-         * 设置请求对象，会从此请求对象身上解析所需的信息
-         * @param context 上下文
-         * @param request 请求对象
-         * @return
-         */
-        public Builder setRequest(Context context, Request request){
-        	Class<? extends Request> requestClass = request.getClass();
-            String requestName = RequestParser.parseNameAnnotation(context, requestClass);
-            if(GeneralUtils.isNotEmpty(requestName)){
-                httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
-            }
-        	String url = RequestParser.parseBaseUrl(context, requestClass);
-            if(GeneralUtils.isEmpty(url)){
-                throw new IllegalArgumentException("你必须在Request上使有Url注解或者Host加Path注解指定请求地址");
-            }
-            httpRequest.setBaseUrl(url);
-            
-            httpRequest.setParams(RequestParser.parseRequestParams(context, request, httpRequest.getParams()));
-            httpRequest.setCacheIgnoreParams(RequestParser.parseCacheIgnoreParams(context, requestClass));
-            httpRequest.addHeader(RequestParser.parseRequestHeaders(request));
-            ResponseCache responseCache = RequestParser.parseResponseCacheAnnotation(context, requestClass);
-            if(responseCache != null){
-                httpRequest.setResponseCache(responseCache);
-            }
-            return this;
-        }
-
-        /**
-         * 设置请求实体
-         * @param httpEntity
-         * @return
-         */
-        public Builder setHttpEntity(HttpEntity httpEntity) {
-            httpRequest.setHttpEntity(httpEntity);
-            return this;
-        }
-
-        /**
-         * 创建并返回Http Put请求
-         * @return
-         */
-        public HttpPutRequest create(){
-            return httpRequest;
-        }
+        return httpRequest;
     }
 }

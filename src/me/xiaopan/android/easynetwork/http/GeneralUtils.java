@@ -395,8 +395,8 @@ class GeneralUtils {
 		}
 	}
 	
-	static String createCacheId(ResponseCache responseCache, String baseUrl, RequestParams requestParams, List<String> cacheIgnoreParams){
-		if(responseCache != null){
+	static String createCacheId(CacheConfig cacheConfig, String baseUrl, RequestParams requestParams, List<String> cacheIgnoreParams){
+		if(cacheConfig != null){
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder.append(baseUrl);
 			if(requestParams != null){

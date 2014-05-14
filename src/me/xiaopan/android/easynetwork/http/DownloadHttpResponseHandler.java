@@ -75,7 +75,7 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
 		try{
 			outputStream = new BufferedOutputStream(new FileOutputStream(file), 8*1024);
 			BaseUpdateProgressCallback baseUpdateProgressCallback = isEnableUpdateProgress()?new BaseUpdateProgressCallback(this, handler):null;
-			ProgressEntityUtils.read(new ProgressBufferedHttpEntity(httpEntity, baseUpdateProgressCallback), outputStream, baseUpdateProgressCallback);
+			ProgressEntityUtils.read(httpEntity, outputStream, baseUpdateProgressCallback);
 		}finally{
 			GeneralUtils.close(outputStream);
 		}

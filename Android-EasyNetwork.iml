@@ -12,7 +12,11 @@
   </component>
   <component name="FacetManager">
     <facet type="android" name="Android">
-      <configuration />
+      <configuration>
+        <proGuardCfgFiles>
+          <file>file://C:/Program Files/Android/android-sdk/tools/proguard/proguard-android.txt</file>
+        </proGuardCfgFiles>
+      </configuration>
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
@@ -23,10 +27,9 @@
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/sample" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="com.android.ide.eclipse.adt.DEPENDENCIES" level="application" />
-    <orderEntry type="library" name="libs" level="project" />
+    <orderEntry type="library" exported="" name="libs" level="project" />
   </component>
 </module>
 

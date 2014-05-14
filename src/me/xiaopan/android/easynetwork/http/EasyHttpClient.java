@@ -62,13 +62,13 @@ public class EasyHttpClient {
      * 执行请求
      * @param httpRequest http请求对象
      * @param name 请求名称，在后台输出log的时候会输出此名称方便区分请求
-     * @param responseCache 响应缓存配置
+     * @param cacheConfig 响应缓存配置
      * @param httpResponseHandler Http响应处理器
      * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle execute(HttpUriRequest httpRequest, String name, ResponseCache responseCache, HttpResponseHandler httpResponseHandler, Context context) {
-    	HttpRequestExecuteRunnable httpRequestRunnable = new HttpRequestExecuteRunnable(getConfiguration(), name, httpRequest, responseCache, httpResponseHandler);
+    public RequestHandle execute(HttpUriRequest httpRequest, String name, CacheConfig cacheConfig, HttpResponseHandler httpResponseHandler, Context context) {
+    	HttpRequestExecuteRunnable httpRequestRunnable = new HttpRequestExecuteRunnable(getConfiguration(), name, httpRequest, cacheConfig, httpResponseHandler);
     	getConfiguration().getExecutorService().submit(httpRequestRunnable);
         RequestHandle requestHandle = new RequestHandle(httpRequestRunnable);
         if(context != null) {
@@ -86,12 +86,12 @@ public class EasyHttpClient {
      * 执行请求
      * @param httpRequest http请求对象
      * @param name 请求名称，在后台输出log的时候会输出此名称方便区分请求
-     * @param responseCache 响应缓存配置
+     * @param cacheConfig 响应缓存配置
      * @param httpResponseHandler Http响应处理器
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle execute(HttpUriRequest httpRequest, String name, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
-        return execute(httpRequest, name, responseCache, httpResponseHandler, null);
+    public RequestHandle execute(HttpUriRequest httpRequest, String name, CacheConfig cacheConfig, HttpResponseHandler httpResponseHandler) {
+        return execute(httpRequest, name, cacheConfig, httpResponseHandler, null);
     }
 
     /**
@@ -133,13 +133,13 @@ public class EasyHttpClient {
 
             //根据不同的请求方式选择不同的方法执行
             if(methodType == MethodType.GET){
-            	 return get(new HttpGetRequest.Builder(configuration.getContext(), request).create(), httpResponseHandler, context);
+            	 return get(HttpGetRequest.valueOf(configuration.getContext(), request), httpResponseHandler, context);
             }else if(methodType == MethodType.POST){
-            	 return post(new HttpPostRequest.Builder(configuration.getContext(), request).create(), httpResponseHandler, context);
+            	 return post(HttpPostRequest.valueOf(configuration.getContext(), request), httpResponseHandler, context);
             }else if(methodType == MethodType.PUT){
-            	 return put(new HttpPutRequest.Builder(configuration.getContext(), request).create(), httpResponseHandler, context);
+            	 return put(HttpPutRequest.valueOf(configuration.getContext(), request), httpResponseHandler, context);
             }else if(methodType == MethodType.DELETE){
-            	 return delete(new HttpDeleteRequest.Builder(configuration.getContext(), request).create(), httpResponseHandler, context);
+            	 return delete(HttpDeleteRequest.valueOf(configuration.getContext(), request), httpResponseHandler, context);
             }else{
             	 return null;
             }
@@ -174,10 +174,10 @@ public class EasyHttpClient {
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
             HttpGet httGet = new HttpGet(HttpUtils.getUrlByParams(getConfiguration().isUrlEncodingEnabled(), httpRequest.getBaseUrl(), httpRequest.getParams()));
             HttpUtils.appendHeaders(httGet, httpRequest.getHeaders());
-            if(httpRequest.getResponseCache() != null && GeneralUtils.isEmpty(httpRequest.getResponseCache().getId())){
-            	httpRequest.getResponseCache().setId(GeneralUtils.createCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
+            if(httpRequest.getCacheConfig() != null && GeneralUtils.isEmpty(httpRequest.getCacheConfig().getId())){
+            	httpRequest.getCacheConfig().setId(GeneralUtils.createCacheId(httpRequest.getCacheConfig(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
             }
-            return execute(httGet, httpRequest.getName(), httpRequest.getResponseCache(), httpResponseHandler, context);
+            return execute(httGet, httpRequest.getName(), httpRequest.getCacheConfig(), httpResponseHandler, context);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
@@ -207,7 +207,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle get(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Context context) {
-    	 return get(new HttpGetRequest.Builder(url).setParams(params).create(), httpResponseHandler, context);
+    	 return get(new HttpGetRequest(url).setParams(params), httpResponseHandler, context);
     }
 
     /**
@@ -218,7 +218,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle get(String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
-    	 return get(new HttpGetRequest.Builder(url).setParams(params).create(), httpResponseHandler, null);
+    	 return get(new HttpGetRequest(url).setParams(params), httpResponseHandler, null);
     }
 
     /**
@@ -229,7 +229,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle get(String url, HttpResponseHandler httpResponseHandler, Context context) {
-    	 return get(new HttpGetRequest.Builder(url).create(), httpResponseHandler, context);
+    	 return get(new HttpGetRequest(url), httpResponseHandler, context);
     }
 
     /**
@@ -239,7 +239,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle get(String url, HttpResponseHandler httpResponseHandler) {
-    	 return get(new HttpGetRequest.Builder(url).create(), httpResponseHandler, null);
+    	 return get(new HttpGetRequest(url), httpResponseHandler, null);
     }
     
     /**
@@ -264,10 +264,10 @@ public class EasyHttpClient {
             if(httpEntity != null){
                 httPost.setEntity(httpEntity);
             }
-            if(httpRequest.getResponseCache() != null && GeneralUtils.isEmpty(httpRequest.getResponseCache().getId())){
-            	httpRequest.getResponseCache().setId(GeneralUtils.createCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
+            if(httpRequest.getCacheConfig() != null && GeneralUtils.isEmpty(httpRequest.getCacheConfig().getId())){
+            	httpRequest.getCacheConfig().setId(GeneralUtils.createCacheId(httpRequest.getCacheConfig(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
             }
-            return execute(httPost, httpRequest.getName(), httpRequest.getResponseCache(), httpResponseHandler, context);
+            return execute(httPost, httpRequest.getName(), httpRequest.getCacheConfig(), httpResponseHandler, context);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
@@ -297,7 +297,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle post(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Context context) {
-    	 return post(new HttpPostRequest.Builder(url).setParams(params).create(), httpResponseHandler, context);
+    	 return post(new HttpPostRequest(url).setParams(params), httpResponseHandler, context);
     }
 
     /**
@@ -308,7 +308,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle post(String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
-    	 return post(new HttpPostRequest.Builder(url).setParams(params).create(), httpResponseHandler, null);
+    	 return post(new HttpPostRequest(url).setParams(params), httpResponseHandler, null);
     }
 
     /**
@@ -319,7 +319,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle post(String url, HttpResponseHandler httpResponseHandler, Context context) {
-    	 return post(new HttpPostRequest.Builder(url).create(), httpResponseHandler, context);
+    	 return post(new HttpPostRequest(url), httpResponseHandler, context);
     }
 
     /**
@@ -329,7 +329,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle post(String url, HttpResponseHandler httpResponseHandler) {
-    	 return post(new HttpPostRequest.Builder(url).create(), httpResponseHandler, null);
+    	 return post(new HttpPostRequest(url), httpResponseHandler, null);
     }
 
     /**
@@ -354,10 +354,10 @@ public class EasyHttpClient {
             if(httpEntity != null){
                 httPut.setEntity(httpEntity);
             }
-            if(httpRequest.getResponseCache() != null && GeneralUtils.isEmpty(httpRequest.getResponseCache().getId())){
-            	httpRequest.getResponseCache().setId(GeneralUtils.createCacheId(httpRequest.getResponseCache(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
+            if(httpRequest.getCacheConfig() != null && GeneralUtils.isEmpty(httpRequest.getCacheConfig().getId())){
+            	httpRequest.getCacheConfig().setId(GeneralUtils.createCacheId(httpRequest.getCacheConfig(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
             }
-            return execute(httPut, httpRequest.getName(), httpRequest.getResponseCache(), httpResponseHandler, context);
+            return execute(httPut, httpRequest.getName(), httpRequest.getCacheConfig(), httpResponseHandler, context);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
@@ -387,7 +387,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle put(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Context context) {
-    	 return put(new HttpPutRequest.Builder(url).setParams(params).create(), httpResponseHandler, context);
+    	 return put(new HttpPutRequest(url).setParams(params), httpResponseHandler, context);
     }
 
     /**
@@ -398,7 +398,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle put(String url, RequestParams params, HttpResponseHandler httpResponseHandler) {
-    	 return put(new HttpPutRequest.Builder(url).setParams(params).create(), httpResponseHandler, null);
+    	 return put(new HttpPutRequest(url).setParams(params), httpResponseHandler, null);
     }
 
     /**
@@ -409,7 +409,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle put(String url, HttpResponseHandler httpResponseHandler, Context context) {
-    	 return put(new HttpPutRequest.Builder(url).create(), httpResponseHandler, context);
+    	 return put(new HttpPutRequest(url), httpResponseHandler, context);
     }
 
     /**
@@ -419,7 +419,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle put(String url, HttpResponseHandler httpResponseHandler) {
-    	 return put(new HttpPutRequest.Builder(url).create(), httpResponseHandler, null);
+    	 return put(new HttpPutRequest(url), httpResponseHandler, null);
     }
 
     /**
@@ -435,7 +435,7 @@ public class EasyHttpClient {
             HttpUtils.appendHeaders(httDelete, httpRequest.getHeaders());
             return execute(httDelete, httpRequest.getName(), null, httpResponseHandler, context);
         }else{
-            IllegalArgumentException illegalArgumentException = new IllegalArgumentException("你必须指定url。你有两种方式来指定url，一是使用HttpGetRequest.Builder.setUrl()，而是在Request上使有Url注解或者Host加Path注解");
+            IllegalArgumentException illegalArgumentException = new IllegalArgumentException("你必须指定url");
             illegalArgumentException.printStackTrace();
             if(httpResponseHandler != null){
             	httpResponseHandler.onException(getConfiguration().getHandler(), illegalArgumentException, false);
@@ -462,7 +462,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle delete(String url, HttpResponseHandler httpResponseHandler, Context context) {
-        return delete(new HttpDeleteRequest.Builder(url).create(), httpResponseHandler, context);
+        return delete(new HttpDeleteRequest(url), httpResponseHandler, context);
     }
 
     /**
@@ -472,7 +472,7 @@ public class EasyHttpClient {
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
     public RequestHandle delete(String url, HttpResponseHandler httpResponseHandler) {
-        return delete(new HttpDeleteRequest.Builder(url).create(), httpResponseHandler, null);
+        return delete(new HttpDeleteRequest(url), httpResponseHandler, null);
     }
 
     /**

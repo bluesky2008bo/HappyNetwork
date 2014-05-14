@@ -54,12 +54,12 @@ class HttpRequestExecuteRunnable implements Runnable {
     private String name;    //请求名称，在输出log的时候会用此参数来作为标识，方便在log中区分具体的请求
     private Configuration configuration;	// 配置
     private HttpUriRequest httpUriRequest;  //HttpUri请求
-    private ResponseCache responseCache;    //响应缓存配置
+    private CacheConfig cacheConfig;    //响应缓存配置
     private HttpResponseHandler httpResponseHandler;    //Http响应处理器
 
-    public HttpRequestExecuteRunnable(Configuration configuration, String name, HttpUriRequest request, ResponseCache responseCache, HttpResponseHandler httpResponseHandler) {
+    public HttpRequestExecuteRunnable(Configuration configuration, String name, HttpUriRequest request, CacheConfig cacheConfig, HttpResponseHandler httpResponseHandler) {
         this.httpUriRequest = request;
-        this.responseCache = responseCache;
+        this.cacheConfig = cacheConfig;
         this.httpResponseHandler = httpResponseHandler;
         this.name = name;
         this.configuration = configuration;
@@ -84,7 +84,7 @@ class HttpRequestExecuteRunnable implements Runnable {
 			httpResponse = getHttpResponseFromCacheFile();
 			if(!isCancelled() && httpResponse != null){
 				try {
-					httpResponseHandler.onHandleResponse(configuration.getHandler(), httpUriRequest, httpResponse, true, !(isRefershCache()&&responseCache.isRefreshCallback()));
+					httpResponseHandler.onHandleResponse(configuration.getHandler(), httpUriRequest, httpResponse, true, !(isRefershCache()&& cacheConfig.isRefreshCallback()));
 					isContinue = !isCancelled() && isRefershCache();// 如果尚未取消并且需要刷新缓存
 					isRefreshCache = isRefershCache();
 					isSuccessed = true;
@@ -98,7 +98,7 @@ class HttpRequestExecuteRunnable implements Runnable {
 		if(!isCancelled() && isContinue){
 			try {
 				httpResponse = getHttpResponseFromNetwork(isRefreshCache);
-				if(!isCancelled() && (!isRefreshCache || (isRefershCache() && responseCache.isRefreshCallback()))){
+				if(!isCancelled() && (!isRefreshCache || (isRefershCache() && cacheConfig.isRefreshCallback()))){
 	        		httpResponseHandler.onHandleResponse(configuration.getHandler(), httpUriRequest, httpResponse, !isRefreshCache, true);
 	        	}
 				isSuccessed = true;
@@ -106,7 +106,7 @@ class HttpRequestExecuteRunnable implements Runnable {
 				e.printStackTrace();
 	        	httpUriRequest.abort();
 	        	isSuccessed = false;
-	        	if(!isCancelled() && (!isRefreshCache || (isRefershCache() && responseCache.isRefreshCallback()))){
+	        	if(!isCancelled() && (!isRefreshCache || (isRefershCache() && cacheConfig.isRefreshCallback()))){
 	            	httpResponseHandler.onException(configuration.getHandler(), e, !isRefreshCache);
 	            }
 			}
@@ -132,17 +132,17 @@ class HttpRequestExecuteRunnable implements Runnable {
     private boolean isAvailableByCache(){
     	try{
     		boolean isAvailable = false;
-    		if(responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId())){
-    			statusLineCacheFile = getCacheFile(configuration, responseCache.getId() + ".status_line");
-    			responseHeadersCacheFile = getCacheFile(configuration, responseCache.getId() + ".headers");
-    			responseEntityCacheFile = getCacheFile(configuration, responseCache.getId() + ".entity");
+    		if(cacheConfig != null && GeneralUtils.isNotEmpty(cacheConfig.getId())){
+    			statusLineCacheFile = getCacheFile(configuration, cacheConfig.getId() + ".status_line");
+    			responseHeadersCacheFile = getCacheFile(configuration, cacheConfig.getId() + ".headers");
+    			responseEntityCacheFile = getCacheFile(configuration, cacheConfig.getId() + ".entity");
     			isAvailable = statusLineCacheFile.exists() && responseHeadersCacheFile.exists() && responseEntityCacheFile.exists();
     			if(isAvailable){
-    				if(responseCache.getPeriodOfValidity() > 0){
+    				if(cacheConfig.getPeriodOfValidity() > 0){
     					long cacheTime = responseEntityCacheFile.lastModified();	// 缓存时间
     					Calendar calendar = new GregorianCalendar();
     					calendar.setTime(new Date(cacheTime));
-    					calendar.add(Calendar.MILLISECOND, responseCache.getPeriodOfValidity());
+    					calendar.add(Calendar.MILLISECOND, cacheConfig.getPeriodOfValidity());
     					long outOfDateTime = calendar.getTimeInMillis();	// 过期时间
     					long currentTime = System.currentTimeMillis();	//当前时间
     					isAvailable = outOfDateTime > currentTime;
@@ -154,7 +154,7 @@ class HttpRequestExecuteRunnable implements Runnable {
     							String lastModifiedTimeString = simpleDateFormat.format(new Date(cacheTime));
     							String currentTimeString = simpleDateFormat.format(new Date());
     							String outOfDateTimeString = simpleDateFormat.format(new Date(outOfDateTime));
-    							Log.w(configuration.getLogTag(), name + "缓存 - 已過期，缓存时间："+lastModifiedTimeString+"；过期时间："+outOfDateTimeString+"；当前时间："+currentTimeString+"；缓存有效期："+responseCache.getPeriodOfValidity()+"毫秒（"+uri+"）");
+    							Log.w(configuration.getLogTag(), name + "缓存 - 已過期，缓存时间："+lastModifiedTimeString+"；过期时间："+outOfDateTimeString+"；当前时间："+currentTimeString+"；缓存有效期："+ cacheConfig.getPeriodOfValidity()+"毫秒（"+uri+"）");
     						}
     					}
     				}else{
@@ -299,7 +299,7 @@ class HttpRequestExecuteRunnable implements Runnable {
      * @return
      */
     public boolean isCache(){
-    	return responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId());
+    	return cacheConfig != null && GeneralUtils.isNotEmpty(cacheConfig.getId());
     }
     
     /**
@@ -307,7 +307,7 @@ class HttpRequestExecuteRunnable implements Runnable {
      * @return
      */
     public boolean isRefershCache(){
-    	return responseCache != null && GeneralUtils.isNotEmpty(responseCache.getId()) && responseCache.isRefreshCache();
+    	return cacheConfig != null && GeneralUtils.isNotEmpty(cacheConfig.getId()) && cacheConfig.isRefreshCache();
     }
 
     /**

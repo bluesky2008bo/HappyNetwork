@@ -124,9 +124,9 @@ public abstract class HttpResponseHandler{
     
     /**
      * 更新进度
-     * @param handler
-     * @param totalLength
-     * @param completedLength
+     * @param handler 帮助在主线程回调
+     * @param totalLength 总长度
+     * @param completedLength 已完成长度
      */
     protected abstract void onUpdateProgress(Handler handler, long totalLength, long completedLength);
 
