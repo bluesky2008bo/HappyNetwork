@@ -1,6 +1,6 @@
 # ![Logo](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/res/drawable-mdpi/ic_launcher.png) Android-EasyNetwork
 
-这是一个参考了android-async-http项目的Android网络访问库，旨在用最简单、最快捷的方式来访问网络，最低兼容Android2.2
+这是一个参考了android-async-http项目的Android网络访问库，旨在用最简单、最快捷的方式来访问网络
 
 ##Features
 >* 异步发送Http请求，并用ThreadPool来维护每一个请求；
@@ -322,6 +322,7 @@ public class DownloadActivity extends MyActivity {
 
 ####自定义HttpResponseHandler
 自定HttpResponseHandler需要有几点需要注意
+
 1. 首先你要不断通过isCancelled()方法检查是否已经取消，一旦发现已经取消就结束执行并且做好善后处理
     ```java
     OutputStream outputStream = null;
