@@ -60,14 +60,20 @@ class HttpRequestExecuteRunnable implements Runnable {
         this.name = name;
         this.configuration = configuration;
     }
+    
+    private String createLog(String type){
+    	if(uri == null){
+    		uri = httpUriRequest.getURI().toString();
+    	}
+    	return new StringBuilder().append(name).append(" ").append(type).append("（").append(uri).append("）").toString();
+    }
 
     @Override
     public void run() {
     	isFinished = false;
 		
     	// 输出开始日志和回调
-    	uri = httpUriRequest.getURI().toString();
-		if(configuration.isDebugMode()) Log.i(configuration.getLogTag(), name + "开始（"+uri+"）");
+		if(configuration.isDebugMode()) Log.i(configuration.getLogTag(), createLog("开始"));
 		httpResponseHandler.onStart(configuration.getHandler());
 		
 		boolean isContinue = true;
@@ -112,11 +118,11 @@ class HttpRequestExecuteRunnable implements Runnable {
        
         if(configuration.isDebugMode()){
         	if(isCancelled()){
-        		Log.w(configuration.getLogTag(), name + "取消（"+uri+"）");
+        		Log.w(configuration.getLogTag(), createLog("取消"));
         	}else if(isSuccess){
-        		Log.i(configuration.getLogTag(), name + "成功（"+uri+"）");
+        		Log.i(configuration.getLogTag(), createLog("成功"));
         	}else{
-        		Log.e(configuration.getLogTag(), name + "失败（"+uri+"）");
+        		Log.e(configuration.getLogTag(), createLog("失败"));
         	}
         }
     }
@@ -143,20 +149,28 @@ class HttpRequestExecuteRunnable implements Runnable {
     					isAvailable = outOfDateTime > currentTime;
     					if(configuration.isDebugMode()){
     						if(isAvailable){
-    							Log.d(configuration.getLogTag(), name + "缓存 - 有效（"+uri+"）");
+    							Log.d(configuration.getLogTag(), createLog("缓存 - 有效"));
     						}else{
     							SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.getDefault());
     							String lastModifiedTimeString = simpleDateFormat.format(new Date(cacheTime));
     							String currentTimeString = simpleDateFormat.format(new Date());
     							String outOfDateTimeString = simpleDateFormat.format(new Date(outOfDateTime));
-    							Log.w(configuration.getLogTag(), name + "缓存 - 已過期，缓存时间："+lastModifiedTimeString+"；过期时间："+outOfDateTimeString+"；当前时间："+currentTimeString+"；缓存有效期："+ cacheConfig.getPeriodOfValidity()+"毫秒（"+uri+"）");
+    							Log.w(configuration.getLogTag(), new StringBuilder().append(name).append("缓存 - 已過期").append("，")
+    	    							.append("缓存时间：").append(lastModifiedTimeString)
+    	    							.append("；")
+    	    							.append("过期时间：").append(outOfDateTimeString)
+    	    							.append("；")
+    	    							.append("当前时间：").append(currentTimeString)
+    	    							.append("；")
+    	    							.append("缓存有效期：").append(cacheConfig.getPeriodOfValidity()).append("毫秒")
+    	    							.append("（").append(uri).append("）").toString());
     						}
     					}
     				}else{
-    					if(configuration.isDebugMode()) Log.d(configuration.getLogTag(), name + "缓存 - 永久有效（"+uri+"）");
+    					if(configuration.isDebugMode()) Log.d(configuration.getLogTag(), createLog("缓存 - 永久有效"));
     				}
     			}else{
-    				if(configuration.isDebugMode()) Log.w(configuration.getLogTag(), name + "缓存 - 文件不存在（"+uri+"）");
+    				if(configuration.isDebugMode()) Log.w(configuration.getLogTag(), createLog("缓存 - 文件不存在"));
     				statusLineCacheFile.delete();
     				responseHeadersCacheFile.delete();
     				responseEntityCacheFile.delete();
@@ -164,7 +178,7 @@ class HttpRequestExecuteRunnable implements Runnable {
     		}
     		return isAvailable;
     	}catch(Throwable throwable){
-    		Log.e(configuration.getLogTag(), name + "缓存 - 异常（"+uri+"）"+throwable.toString());
+    		Log.e(configuration.getLogTag(), name + " 缓存 - 异常（"+uri+"）"+throwable.toString());
     		throwable.printStackTrace();
     		return false;
     	}
@@ -176,7 +190,7 @@ class HttpRequestExecuteRunnable implements Runnable {
      */
     private HttpResponse getHttpResponseFromCacheFile(){
     	try {
-	    	if(configuration.isDebugMode()) Log.d(configuration.getLogTag(), name + "本地（"+uri+"）");
+	    	if(configuration.isDebugMode()) Log.d(configuration.getLogTag(), createLog("本地"));
 	    	/* 读取状态行 */
 			HttpResponse httpResponse = new BasicHttpResponse(new Gson().fromJson(GeneralUtils.readString(statusLineCacheFile), SaveStatusLine.class).toStatusLine());
 	
@@ -212,7 +226,7 @@ class HttpRequestExecuteRunnable implements Runnable {
      * 从网络加载
      */
     private HttpResponse getHttpResponseFromNetwork(boolean isRefreshCache) throws IOException{
-    	if(configuration.isDebugMode()) Log.d(configuration.getLogTag(), name + "网络"+(isRefreshCache?" - 刷新缓存":"")+"（"+uri+"）");
+    	if(configuration.isDebugMode()) Log.d(configuration.getLogTag(), createLog("网络"+(isRefreshCache?" - 刷新缓存":"")));
         HttpResponse httpResponse = configuration.getHttpClientManager().getHttpClient().execute(httpUriRequest, configuration.getHttpClientManager().getHttpContext());
         
         if(isCancelled()){
@@ -266,22 +280,22 @@ class HttpRequestExecuteRunnable implements Runnable {
         			//将响应实体替换为本地文件
         			Header contentTypeHeader = httpEntity.getContentType();
         			httpResponse.setEntity(new FileEntity(responseEntityCacheFile,contentTypeHeader != null?contentTypeHeader.getValue():null));
-        			if(configuration.isDebugMode()) Log.d(configuration.getLogTag(), name + "网络 - 响应已缓存（"+uri+"）");
+        			if(configuration.isDebugMode()) Log.d(configuration.getLogTag(), createLog("网络 - 响应已缓存"));
         		}catch(IOException exception){
         			if(inputStream != null){ try{inputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
         			if(fileOutputStream != null){try{fileOutputStream.flush();fileOutputStream.close();}catch (Exception exception2){exception2.printStackTrace();}}
         			if(responseEntityCacheFile.delete() || responseHeadersCacheFile.delete()){
-        				if(configuration.isDebugMode()) Log.w(configuration.getLogTag(), name + "网络 - 缓存响应失败，缓存文件已刪除（"+uri+"）");
+        				if(configuration.isDebugMode()) Log.w(configuration.getLogTag(), createLog("网络 - 缓存响应失败，缓存文件已刪除"));
         			}else{
-        				if(configuration.isDebugMode()) Log.w(configuration.getLogTag(), name + "网络 - 缓存响应失败，缓存文件刪除失敗（"+uri+"）");
+        				if(configuration.isDebugMode()) Log.w(configuration.getLogTag(), createLog("网络 - 缓存响应失败，缓存文件刪除失敗"));
         			}
         			throw exception;
         		}
         	}else{
-        		if(configuration.isDebugMode()) Log.w(configuration.getLogTag(), name + "网络 - 创建文件 "+responseHeadersCacheFile.getPath() + " 或 " + responseEntityCacheFile.getPath()+" 失败（"+uri+"）");
+        		if(configuration.isDebugMode()) Log.w(configuration.getLogTag(), createLog("网络 - 创建缓存文件失败"));
         	}
         }else{
-        	if(configuration.isDebugMode()) Log.w(configuration.getLogTag(), name + "网络 - 缓存失败，原因：Http实体是null（"+uri+"）");
+        	if(configuration.isDebugMode()) Log.w(configuration.getLogTag(), createLog("网络 - 缓存失败，原因：Http实体是null"));
         }
     }
     

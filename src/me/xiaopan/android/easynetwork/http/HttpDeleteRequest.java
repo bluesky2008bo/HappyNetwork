@@ -38,7 +38,7 @@ public class HttpDeleteRequest {
 
     public HttpDeleteRequest(String baseUrl){
         this.baseUrl = baseUrl;
-        setName(GeneralUtils.getCurrentDateTimeBy24Hour() + " DELETE ");
+        setName(GeneralUtils.getCurrentDateTimeBy24Hour() + " DELETE");
     }
 
     /**
@@ -242,7 +242,7 @@ public class HttpDeleteRequest {
 
         String requestName = RequestParser.parseNameAnnotation(context, requestClass);
         if(GeneralUtils.isNotEmpty(requestName)){
-            httpRequest.setName(httpRequest.getName() + " " + requestName + " ");
+            httpRequest.setName(httpRequest.getName() + " " + requestName);
         }
 
         httpRequest.setParams(RequestParser.parseRequestParams(context, request, httpRequest.getParams()));

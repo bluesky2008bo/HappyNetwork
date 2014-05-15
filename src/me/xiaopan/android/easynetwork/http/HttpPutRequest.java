@@ -42,7 +42,7 @@ public class HttpPutRequest {
 
     public HttpPutRequest(String baseUrl){
         this.baseUrl = baseUrl;
-        setName(GeneralUtils.getCurrentDateTimeBy24Hour() + " PUT ");
+        setName(GeneralUtils.getCurrentDateTimeBy24Hour() + " PUT");
     }
 
     /**
@@ -296,7 +296,7 @@ public class HttpPutRequest {
 
         String requestName = RequestParser.parseNameAnnotation(context, requestClass);
         if(GeneralUtils.isNotEmpty(requestName)){
-            httpRequest.setName(httpRequest.getName() + " " + requestName + " ");
+            httpRequest.setName(httpRequest.getName() + " " + requestName);
         }
 
         httpRequest.setParams(RequestParser.parseRequestParams(context, request, httpRequest.getParams()));

@@ -42,7 +42,7 @@ public class HttpPostRequest {
 
     public HttpPostRequest(String baseUrl){
         this.baseUrl = baseUrl;
-        setName(GeneralUtils.getCurrentDateTimeBy24Hour() + " POST ");
+        setName(GeneralUtils.getCurrentDateTimeBy24Hour() + " POST");
     }
 
     /**
@@ -296,7 +296,7 @@ public class HttpPostRequest {
 
         String requestName = RequestParser.parseNameAnnotation(context, requestClass);
         if(GeneralUtils.isNotEmpty(requestName)){
-            httpRequest.setName(httpRequest.getName() + " "+requestName+" ");
+            httpRequest.setName(httpRequest.getName() + " "+requestName);
         }
 
         httpRequest.setParams(RequestParser.parseRequestParams(context, request, httpRequest.getParams()));
