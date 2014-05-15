@@ -59,6 +59,18 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	}
 
 	@Override
+	public JsonHttpResponseHandler<T> setEnableProgressCallback(boolean enableProgressCallback) {
+		super.setEnableProgressCallback(enableProgressCallback);
+		return this;
+	}
+
+	@Override
+	public JsonHttpResponseHandler<T> setSynchronizationCallback(boolean synchronizationCallback) {
+		super.setSynchronizationCallback(synchronizationCallback);
+		return this;
+	}
+
+	@Override
 	protected final void onStart(final Handler handler) {
 		if(isCancelled()) return;
 		

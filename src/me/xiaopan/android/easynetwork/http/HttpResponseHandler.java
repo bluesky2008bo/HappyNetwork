@@ -76,8 +76,9 @@ public abstract class HttpResponseHandler{
 	 * 设置是否开启回调进度功能
 	 * @param enableProgressCallback 是否开启回调进度功能
 	 */
-	public void setEnableProgressCallback(boolean enableProgressCallback) {
+	public HttpResponseHandler setEnableProgressCallback(boolean enableProgressCallback) {
 		this.enableProgressCallback = enableProgressCallback;
+		return this; 
 	}
 
 	/**
@@ -92,8 +93,9 @@ public abstract class HttpResponseHandler{
 	 * 设置是否同步回调
 	 * @param synchronizationCallback 是否同步回调
 	 */
-	public void setSynchronizationCallback(boolean synchronizationCallback) {
+	public HttpResponseHandler setSynchronizationCallback(boolean synchronizationCallback) {
 		this.synchronizationCallback = synchronizationCallback;
+		return this; 
 	}
 
 	/**

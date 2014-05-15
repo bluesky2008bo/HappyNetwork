@@ -30,6 +30,18 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
     }
 
 	@Override
+	public DownloadHttpResponseHandler setEnableProgressCallback(boolean enableProgressCallback) {
+		super.setEnableProgressCallback(enableProgressCallback);
+		return this;
+	}
+
+	@Override
+	public DownloadHttpResponseHandler setSynchronizationCallback(boolean synchronizationCallback) {
+		super.setSynchronizationCallback(synchronizationCallback);
+		return this;
+	}
+
+	@Override
     protected final void onStart(Handler handler) {
     	if(isCancelled()) return;
     	

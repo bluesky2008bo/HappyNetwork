@@ -38,6 +38,18 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler{
 	}
 
 	@Override
+	public BinaryHttpResponseHandler setEnableProgressCallback(boolean enableProgressCallback) {
+		super.setEnableProgressCallback(enableProgressCallback);
+		return this;
+	}
+
+	@Override
+	public BinaryHttpResponseHandler setSynchronizationCallback(boolean synchronizationCallback) {
+		super.setSynchronizationCallback(synchronizationCallback);
+		return this;
+	}
+
+	@Override
 	protected final void onStart(final Handler handler) {
 		if(isCancelled()) return;
 		
