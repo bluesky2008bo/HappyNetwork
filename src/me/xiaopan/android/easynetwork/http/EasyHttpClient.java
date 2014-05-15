@@ -16,23 +16,17 @@
 
 package me.xiaopan.android.easynetwork.http;
 
+import android.content.Context;
+import android.util.Log;
+import me.xiaopan.android.easynetwork.http.annotation.Method;
+import me.xiaopan.android.easynetwork.http.enums.MethodType;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.*;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
-
-import me.xiaopan.android.easynetwork.http.annotation.Method;
-import me.xiaopan.android.easynetwork.http.enums.MethodType;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
-
-import android.content.Context;
-import android.util.Log;
 
 /**
  * Http客户端，所有的Http操作都将由此类来异步完成，同时此类提供一个单例模式来方便直接使用
@@ -40,11 +34,11 @@ import android.util.Log;
 public class EasyHttpClient {
 	private static EasyHttpClient instance;
 	private Configuration configuration;	//配置
-    private Map<Context, List<RequestHandle>> requestMap;	//请求Map
+    private Map<Object, List<RequestHandle>> requestMap;	//请求Map
 	
     public EasyHttpClient(Context context){
     	configuration = new Configuration(context);
-    	requestMap = new WeakHashMap<Context, List<RequestHandle>>();
+    	requestMap = new WeakHashMap<Object, List<RequestHandle>>();
     }
     
 	/**
@@ -64,18 +58,19 @@ public class EasyHttpClient {
      * @param name 请求名称，在后台输出log的时候会输出此名称方便区分请求
      * @param cacheConfig 响应缓存配置
      * @param httpResponseHandler Http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle execute(HttpUriRequest httpRequest, String name, CacheConfig cacheConfig, HttpResponseHandler httpResponseHandler, Context context) {
+    public RequestHandle execute(HttpUriRequest httpRequest, String name, CacheConfig cacheConfig, HttpResponseHandler httpResponseHandler, Object requestTag) {
     	HttpRequestExecuteRunnable httpRequestRunnable = new HttpRequestExecuteRunnable(getConfiguration(), name, httpRequest, cacheConfig, httpResponseHandler);
     	getConfiguration().getExecutorService().submit(httpRequestRunnable);
         RequestHandle requestHandle = new RequestHandle(httpRequestRunnable);
-        if(context != null) {
-            List<RequestHandle> requestList = requestMap.get(context);
+        if(requestTag != null) {
+            List<RequestHandle> requestList = requestMap.get(requestTag);
             if(requestList == null) {
                 requestList = new LinkedList<RequestHandle>();
-                requestMap.put(context, requestList);
+                requestMap.put(requestTag, requestList);
             }
             requestList.add(requestHandle);
         }
@@ -98,11 +93,12 @@ public class EasyHttpClient {
      * 执行请求
      * @param httpRequest http请求对象
      * @param httpResponseHandler Http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle execute(HttpUriRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context) {
-    	return execute(httpRequest, null, null, httpResponseHandler, context);
+    public RequestHandle execute(HttpUriRequest httpRequest, HttpResponseHandler httpResponseHandler, Object requestTag) {
+    	return execute(httpRequest, null, null, httpResponseHandler, requestTag);
     }
 
     /**
@@ -119,10 +115,11 @@ public class EasyHttpClient {
      * 执行请求
      * @param request 请求对象，将通过请求对象来解析出一个Http请求
      * @param httpResponseHandler http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle execute(Request request, HttpResponseHandler httpResponseHandler, Context context){
+    public RequestHandle execute(Request request, HttpResponseHandler httpResponseHandler, Object requestTag){
         if(request != null){
             /* 解析请求方式 */
             MethodType methodType = MethodType.GET;
@@ -133,13 +130,13 @@ public class EasyHttpClient {
 
             //根据不同的请求方式选择不同的方法执行
             if(methodType == MethodType.GET){
-            	 return get(HttpGetRequest.valueOf(configuration.getContext(), request), httpResponseHandler, context);
+            	 return get(HttpGetRequest.valueOf(configuration.getContext(), request), httpResponseHandler, requestTag);
             }else if(methodType == MethodType.POST){
-            	 return post(HttpPostRequest.valueOf(configuration.getContext(), request), httpResponseHandler, context);
+            	 return post(HttpPostRequest.valueOf(configuration.getContext(), request), httpResponseHandler, requestTag);
             }else if(methodType == MethodType.PUT){
-            	 return put(HttpPutRequest.valueOf(configuration.getContext(), request), httpResponseHandler, context);
+            	 return put(HttpPutRequest.valueOf(configuration.getContext(), request), httpResponseHandler, requestTag);
             }else if(methodType == MethodType.DELETE){
-            	 return delete(HttpDeleteRequest.valueOf(configuration.getContext(), request), httpResponseHandler, context);
+            	 return delete(HttpDeleteRequest.valueOf(configuration.getContext(), request), httpResponseHandler, requestTag);
             }else{
             	 return null;
             }
@@ -165,19 +162,20 @@ public class EasyHttpClient {
 	
     /**
      * 执行一个Get请求
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
      * @param httpRequest Http Get请求
      * @param httpResponseHandler Http响应处理器
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle get(HttpGetRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context) {
+    public RequestHandle get(HttpGetRequest httpRequest, HttpResponseHandler httpResponseHandler, Object requestTag) {
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
             HttpGet httGet = new HttpGet(HttpUtils.getUrlByParams(getConfiguration().isUrlEncodingEnabled(), httpRequest.getBaseUrl(), httpRequest.getParams()));
             HttpUtils.appendHeaders(httGet, httpRequest.getHeaders());
             if(httpRequest.getCacheConfig() != null && GeneralUtils.isEmpty(httpRequest.getCacheConfig().getId())){
             	httpRequest.getCacheConfig().setId(GeneralUtils.createCacheId(httpRequest.getCacheConfig(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
             }
-            return execute(httGet, httpRequest.getName(), httpRequest.getCacheConfig(), httpResponseHandler, context);
+            return execute(httGet, httpRequest.getName(), httpRequest.getCacheConfig(), httpResponseHandler, requestTag);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
@@ -203,11 +201,12 @@ public class EasyHttpClient {
      * @param url 请求地址
      * @param params 请求参数
      * @param httpResponseHandler Http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle get(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Context context) {
-    	 return get(new HttpGetRequest(url).setParams(params), httpResponseHandler, context);
+    public RequestHandle get(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Object requestTag) {
+    	 return get(new HttpGetRequest(url).setParams(params), httpResponseHandler, requestTag);
     }
 
     /**
@@ -225,11 +224,12 @@ public class EasyHttpClient {
      * 执行一个Get请求
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle get(String url, HttpResponseHandler httpResponseHandler, Context context) {
-    	 return get(new HttpGetRequest(url), httpResponseHandler, context);
+    public RequestHandle get(String url, HttpResponseHandler httpResponseHandler, Object requestTag) {
+    	 return get(new HttpGetRequest(url), httpResponseHandler, requestTag);
     }
 
     /**
@@ -246,10 +246,11 @@ public class EasyHttpClient {
      * 执行一个Post请求
      * @param httpRequest Http Post请求
      * @param httpResponseHandler Http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle post(HttpPostRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context){
+    public RequestHandle post(HttpPostRequest httpRequest, HttpResponseHandler httpResponseHandler, Object requestTag){
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
             HttpPost httPost = new HttpPost(httpRequest.getBaseUrl());
             HttpUtils.appendHeaders(httPost, httpRequest.getHeaders());
@@ -267,7 +268,7 @@ public class EasyHttpClient {
             if(httpRequest.getCacheConfig() != null && GeneralUtils.isEmpty(httpRequest.getCacheConfig().getId())){
             	httpRequest.getCacheConfig().setId(GeneralUtils.createCacheId(httpRequest.getCacheConfig(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
             }
-            return execute(httPost, httpRequest.getName(), httpRequest.getCacheConfig(), httpResponseHandler, context);
+            return execute(httPost, httpRequest.getName(), httpRequest.getCacheConfig(), httpResponseHandler, requestTag);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
@@ -293,11 +294,12 @@ public class EasyHttpClient {
      * @param url 请求地址
      * @param params 请求参数
      * @param httpResponseHandler Http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle post(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Context context) {
-    	 return post(new HttpPostRequest(url).setParams(params), httpResponseHandler, context);
+    public RequestHandle post(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Object requestTag) {
+    	 return post(new HttpPostRequest(url).setParams(params), httpResponseHandler, requestTag);
     }
 
     /**
@@ -315,11 +317,12 @@ public class EasyHttpClient {
      * 执行一个Post请求
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle post(String url, HttpResponseHandler httpResponseHandler, Context context) {
-    	 return post(new HttpPostRequest(url), httpResponseHandler, context);
+    public RequestHandle post(String url, HttpResponseHandler httpResponseHandler, Object requestTag) {
+    	 return post(new HttpPostRequest(url), httpResponseHandler, requestTag);
     }
 
     /**
@@ -336,10 +339,11 @@ public class EasyHttpClient {
      * 执行一个Put请求
      * @param httpRequest Http Put请求
      * @param httpResponseHandler Http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle put(HttpPutRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context){
+    public RequestHandle put(HttpPutRequest httpRequest, HttpResponseHandler httpResponseHandler, Object requestTag){
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
             HttpPut httPut = new HttpPut(httpRequest.getBaseUrl());
             HttpUtils.appendHeaders(httPut, httpRequest.getHeaders());
@@ -357,7 +361,7 @@ public class EasyHttpClient {
             if(httpRequest.getCacheConfig() != null && GeneralUtils.isEmpty(httpRequest.getCacheConfig().getId())){
             	httpRequest.getCacheConfig().setId(GeneralUtils.createCacheId(httpRequest.getCacheConfig(), httpRequest.getBaseUrl(), httpRequest.getParams(), httpRequest.getCacheIgnoreParams()));
             }
-            return execute(httPut, httpRequest.getName(), httpRequest.getCacheConfig(), httpResponseHandler, context);
+            return execute(httPut, httpRequest.getName(), httpRequest.getCacheConfig(), httpResponseHandler, requestTag);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("url不能为空");
             illegalArgumentException.printStackTrace();
@@ -383,11 +387,12 @@ public class EasyHttpClient {
      * @param url 请求地址
      * @param params 请求参数
      * @param httpResponseHandler Http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle put(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Context context) {
-    	 return put(new HttpPutRequest(url).setParams(params), httpResponseHandler, context);
+    public RequestHandle put(String url, RequestParams params, HttpResponseHandler httpResponseHandler, Object requestTag) {
+    	 return put(new HttpPutRequest(url).setParams(params), httpResponseHandler, requestTag);
     }
 
     /**
@@ -405,11 +410,12 @@ public class EasyHttpClient {
      * 执行一个Put请求
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle put(String url, HttpResponseHandler httpResponseHandler, Context context) {
-    	 return put(new HttpPutRequest(url), httpResponseHandler, context);
+    public RequestHandle put(String url, HttpResponseHandler httpResponseHandler, Object requestTag) {
+    	 return put(new HttpPutRequest(url), httpResponseHandler, requestTag);
     }
 
     /**
@@ -426,14 +432,15 @@ public class EasyHttpClient {
      * 执行一个Delete请求
      * @param httpRequest Http Delete请求
      * @param httpResponseHandler Http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle delete(HttpDeleteRequest httpRequest, HttpResponseHandler httpResponseHandler, Context context) {
+    public RequestHandle delete(HttpDeleteRequest httpRequest, HttpResponseHandler httpResponseHandler, Object requestTag) {
         if(GeneralUtils.isNotEmpty(httpRequest.getBaseUrl())){
             HttpDelete httDelete = new HttpDelete(HttpUtils.getUrlByParams(getConfiguration().isUrlEncodingEnabled(), httpRequest.getBaseUrl(), httpRequest.getParams()));
             HttpUtils.appendHeaders(httDelete, httpRequest.getHeaders());
-            return execute(httDelete, httpRequest.getName(), null, httpResponseHandler, context);
+            return execute(httDelete, httpRequest.getName(), null, httpResponseHandler, requestTag);
         }else{
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("你必须指定url");
             illegalArgumentException.printStackTrace();
@@ -458,11 +465,12 @@ public class EasyHttpClient {
      * 执行一个Delete请求
      * @param url 请求地址
      * @param httpResponseHandler Http响应处理器
-     * @param context Android上下文，此上下文唯一的作用就是稍后你可以通过cancelRequests()方法批量取消请求
+     * @param requestTag 给当前请求打上一个标签，稍后你可以通过cancelRequests()方法传入这个标签来取消请求。
+     *                <br>通过此功能你可以实现批量取消请求，比如：同一个Activity中你都用同一个requestTag提交请求，那么在Activity销毁的时候你就可以通过这个requestTag取消与之相关的所有请求
      * @return 请求处理对象，你可以通过此对象取消请求或判断请求是否完成
      */
-    public RequestHandle delete(String url, HttpResponseHandler httpResponseHandler, Context context) {
-        return delete(new HttpDeleteRequest(url), httpResponseHandler, context);
+    public RequestHandle delete(String url, HttpResponseHandler httpResponseHandler, Object requestTag) {
+        return delete(new HttpDeleteRequest(url), httpResponseHandler, requestTag);
     }
 
     /**
@@ -477,18 +485,18 @@ public class EasyHttpClient {
 
     /**
      * 取消所有的请求，请求如果尚未开始就不再执行，如果已经开始就尝试中断
-     * <br>你可以在Activity Destory的时候调用此方法来抛弃跟当前Activity相关的所有请求
-     * @param context 上下文
-     * @param mayInterruptIfRunning 如果有请求正在运行中的话是否尝试中断
+     * <br>你可以在onDestory的时候调用此方法来取消与之相关的所有请求
+     * @param requestTag 请求标签
+     * @param isStopReadData 如果有请求正在运行中的话是否立即停止读取数据
      */
-    public void cancelRequests(Context context, boolean mayInterruptIfRunning) {
-        List<RequestHandle> requestList = requestMap.get(context);
+    public void cancelRequests(Object requestTag, boolean isStopReadData) {
+        List<RequestHandle> requestList = requestMap.get(requestTag);
         if(requestList != null) {
             for(RequestHandle requestHandle : requestList) {
-                requestHandle.cancel(mayInterruptIfRunning);
+                requestHandle.cancel(isStopReadData);
             }
         }
-        requestMap.remove(context);
+        requestMap.remove(requestTag);
     }
 
     /**

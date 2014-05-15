@@ -16,14 +16,13 @@
 
 package me.xiaopan.android.easynetwork.http;
 
-import java.io.FileNotFoundException;
-
+import android.os.Handler;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpUriRequest;
 
-import android.os.Handler;
+import java.io.FileNotFoundException;
 
 /**
  * 默认的二进制Http响应处理器
@@ -34,8 +33,8 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler{
 		super();
 	}
 
-	public BinaryHttpResponseHandler(boolean enableUpdateProgress) {
-		super(enableUpdateProgress);
+	public BinaryHttpResponseHandler(boolean enableProgressCallback) {
+		super(enableProgressCallback);
 	}
 
 	@Override
@@ -70,8 +69,8 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler{
             throw new Exception("没有响应体："+request.getURI().toString());
 		}
 		
-		BaseUpdateProgressCallback updateProgressCallback = isEnableUpdateProgress()?new BaseUpdateProgressCallback(this, handler):null;
-		final byte[] data = ProgressEntityUtils.toByteArray(new ProgressBufferedHttpEntity(httpEntity, updateProgressCallback), updateProgressCallback);
+		BaseUpdateProgressCallback updateProgressCallback = isEnableProgressCallback()?new BaseUpdateProgressCallback(this, handler):null;
+		final byte[] data = ProgressEntityUtils.toByteArray(new ProgressBufferedHttpEntity(httpEntity, this, updateProgressCallback), this, updateProgressCallback);
 		if(isCancelled()) return;
 		
 		if(!isSynchronizationCallback()){
@@ -142,10 +141,10 @@ public abstract class BinaryHttpResponseHandler extends HttpResponseHandler{
 
 	/**
 	 * 更新进度
-	 * @param totalLength
-	 * @param completedLength
+	 * @param totalLength 总长度
+	 * @param completedLength 已完成长度
 	 */
-    public void onUpdateProgress(long totalLength, long completedLength){};
+    public void onUpdateProgress(long totalLength, long completedLength){}
 	
 	/**
 	 * 请求成功

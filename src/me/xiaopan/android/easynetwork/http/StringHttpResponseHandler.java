@@ -16,14 +16,13 @@
 
 package me.xiaopan.android.easynetwork.http;
 
-import java.io.FileNotFoundException;
-
+import android.os.Handler;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpUriRequest;
 
-import android.os.Handler;
+import java.io.FileNotFoundException;
 
 /**
  * 默认的字符串Http响应处理器
@@ -33,8 +32,8 @@ public abstract class StringHttpResponseHandler extends HttpResponseHandler {
 	public StringHttpResponseHandler() {
 	}
 
-	public StringHttpResponseHandler(boolean enableUpdateProgress) {
-		super(enableUpdateProgress);
+	public StringHttpResponseHandler(boolean enableProgressCallback) {
+		super(enableProgressCallback);
 	}
 
 	@Override
@@ -69,8 +68,8 @@ public abstract class StringHttpResponseHandler extends HttpResponseHandler {
             throw new Exception("没有响应体："+request.getURI().toString());
 		}
 		
-		BaseUpdateProgressCallback updateProgressCallback = isEnableUpdateProgress()?new BaseUpdateProgressCallback(this, handler):null;
-		final String responseContent = ProgressEntityUtils.toString(new ProgressBufferedHttpEntity(httpEntity, updateProgressCallback), "UTF-8", updateProgressCallback);
+		BaseUpdateProgressCallback updateProgressCallback = isEnableProgressCallback()?new BaseUpdateProgressCallback(this, handler):null;
+		final String responseContent = ProgressEntityUtils.toString(new ProgressBufferedHttpEntity(httpEntity, this, updateProgressCallback), "UTF-8", this, updateProgressCallback);
         if(isCancelled()) return;
 		
         if(!isSynchronizationCallback()){
@@ -141,10 +140,10 @@ public abstract class StringHttpResponseHandler extends HttpResponseHandler {
 
 	/**
 	 * 更新进度
-	 * @param totalLength
-	 * @param completedLength
+     * @param totalLength 总长度
+     * @param completedLength 已完成长度
 	 */
-    public void onUpdateProgress(long totalLength, long completedLength){};
+    public void onUpdateProgress(long totalLength, long completedLength){}
 	
 	/**
 	 * 请求成功

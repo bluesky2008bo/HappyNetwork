@@ -16,19 +16,17 @@
 
 package me.xiaopan.android.easynetwork.http;
 
-import java.io.FileNotFoundException;
-import java.lang.reflect.Type;
-
+import android.content.Context;
+import android.os.Handler;
+import com.google.gson.GsonBuilder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.json.JSONObject;
 
-import android.content.Context;
-import android.os.Handler;
-
-import com.google.gson.GsonBuilder;
+import java.io.FileNotFoundException;
+import java.lang.reflect.Type;
 
 /**
  * 默认的JsonHttp响应处理器
@@ -38,14 +36,14 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 	private Class<?> responseClass;
 	private Type responseType;
 
-	public JsonHttpResponseHandler(Context context, Class<?> responseClass, boolean enableUpdateProgress){
-		super(enableUpdateProgress);
+	public JsonHttpResponseHandler(Context context, Class<?> responseClass, boolean enableProgressCallback){
+		super(enableProgressCallback);
 		this.context = context;
 		this.responseClass = responseClass;
 	}
 	
-	public JsonHttpResponseHandler(Context context, Type responseType, boolean enableUpdateProgress){
-		super(enableUpdateProgress);
+	public JsonHttpResponseHandler(Context context, Type responseType, boolean enableProgressCallback){
+		super(enableProgressCallback);
 		this.context = context;
 		this.responseType = responseType;
 	}
@@ -93,8 +91,8 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
             throw new Exception("没有响应体："+request.getURI().toString());
 		}
 		
-		BaseUpdateProgressCallback updateProgressCallback = isEnableUpdateProgress()?new BaseUpdateProgressCallback(this, handler):null;
-		String jsonString = ProgressEntityUtils.toString(new ProgressBufferedHttpEntity(httpEntity, updateProgressCallback), "UTF-8", updateProgressCallback);
+		BaseUpdateProgressCallback updateProgressCallback = isEnableProgressCallback()?new BaseUpdateProgressCallback(this, handler):null;
+		String jsonString = ProgressEntityUtils.toString(new ProgressBufferedHttpEntity(httpEntity, this, updateProgressCallback), "UTF-8", this, updateProgressCallback);
 		if(isCancelled()) return;
 		
 		if(jsonString == null || "".equals(jsonString)){
@@ -194,10 +192,10 @@ public abstract class JsonHttpResponseHandler<T> extends HttpResponseHandler {
 
 	/**
 	 * 更新进度
-	 * @param totalLength
-	 * @param completedLength
+     * @param totalLength 总长度
+     * @param completedLength 已完成长度
 	 */
-    public void onUpdateProgress(long totalLength, long completedLength){};
+    public void onUpdateProgress(long totalLength, long completedLength){}
 	
 	/**
 	 * 请求成功

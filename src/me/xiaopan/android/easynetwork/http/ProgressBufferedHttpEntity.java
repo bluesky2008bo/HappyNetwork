@@ -16,13 +16,13 @@
 
 package me.xiaopan.android.easynetwork.http;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.HttpEntityWrapper;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.HttpEntityWrapper;
 
 /***
  * 带有进度功能的Http实体缓冲器
@@ -31,19 +31,17 @@ public class ProgressBufferedHttpEntity extends HttpEntityWrapper {
 
 	private final byte[] buffer;
 
-	public ProgressBufferedHttpEntity(final HttpEntity entity,
-			UpdateProgressCallback updateProgressCallback) throws IOException {
+	public ProgressBufferedHttpEntity(final HttpEntity entity, HttpResponseHandler httpResponseHandler, UpdateProgressCallback updateProgressCallback) throws IOException {
 		super(entity);
 		if (!entity.isRepeatable() || entity.getContentLength() < 0) {
-			this.buffer = ProgressEntityUtils.toByteArray(entity,
-					updateProgressCallback);
+			this.buffer = ProgressEntityUtils.toByteArray(entity, httpResponseHandler, updateProgressCallback);
 		} else {
 			this.buffer = null;
 		}
 	}
 
-	public ProgressBufferedHttpEntity(final HttpEntity entity) throws IOException {
-		this(entity, null);
+	public ProgressBufferedHttpEntity(final HttpEntity entity, HttpResponseHandler httpResponseHandler) throws IOException {
+		this(entity, httpResponseHandler, null);
 	}
 
 	public long getContentLength() {

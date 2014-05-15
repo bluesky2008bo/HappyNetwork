@@ -25,18 +25,28 @@ public class RequestHandle {
         this.requestReference = new WeakReference<HttpRequestExecuteRunnable>(request);
     }
 
-    public void cancel(boolean mayInterruptIfRunning) {
+    /**
+     * 取消请求
+     * @param isStopReadData 是否停止接收数据
+     */
+    public void cancel(boolean isStopReadData) {
     	HttpRequestExecuteRunnable request = requestReference.get();
     	if(request != null){
-    		request.cancel(mayInterruptIfRunning);
+    		request.cancel(isStopReadData);
     	}
     }
 
+    /**
+     * 是否完成
+     */
     public boolean isFinished() {
     	HttpRequestExecuteRunnable request = requestReference.get();
         return request == null || request.isDone();
     }
 
+    /**
+     * 是否已经取消
+     */
     public boolean isCancelled() {
     	HttpRequestExecuteRunnable request = requestReference.get();
         return request == null || request.isCancelled();
@@ -44,8 +54,9 @@ public class RequestHandle {
 
     public boolean shouldBeGarbageCollected() {
         boolean should = isCancelled() || isFinished();
-        if (should)
+        if (should){
             requestReference.clear();
+        }
         return should;
     }
 }

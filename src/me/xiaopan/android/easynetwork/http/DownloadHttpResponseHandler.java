@@ -1,18 +1,12 @@
 package me.xiaopan.android.easynetwork.http;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
+import android.os.Handler;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpUriRequest;
 
-import android.os.Handler;
+import java.io.*;
 
 /**
  * 下载Http响应处理器
@@ -20,8 +14,8 @@ import android.os.Handler;
 public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
     private File file;
     
-	public DownloadHttpResponseHandler(File file, boolean enableUpdateProgress) {
-		super(enableUpdateProgress);
+	public DownloadHttpResponseHandler(File file, boolean enableProgressCallback) {
+		super(enableProgressCallback);
 		if(file == null){
     		throw new IllegalArgumentException("file 参数不能为null");
     	}
@@ -74,12 +68,17 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
 		OutputStream outputStream = null;
 		try{
 			outputStream = new BufferedOutputStream(new FileOutputStream(file), 8*1024);
-			BaseUpdateProgressCallback baseUpdateProgressCallback = isEnableUpdateProgress()?new BaseUpdateProgressCallback(this, handler):null;
-			ProgressEntityUtils.read(httpEntity, outputStream, baseUpdateProgressCallback);
+			BaseUpdateProgressCallback baseUpdateProgressCallback = isEnableProgressCallback()?new BaseUpdateProgressCallback(this, handler):null;
+			ProgressEntityUtils.read(httpEntity, outputStream, this, baseUpdateProgressCallback);
 		}finally{
 			GeneralUtils.close(outputStream);
 		}
-		if(isCancelled()) return;
+		if(isCancelled()){
+			if(file.exists()){
+				file.delete();
+			}
+			return;
+		}
 		
 		if(!isSynchronizationCallback()){
 			handler.post(new Runnable() {
@@ -142,13 +141,29 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
     	}
     }
 
-    public abstract void onStart();
+    /**
+     * 请求开始
+     */
+    protected abstract void onStart();
 
-    public abstract void onUpdateProgress(long totalLength, long completedLength);
+    /**
+     * 更新进度
+     * @param totalLength 总长度
+     * @param completedLength 已完成长度
+     */
+    public void onUpdateProgress(long totalLength, long completedLength){}
 
+    /**
+     * 请求成功
+     * @param file  保存数据的文件
+     */
     public abstract void onSuccess(File file);
 
-    public abstract void onFailure(Throwable e);
+    /**
+     * 请求失败
+     * @param throwable 异常
+     */
+    public abstract void onFailure(Throwable throwable);
 
     /**
      * 请求取消
@@ -159,18 +174,16 @@ public abstract class DownloadHttpResponseHandler extends HttpResponseHandler{
     
     /**
 	 * 创建文件，此方法的重要之处在于，如果其父目录不存在会先创建其父目录
-	 * @param file
-	 * @return
 	 * @throws IOException
 	 */
 	private static File createFile(File file) throws IOException{
 		if(!file.exists()){
-			boolean mkadirsSuccess = true;
+			boolean createSuccess = true;
 			File parentFile = file.getParentFile();
 			if(!parentFile.exists()){
-				mkadirsSuccess = parentFile.mkdirs();
+				createSuccess = parentFile.mkdirs();
 			}
-			if(mkadirsSuccess){
+			if(createSuccess){
 				try{
 					file.createNewFile();
 					return file;

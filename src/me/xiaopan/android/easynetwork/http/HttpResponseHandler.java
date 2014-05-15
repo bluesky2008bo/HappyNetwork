@@ -26,12 +26,12 @@ import android.os.Handler;
  */
 public abstract class HttpResponseHandler{
 	private boolean cancelled;	// 是否已经取消
-	private boolean mayInterruptIfRunning;	// 当取消请求的时候是否中断正在进行的请求
-	private boolean enableUpdateProgress;	// 开启更新进度功能
+	private boolean stopReadData;	// 是否停止接收数据
+	private boolean enableProgressCallback;	// 开启回调进度功能
 	private boolean synchronizationCallback;	// 同步回调
 	
-    public HttpResponseHandler(boolean enableUpdateProgress) {
-		this.enableUpdateProgress = enableUpdateProgress;
+    public HttpResponseHandler(boolean enableProgressCallback) {
+		this.enableProgressCallback = enableProgressCallback;
 	}
 	
     public HttpResponseHandler() {
@@ -45,38 +45,39 @@ public abstract class HttpResponseHandler{
 	}
     
 	/**
-	 * 如果正在运行是否中断
+	 * 是否停止接收数据
 	 */
-	public boolean isMayInterruptIfRunning() {
-		return mayInterruptIfRunning;
+	public boolean isStopReadData() {
+		return stopReadData;
 	}
 
 	/**
      * 取消
-     * @param handler
-     * @param mayInterruptIfRunning 如果正在运行是否尝试终止
-     * @return
+     * @param handler 用于实现在主线程回调
+     * @param isStopReadData 是否停止接收数据
      */
-    public void cancel(Handler handler, boolean mayInterruptIfRunning) {
-    	this.cancelled = true;
-    	this.mayInterruptIfRunning = mayInterruptIfRunning;
-    	onCancel(handler);
+    public void cancel(Handler handler, boolean isStopReadData) {
+    	if(!isCancelled()){
+            this.cancelled = true;
+            this.stopReadData = isStopReadData;
+            onCancel(handler);
+        }
     }
     
     /**
-     * 是否开启进度更新功能
-     * @return 是否开启进度更新功能
+     * 是否开启回调进度功能
+     * @return 是否开启回调进度功能
      */
-	public boolean isEnableUpdateProgress() {
-		return enableUpdateProgress;
+	public boolean isEnableProgressCallback() {
+		return enableProgressCallback;
 	}
 
 	/**
-	 * 设置是否开启进度更新功能
-	 * @param enableUpdateProgress 是否开启进度更新功能
+	 * 设置是否开启回调进度功能
+	 * @param enableProgressCallback 是否开启回调进度功能
 	 */
-	public void setEnableUpdateProgress(boolean enableUpdateProgress) {
-		this.enableUpdateProgress = enableUpdateProgress;
+	public void setEnableProgressCallback(boolean enableProgressCallback) {
+		this.enableProgressCallback = enableProgressCallback;
 	}
 
 	/**
@@ -103,11 +104,10 @@ public abstract class HttpResponseHandler{
     
     /**
      * 判断是否可以缓存，当需要缓存HttpResponse的时候会先调用此方法判断是否可以缓存，例如：实现者可以在此方法里过滤掉状态码不是200的响应。默认为状态码大于等于200并且 小于300就返回true
-     * @param handler 消息处理器
      * @param httpResponse Http响应
      * @return 是否可以缓存
      */
-    protected boolean isCanCache(Handler handler, HttpResponse httpResponse){
+    protected boolean isCanCache(HttpResponse httpResponse){
     	return httpResponse.getStatusLine().getStatusCode() >= 200 && httpResponse.getStatusLine().getStatusCode() < 300;
     }
 

@@ -16,13 +16,10 @@
 
 package me.xiaopan.android.easynetwork.http;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import android.util.Log;
 import me.xiaopan.android.easynetwork.http.interceptor.AddRequestHeaderRequestInterceptor;
 import me.xiaopan.android.easynetwork.http.interceptor.GzipProcessRequestInterceptor;
 import me.xiaopan.android.easynetwork.http.interceptor.GzipProcessResponseInterceptor;
-
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -48,7 +45,8 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.SyncBasicHttpContext;
 
-import android.util.Log;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Http客户端配置
@@ -59,6 +57,7 @@ public class HttpClientManager {
 	public static final int DEFAULT_MAX_CONNECTIONS = 10;	//默认最大连接数
 	public static final int DEFAULT_TIMEOUT = 20000;	//默认连接超时时间
     public static final int DEFAULT_RETRY_SLEEP_TIME_MILLIS = 1500;
+    public static final String DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 6.0; WOW64) AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.16 Safari/534.24";
 	
     private HttpContext httpContext;	//Http上下文
     private DefaultHttpClient httpClient;	//Http客户端
@@ -68,7 +67,7 @@ public class HttpClientManager {
     	BasicHttpParams httpParams = new BasicHttpParams();
         HttpConnectionParams.setTcpNoDelay(httpParams, true);	//开启TCP无延迟
         HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);	//设置使用的Http协议版本
-		HttpProtocolParams.setUserAgent(httpParams, String.format("Android-EasyNetwork/%s (https://github.com/xiaopansky/Android-EasyNetwork)", "2.1.8"));	//设置浏览器标识
+		HttpProtocolParams.setUserAgent(httpParams, DEFAULT_USER_AGENT);	//设置浏览器标识
 		httpContext = new SyncBasicHttpContext(new BasicHttpContext());	//初始化Http上下文
         httpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams, schemeRegistry), httpParams);
         httpClient.addRequestInterceptor(new GzipProcessRequestInterceptor());

@@ -16,12 +16,6 @@
 
 package me.xiaopan.android.easynetwork.http;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -29,6 +23,8 @@ import org.apache.http.ParseException;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.ByteArrayBuffer;
 import org.apache.http.util.CharArrayBuffer;
+
+import java.io.*;
 
 /***
  * 带有进度的实体工具箱
@@ -38,12 +34,12 @@ public final class ProgressEntityUtils {
     private ProgressEntityUtils() {
     }
     
-    public static byte[] toByteArray(final HttpEntity entity, UpdateProgressCallback updateProgressCallback) throws IOException {
+    public static byte[] toByteArray(final HttpEntity entity, HttpResponseHandler httpResponseHandler, UpdateProgressCallback updateProgressCallback) throws IOException {
         if (entity == null) {
             throw new IllegalArgumentException("HTTP entity may not be null");
         }
-        InputStream instream = entity.getContent();
-        if (instream == null) {
+        InputStream inputStream = entity.getContent();
+        if (inputStream == null) {
             return new byte[] {};
         }
         if (entity.getContentLength() > Integer.MAX_VALUE) {
@@ -58,10 +54,10 @@ public final class ProgressEntityUtils {
             byte[] tmp = new byte[4096];
             int readLength;
             long completedLength = 0;
-            while((readLength = instream.read(tmp)) != -1) {
+            while(!httpResponseHandler.isStopReadData() && (readLength = inputStream.read(tmp)) != -1) {
                 buffer.append(tmp, 0, readLength);
                 completedLength += readLength;
-                if(updateProgressCallback != null && !updateProgressCallback.isMarkRead()){
+                if(!httpResponseHandler.isCancelled() && updateProgressCallback != null && !updateProgressCallback.isMarkRead()){
                 	updateProgressCallback.onUpdateProgress(contentLength, completedLength);
                 }
             }
@@ -69,13 +65,13 @@ public final class ProgressEntityUtils {
             	updateProgressCallback.setMarkRead(true);
             }
         } finally {
-            instream.close();
+            inputStream.close();
         }
-        return buffer.toByteArray();
+        return !httpResponseHandler.isCancelled()?buffer.toByteArray():null;
     }
     
-    public static byte[] toByteArray(final HttpEntity entity) throws IOException {
-        return toByteArray(entity, null);
+    public static byte[] toByteArray(final HttpEntity entity, HttpResponseHandler httpResponseHandler) throws IOException {
+        return toByteArray(entity, httpResponseHandler, null);
     }
         
     public static String getContentCharSet(final HttpEntity entity)
@@ -97,12 +93,12 @@ public final class ProgressEntityUtils {
         return charset;
     }
 
-    public static String toString(final HttpEntity entity, final String defaultCharset, UpdateProgressCallback updateProgressCallback) throws IOException, ParseException {
+    public static String toString(final HttpEntity entity, final String defaultCharset, HttpResponseHandler httpResponseHandler, UpdateProgressCallback updateProgressCallback) throws IOException, ParseException {
         if (entity == null) {
             throw new IllegalArgumentException("HTTP entity may not be null");
         }
-        InputStream instream = entity.getContent();
-        if (instream == null) {
+        InputStream inputStream = entity.getContent();
+        if (inputStream == null) {
             return "";
         }
         if (entity.getContentLength() > Integer.MAX_VALUE) {
@@ -119,16 +115,16 @@ public final class ProgressEntityUtils {
         if (charset == null) {
             charset = HTTP.DEFAULT_CONTENT_CHARSET;
         }
-        Reader reader = new InputStreamReader(instream, charset);
+        Reader reader = new InputStreamReader(inputStream, charset);
         CharArrayBuffer buffer = new CharArrayBuffer(contentLength); 
         try {
             char[] tmp = new char[1024];
             int readLength;
             long completedLength = 0;
-            while((readLength = reader.read(tmp)) != -1) {
+            while(!httpResponseHandler.isStopReadData() && (readLength = reader.read(tmp)) != -1) {
                 buffer.append(tmp, 0, readLength);
                 completedLength += readLength;
-                if(updateProgressCallback != null && !updateProgressCallback.isMarkRead()){
+                if(!httpResponseHandler.isCancelled() && updateProgressCallback != null && !updateProgressCallback.isMarkRead()){
                 	updateProgressCallback.onUpdateProgress(contentLength, completedLength);
                 }
             }
@@ -138,55 +134,55 @@ public final class ProgressEntityUtils {
         } finally {
             reader.close();
         }
-        return buffer.toString();
+        return !httpResponseHandler.isCancelled()?buffer.toString():null;
     }
 
-    public static String toString(final HttpEntity entity, final String defaultCharset) throws IOException, ParseException {
-        return toString(entity, defaultCharset, null);
+    public static String toString(final HttpEntity entity, final String defaultCharset, HttpResponseHandler httpResponseHandler) throws IOException, ParseException {
+        return toString(entity, defaultCharset, httpResponseHandler, null);
     }
 
-    public static String toString(final HttpEntity entity, final UpdateProgressCallback updateProgressListener) throws IOException, ParseException {
-        return toString(entity, null, updateProgressListener);
+    public static String toString(final HttpEntity entity, HttpResponseHandler httpResponseHandler, final UpdateProgressCallback updateProgressListener) throws IOException, ParseException {
+        return toString(entity, null, httpResponseHandler, updateProgressListener);
     }
 
-    public static String toString(final HttpEntity entity) throws IOException, ParseException {
-        return toString(entity, null, null);
+    public static String toString(final HttpEntity entity, final HttpResponseHandler httpResponseHandler) throws IOException, ParseException {
+        return toString(entity, null, httpResponseHandler, null);
     }
     
-    public static boolean read(final HttpEntity entity, OutputStream outputStream, UpdateProgressCallback updateProgressCallback) throws IOException {
+    public static boolean read(final HttpEntity entity, OutputStream outputStream, HttpResponseHandler httpResponseHandler, UpdateProgressCallback updateProgressCallback) throws IOException {
         if (entity == null) {
             throw new IllegalArgumentException("HTTP entity may not be null");
         }
-        InputStream instream = entity.getContent();
-        if (instream == null || outputStream == null) {
+        InputStream inputStream = entity.getContent();
+        if (inputStream == null || outputStream == null) {
             return false;
         }
         long contentLength = entity.getContentLength();
         if (contentLength < 0) {
-        	throw new IllegalArgumentException("HTTP entity leng is 0");
+        	throw new IllegalArgumentException("HTTP entity length is 0");
         }
         try {
             byte[] tmp = new byte[4096];
             int readLength;
             long completedLength = 0;
-            while((readLength = instream.read(tmp)) != -1) {
+            while(!httpResponseHandler.isStopReadData() && (readLength = inputStream.read(tmp)) != -1) {
                 outputStream.write(tmp, 0, readLength);
                 completedLength += readLength;
-                if(updateProgressCallback != null && !updateProgressCallback.isMarkRead()){
-                	updateProgressCallback.onUpdateProgress(contentLength, completedLength);
+                if(!httpResponseHandler.isCancelled() && updateProgressCallback != null && !updateProgressCallback.isMarkRead()){
+                    updateProgressCallback.onUpdateProgress(contentLength, completedLength);
                 }
             }
             if(updateProgressCallback != null){
             	updateProgressCallback.setMarkRead(true);
             }
         } finally {
-            instream.close();
+            inputStream.close();
             outputStream.flush();
         }
-        return true;
+        return !httpResponseHandler.isCancelled();
     }
     
-    public static boolean read(final HttpEntity entity, OutputStream outputStream) throws IOException {
-        return read(entity, null);
+    public static boolean read(final HttpEntity entity, OutputStream outputStream, HttpResponseHandler httpResponseHandler) throws IOException {
+        return read(entity, outputStream, httpResponseHandler, null);
     }
 }
