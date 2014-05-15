@@ -61,39 +61,6 @@ public class DownloadActivity extends MyActivity {
 				Log.e("下载", "取消");
 			}
 		}, requestTag);
-
-        EasyHttpClient.getInstance(getBaseContext()).get("http://img.pconline.com.cn/images/upload/upc/tx/wallpaper/1311/11/c0/28529113_1384156076013_800x600.jpg", new DownloadHttpResponseHandler(file, true) {
-            @Override
-            public void onStart() {
-                getHintView().loading("");
-            }
-
-            @Override
-            public void onUpdateProgress(long totalLength, long completedLength) {
-                getHintView().setProgress((int)totalLength, (int)completedLength);
-            }
-
-            @Override
-            public void onSuccess(File file) {
-                imageView.setImageURI(Uri.fromFile(file));
-                getHintView().hidden();
-            }
-
-            @Override
-            public void onFailure(Throwable e) {
-                getHintView().failure(Failure.buildByException(getBaseContext(), e), new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        load();
-                    }
-                });
-            }
-
-            @Override
-            protected void onCancel() {
-                Log.e("下载", "取消");
-            }
-        }, requestTag);
 	}
 
 	@Override
