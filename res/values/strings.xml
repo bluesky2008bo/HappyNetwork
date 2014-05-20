@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Easy Network</string>
+    <string name="app_name">Happy Network</string>
     
     <string name="activityTitle_binary">BinaryHttpResponseHandler</string>
     <string name="activityTitle_string">StringHttpResponseHandler</string>
