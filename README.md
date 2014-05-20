@@ -391,8 +391,8 @@ public class DownloadActivity extends MyActivity {
 最好的的示例就是内置的HttpResponseHandler
 
 ##Downloads
->* [android-happy-network-2.3.0.jar](https://github.com/xiaopansky/HappyNetwork/raw/master/releases/android-happy-network-2.3.0.jar)
->* [android-happy-network-2.3.0-with-src.jar](https://github.com/xiaopansky/HappyNetwork/raw/master/releases/android-happy-network-2.3.0-with-src.jar)
+>* [android-happy-network-2.4.0.jar](https://github.com/xiaopansky/HappyNetwork/raw/master/releases/android-happy-network-2.4.0.jar)
+>* [android-happy-network-2.4.0-with-src.jar](https://github.com/xiaopansky/HappyNetwork/raw/master/releases/android-happy-network-2.4.0-with-src.jar)
 
 依赖
 >* **[gson-2.2.4.jar](https://github.com/xiaopansky/HappyNetwork/raw/master/libs/gson-2.2.4.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
