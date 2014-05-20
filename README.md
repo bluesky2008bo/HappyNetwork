@@ -1,4 +1,4 @@
-# ![Logo](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/res/drawable-mdpi/ic_launcher.png) Android-EasyNetwork
+# ![Logo](https://github.com/xiaopansky/HappyNetwork/raw/master/res/drawable-mdpi/ic_launcher.png) HappyNetwork
 
 这是一个参考了android-async-http项目的Android网络访问库，旨在用最简单、最快捷的方式来访问网络
 
@@ -15,7 +15,7 @@
 
 ####使用普通方式发送请求
 ```java
-EasyHttpClient.getInstance(getBaseContext()).get(new HttpGetRequest("http://www.miui.com/forum.php"), new StringHttpResponseHandler(true){
+HappyHttpClient.getInstance(getBaseContext()).get(new HttpGetRequest("http://www.miui.com/forum.php"), new StringHttpResponseHandler(true){
 	@Override
 	protected void onStart() {
 		// 提示开始
@@ -91,7 +91,7 @@ public class BaiduSearchRequest implements Request {
 #####第二步：发送请求
 例如：
 ```java
-EasyHttpClient.getInstance(getBaseContext()).execute(new BaiduSearchRequest("王力宏"), new StringHttpResponseHandler(true){
+HappyHttpClient.getInstance(getBaseContext()).execute(new BaiduSearchRequest("王力宏"), new StringHttpResponseHandler(true){
 	@Override
 	protected void onStart() {
 		// 提示开始
@@ -195,11 +195,11 @@ public class BaseRequest implements Request {
     * 字段上有``@Value``注解
         有``@Value``注解时，将会用``@Value``注解的值来作为请求参数值，而不再考虑字段的值
     * 字段类型为Map
-        对于``Map``类型的字段``EasyHttpClient``会将其每一对键值对都转换成请求参数，而每一对键值对的键将作为参数名，键值对的值将作为参数值；
+        对于``Map``类型的字段``HappyHttpClient``会将其每一对键值对都转换成请求参数，而每一对键值对的键将作为参数名，键值对的值将作为参数值；
     * 字段类型为File
-        对于``File``类型的字段EasyHttpClient将使用``RequestParams``的``put(String key, File file)``方法将其添加到``RequestParams``中；
+        对于``File``类型的字段HappyHttpClient将使用``RequestParams``的``put(String key, File file)``方法将其添加到``RequestParams``中；
     * 字段类型为ArrayList
-        对于``ArrayList``类型的字段EasyHttpClient将使用``RequestParams``的``put(String key, ArrayList<String> values)``方法将其添加到``RequestParams``中；
+        对于``ArrayList``类型的字段HappyHttpClient将使用``RequestParams``的``put(String key, ArrayList<String> values)``方法将其添加到``RequestParams``中；
     * 字段类型为Boolean
         对于``Boolean``类型的字段你可以通过``@True``和``@False``注解来指定当字段值是``true``或``false``的时候其对应的转换成请求参数时的参数值；
     * 字段类型为Enum
@@ -274,7 +274,7 @@ execute()、get()、post()等方法都会返回一个ReponseHandle类型的对�
 ```java
 private void load(){
 	File file = new File(getExternalCacheDir(), "800x600.jpg");
-	final RequestHandle requestHandle = EasyHttpClient.getInstance(getBaseContext()).get("http://b.zol-img.com.cn/desk/bizhi/image/4/1600x900/1386814415425.jpg", new DownloadHttpResponseHandler(file, true) {
+	final RequestHandle requestHandle = HappyHttpClient.getInstance(getBaseContext()).get("http://b.zol-img.com.cn/desk/bizhi/image/4/1600x900/1386814415425.jpg", new DownloadHttpResponseHandler(file, true) {
 		// ...
 	}, this);
 
@@ -301,12 +301,12 @@ public class DownloadActivity extends MyActivity {
 		File file = new File(getExternalCacheDir(), "800x600.jpg");
 		
 		// 第一次发送请求
-        EasyHttpClient.getInstance(getBaseContext()).get("http://b.zol-img.com.cn/desk/bizhi/image/4/1600x900/1386814415425.jpg", new DownloadHttpResponseHandler(file, true) {
+        HappyHttpClient.getInstance(getBaseContext()).get("http://b.zol-img.com.cn/desk/bizhi/image/4/1600x900/1386814415425.jpg", new DownloadHttpResponseHandler(file, true) {
 			// ...
 		}, requestTag);
 
         // 第二次发送请求
-        EasyHttpClient.getInstance(getBaseContext()).get("http://img.pconline.com.cn/800x600.jpg", new DownloadHttpResponseHandler(file, true) {
+        HappyHttpClient.getInstance(getBaseContext()).get("http://img.pconline.com.cn/800x600.jpg", new DownloadHttpResponseHandler(file, true) {
             // ...
         }, requestTag);
 	}
@@ -315,7 +315,7 @@ public class DownloadActivity extends MyActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		// 取消与requestTag相关的所有请求
-		EasyHttpClient.getInstance(getBaseContext()).cancelRequests(requestTag, true);
+		HappyHttpClient.getInstance(getBaseContext()).cancelRequests(requestTag, true);
 	}
 }
 ```
@@ -391,13 +391,18 @@ public class DownloadActivity extends MyActivity {
 最好的的示例就是内置的HttpResponseHandler
 
 ##Downloads
->* [android-easy-network-2.3.0.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.3.0.jar)
->* [android-easy-network-2.3.0-with-src.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/releases/android-easy-network-2.3.0-with-src.jar)
+>* [android-easy-network-2.3.0.jar](https://github.com/xiaopansky/HappyNetwork/raw/master/releases/android-easy-network-2.3.0.jar)
+>* [android-easy-network-2.3.0-with-src.jar](https://github.com/xiaopansky/HappyNetwork/raw/master/releases/android-easy-network-2.3.0-with-src.jar)
 
 依赖
->* **[gson-2.2.2.jar](https://github.com/xiaopansky/Android-EasyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
+>* **[gson-2.2.2.jar](https://github.com/xiaopansky/HappyNetwork/raw/master/libs/gson-2.2.2.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
 
 ##Change Log
+####2.4.0
+>* 项目更名为HappyNetwork
+>* 包更名为me.xiaopan.android.happynetwork.http
+>* EasyHttpClient更名为HappyHttpClient
+
 ####2.3.0
 >* ResponseCache类和注解都改名为CacheConfig；
 >* 修复加载进度在回调之前会等待很长一段时间的BUG，原因前由于使用了BufferedHttpEntity，而BufferedHttpEntity要先将数据读完保存在一个字节数组中，然后才给你读；
@@ -447,8 +452,8 @@ public class DownloadActivity extends MyActivity {
 ####2.1.5
 >* 不再默认支持Gzip超高速传输，因为在实际使用中由于使用了Gzip超高速传输出现了java.io.IOException: unknown format (magic number 227b)异常，此异常出现频率大概20%，并且到现在位置我尚未发现其规律，所以目前无法解决。如果你想开启Gzip超高速传输可通过下面代码实现
 ```java
-EasyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addRequestInterceptor(new GzipProcessRequestInterceptor());
-EasyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addResponseInterceptor(new GzipProcessResponseInterceptor());
+HappyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addRequestInterceptor(new GzipProcessRequestInterceptor());
+HappyHttpClient.getInstance().getConfiguration().getDefaultHttpClient().addResponseInterceptor(new GzipProcessResponseInterceptor());
 ```
 
 ####2.1.4
