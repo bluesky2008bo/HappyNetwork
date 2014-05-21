@@ -1,6 +1,6 @@
 # ![Logo](https://github.com/xiaopansky/HappyNetwork/raw/master/res/drawable-mdpi/ic_launcher.png) HappyNetwork
 
-这是一个参考了android-async-http项目的Android网络访问库，旨在用最简单、最快捷的方式来访问网络
+HappyNetwork是Android上的一个网络访问库，旨在用最简单、最快捷的方式来访问网络，其参考了android-async-http
 
 ##Features
 >* 异步发送Http请求，并用ThreadPool来维护每一个请求；
@@ -394,7 +394,7 @@ public class DownloadActivity extends MyActivity {
 >* [android-happy-network-2.4.0.jar](https://github.com/xiaopansky/HappyNetwork/raw/master/releases/android-happy-network-2.4.0.jar)
 >* [android-happy-network-2.4.0-with-src.jar](https://github.com/xiaopansky/HappyNetwork/raw/master/releases/android-happy-network-2.4.0-with-src.jar)
 
-依赖
+Dependencies
 >* **[gson-2.2.4.jar](https://github.com/xiaopansky/HappyNetwork/raw/master/libs/gson-2.2.4.jar)** 可选的。如果你要使用JsonHttpResponseHandler和缓存功能的话就必须引入此类库 
 
 ##Change Log
