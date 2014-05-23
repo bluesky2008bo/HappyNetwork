@@ -15,7 +15,7 @@ HappyNetwork是Android上的一个网络访问库，旨在用最简单、最快�
 
 ####使用普通方式发送请求
 ```java
-HappyHttpClient.getInstance(getBaseContext()).get(new HttpGetRequest("http://www.miui.com/forum.php"), new StringHttpResponseHandler(true){
+HappyHttpClient.getInstance(getBaseContext()).get("http://www.miui.com/forum.php", new StringHttpResponseHandler(true){
 	@Override
 	protected void onStart() {
 		// 提示开始
